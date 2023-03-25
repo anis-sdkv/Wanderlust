@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Wanderlust</string>
+    <!--    authorization-->
+    <string name="sign_in">Sign in</string>
+    <string name="email">Email</string>
+
 </resources>
