@@ -3,7 +3,13 @@ package com.example.wanderlust
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.wanderlust.ui.screens.sign_in.SignInScreen
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.wanderlust.navigation.SetBottomNavigationBar
 import com.example.wanderlust.ui.theme.WanderlustTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,8 +18,20 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             WanderlustTheme {
-                SignInScreen()
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SetBottomNavigationBar()
+                }
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun BottomNavigationPreview() {
+    SetBottomNavigationBar()
 }
