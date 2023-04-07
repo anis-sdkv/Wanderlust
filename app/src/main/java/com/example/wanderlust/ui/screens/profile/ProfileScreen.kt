@@ -22,6 +22,7 @@ fun ProfileScreen(
         Modifier
             .background(Color.White)
             .fillMaxSize()
+            .padding(bottom = 64.dp)
     ){
         val (text, column) = createRefs()
         Column(
