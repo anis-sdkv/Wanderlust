@@ -2,6 +2,7 @@ package com.example.wanderlust.ui.screens.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,6 +18,7 @@ fun HomeScreen() {
         Modifier
             .background(Color.White)
             .fillMaxSize()
+            .padding(bottom = 100.dp)
     ){
         val (text) = createRefs()
         Text(text = "Home",

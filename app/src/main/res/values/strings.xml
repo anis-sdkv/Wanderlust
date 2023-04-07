@@ -4,4 +4,8 @@
     <string name="sign_in">Sign in</string>
     <string name="email">Email</string>
 
+    <!--    BottomSheet-->
+    <string name="add_route">Добавить маршрут</string>
+    <string name="add_place">Добавить интересное место</string>
+
 </resources>
