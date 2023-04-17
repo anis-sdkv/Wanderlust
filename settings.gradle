@@ -12,5 +12,8 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Wanderlust"
+rootProject.name = "wanderlust"
 include ':app'
+include ':data'
+include ':ui'
+include ':domain'
