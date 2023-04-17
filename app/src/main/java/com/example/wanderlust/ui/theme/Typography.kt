@@ -31,7 +31,7 @@ val wanderlustTypography = Typography(
     titleLarge = TextStyle(
         fontFamily = wanderlustFontFamily,
         fontWeight = FontWeight.W300,
-        fontSize = 96.sp
+        fontSize = 96.sp,
     )
     //TODO если нужно
 )
@@ -49,11 +49,15 @@ object WanderlustTextStyles {
         fontSize = 16.sp,
         color = Color.White
     )
-    val AuthorizationInputInnerText = TextStyle(
+    val AuthorizationRegular = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp
+    )
+    val AuthorizationSemibold = TextStyle(
         fontFamily = wanderlustFontFamily,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 16.sp,
-        color = Color.Black
+        fontSize = 16.sp
     )
 
     val BottomSheetText = TextStyle(
