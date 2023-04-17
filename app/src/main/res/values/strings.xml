@@ -15,4 +15,8 @@
     <string name="repeat_pass">Repeat the password</string>
     <string name="reg_via_social">Register via social networks</string>
     <string name="have_acc">Already have an account?</string>
+    
+    <!--    BottomSheet-->
+    <string name="add_route">Add route</string>
+    <string name="add_place">Add an interesting place</string>
 </resources>
