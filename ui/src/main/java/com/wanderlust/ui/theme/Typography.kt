@@ -63,4 +63,60 @@ object WanderlustTextStyles {
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
     )
+
+    val ProfileTitleText = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 24.sp,
+    )
+
+    val ProfileLocationText = TextStyle(
+    fontFamily = wanderlustFontFamily,
+    fontWeight = FontWeight.SemiBold,
+    fontSize = 14.sp,
+    )
+
+    val ProfileNumbersText = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 26.sp,
+    )
+
+    val ProfileMedium13 = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 13.sp,
+    )
+
+    val ProfileRouteTitleAndBtnText = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+    )
+
+    val ProfileUserInfoText = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.Medium,
+        fontSize = 16.sp,
+    )
+
+    val ProfileRoutesTitleText = TextStyle(
+    fontFamily = wanderlustFontFamily,
+    fontWeight = FontWeight.Bold,
+    fontSize = 20.sp,
+    )
+
+    val EditProfileInputText = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+    )
+
+    val EditProfileInputTextLabel = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 13.sp,
+    )
+
+
 }
