@@ -9,23 +9,27 @@ sealed class BottomNavigationItem(var graph: String, var route: String, var icon
         "home_graph",
         "home",
         R.drawable.baseline_format_list_bulleted_24,
-        "Home")
+        "Home"
+    )
 
     object Map : BottomNavigationItem(
         "map_graph",
         "map",
         R.drawable.baseline_map_24,
-        "Map")
+        "Map"
+    )
 
     object Notifications : BottomNavigationItem(
         "notifications_graph",
         "notifications",
         R.drawable.baseline_notifications_none_24,
-        "Notifications")
+        "Notifications"
+    )
 
     object Profile : BottomNavigationItem(
         "profile_graph",
-        "profile",
+        "profile?userName={userName}",
         R.drawable.baseline_person_outline_24,
-        "Profile")
+        "Profile"
+    )
 }

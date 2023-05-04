@@ -4,6 +4,7 @@ package com.wanderlust.ui.navigation
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -50,8 +51,9 @@ fun BottomNavigationBar(navController: NavController, bottomBarState: MutableSta
         val currentDestination = navBackStackEntry?.destination
 
         NavigationBar(
-            modifier = Modifier.height(64.dp),
-            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.height(64.dp)
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp) ),
+            containerColor = MaterialTheme.colorScheme.background,
         ) {
             items.forEach { item ->
                 NavigationBarItem(
@@ -112,7 +114,8 @@ fun SetBottomNavigationBar() {
     if (openBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
-            sheetState = bottomSheetState
+            sheetState = bottomSheetState,
+            containerColor = MaterialTheme.colorScheme.background
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
