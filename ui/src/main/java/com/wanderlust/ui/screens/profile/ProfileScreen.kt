@@ -23,15 +23,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.profile_screen.CreateRouteCard
 import com.wanderlust.ui.theme.WanderlustTextStyles
 
 @Composable
 fun ProfileScreen(
-    viewModel: ProfileViewModel,
     onNavigateToEditProfile: () -> Unit,
-    onNavigateToSignIn: () -> Unit
+    onNavigateToSignIn: () -> Unit,
+    viewModel: ProfileViewModel = hiltViewModel(),
 ) {
     val profileState by viewModel.state.collectAsState()
 
