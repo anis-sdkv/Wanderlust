@@ -15,7 +15,7 @@
     <string name="repeat_pass">Repeat the password</string>
     <string name="reg_via_social">Register via social networks</string>
     <string name="have_acc">Already have an account?</string>
-    
+
     <!--    BottomSheet-->
     <string name="add_route">Add a route</string>
     <string name="add_place">Add an interesting place</string>
@@ -29,7 +29,6 @@
     <string name="edit">Edit</string>
 
     <string name="copy">Copy</string>
-    <string name="settings">Settings</string>
 
     <string name="routes">Routes</string>
     <string name="subscribers">Subscribers</string>
@@ -52,5 +51,17 @@
     <string name="country">Country</string>
     <string name="city">City</string>
     <string name="about_user">About User</string>
+
+    <!--    Settings-->
+    <string name="settings">Settings</string>
+
+    <string name="theme">Theme</string>
+    <string name="light">Light</string>
+    <string name="dark">Dark</string>
+    <string name="system">System</string>
+
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="russian">Russian</string>
 
 </resources>

@@ -11,22 +11,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.components.edit_profile_screen.DateDefaults.DATE_LENGTH
 import com.wanderlust.ui.components.edit_profile_screen.DateDefaults.DATE_MASK
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 import kotlin.math.absoluteValue
 
 
 @Composable
 fun EditProfileTextFieldDate(label: String) {
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,7 +42,7 @@ fun EditProfileTextFieldDate(label: String) {
 
         Text(
             text = label,
-            style = WanderlustTextStyles.EditProfileInputTextLabel,
+            style = WanderlustTheme.typography.bold16,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
                 .alpha(0.5f)
@@ -50,7 +56,7 @@ fun EditProfileTextFieldDate(label: String) {
                 }
             },
             singleLine = true,
-            textStyle = WanderlustTextStyles.EditProfileInputText,
+            textStyle = WanderlustTheme.typography.bold16,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(8.dp),
             visualTransformation = MaskVisualTransformation(DATE_MASK),

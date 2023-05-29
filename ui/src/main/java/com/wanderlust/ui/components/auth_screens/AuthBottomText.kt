@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun AuthBottomText(descriptionText: String, btnText: String, onClick: () -> Unit) {
@@ -20,14 +20,14 @@ fun AuthBottomText(descriptionText: String, btnText: String, onClick: () -> Unit
     ) {
         Text(
             descriptionText,
-            style = WanderlustTextStyles.AuthorizationRegular,
-            color = MaterialTheme.colorScheme.background
+            style = WanderlustTheme.typography.medium16,
+            color = WanderlustTheme.colors.primaryBackground
         )
         TextButton(onClick = onClick) {
             Text(
                 btnText,
-                style = WanderlustTextStyles.AuthorizationRegular,
-                color = MaterialTheme.colorScheme.background,
+                style = WanderlustTheme.typography.medium16,
+                color = WanderlustTheme.colors.primaryBackground,
                 textDecoration = TextDecoration.Underline
             )
         }

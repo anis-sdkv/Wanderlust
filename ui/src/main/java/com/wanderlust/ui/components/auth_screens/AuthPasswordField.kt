@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,7 +30,7 @@ fun AuthPasswordField(label: String) {
         Text(
             modifier = Modifier.padding(start = 8.dp, bottom = 4.dp),
             text = label,
-            style = WanderlustTextStyles.AuthorizationInputHint,
+            style = WanderlustTheme.typography.semibold16,
         )
 
         TextField(
@@ -46,11 +46,11 @@ fun AuthPasswordField(label: String) {
             ),
             singleLine = true,
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            textStyle = WanderlustTextStyles.AuthorizationSemibold,
+            textStyle = WanderlustTheme.typography.semibold16,
             colors = TextFieldDefaults.textFieldColors(
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                containerColor = MaterialTheme.colorScheme.background
+                containerColor = WanderlustTheme.colors.primaryBackground
             ),
             trailingIcon = {
                 val image = if (passwordVisible)

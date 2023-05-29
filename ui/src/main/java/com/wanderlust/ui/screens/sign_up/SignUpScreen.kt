@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,7 +23,7 @@ import com.wanderlust.ui.components.auth_screens.AuthTextField
 import com.wanderlust.ui.components.auth_screens.DecoratedText
 import com.wanderlust.ui.components.auth_screens.SocialMediaAuthButton
 import com.wanderlust.ui.components.auth_screens.authGradient
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun SignUpScreen(
@@ -43,8 +42,8 @@ fun SignUpScreen(
             Text(
                 text = stringResource(id = R.string.sign_up),
                 modifier = Modifier,
-                style = WanderlustTextStyles.AuthorizationMain,
-                color = MaterialTheme.colorScheme.background
+                style = WanderlustTheme.typography.bold40,
+                color = WanderlustTheme.colors.primaryBackground
             )
         }
 
