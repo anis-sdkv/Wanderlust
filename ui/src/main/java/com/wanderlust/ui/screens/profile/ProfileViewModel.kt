@@ -34,10 +34,9 @@ class ProfileViewModel @Inject constructor(
 
     private val isSubscribe = (user.userSubscriptions.find { it.userName == userNameOfProfile }) != null
 
-
     private val internalState: MutableStateFlow<ProfileState> = MutableStateFlow(
         ProfileState(
-            isUserAuthorized = true,
+            isUserAuthorized = false,
             isMyProfile = false, //(userNameOfProfile == user.userName),
             isSubscribe = isSubscribe,
             userName = user.userName,
@@ -51,5 +50,4 @@ class ProfileViewModel @Inject constructor(
         )
     )
     val state: StateFlow<ProfileState> = internalState
-
 }

@@ -2,11 +2,21 @@ package com.wanderlust.ui.screens.edit_profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -18,7 +28,7 @@ import com.wanderlust.ui.R
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextField
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDate
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDescription
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun EditProfileScreen(
@@ -27,11 +37,11 @@ fun EditProfileScreen(
 
     LazyColumn(
         Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
             .padding(bottom = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         item {
             Row(
                 modifier = Modifier
@@ -53,8 +63,8 @@ fun EditProfileScreen(
                 Text(
                     modifier = Modifier.padding(start = 16.dp),
                     text = stringResource(id = R.string.edit_profile),
-                    style = WanderlustTextStyles.ProfileRoutesTitleText,
-                    color = MaterialTheme.colorScheme.onBackground
+                    style = WanderlustTheme.typography.bold20,
+                    color = WanderlustTheme.colors.primaryText
                 )
             }
         }
@@ -82,8 +92,8 @@ fun EditProfileScreen(
             ) {
                 Text(
                     text = stringResource(id = R.string.change_photo),
-                    style = WanderlustTextStyles.ProfileMedium13,
-                    color = MaterialTheme.colorScheme.primary
+                    style = WanderlustTheme.typography.medium12,
+                    color = WanderlustTheme.colors.accent
                 )
             }
         }
@@ -108,13 +118,13 @@ fun EditProfileScreen(
                     .fillMaxWidth()
                     .padding(top = 22.dp, start = 24.dp, end = 24.dp, bottom = 80.dp)
                     .height(42.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.primaryBackground),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.save),
-                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
-                    color = MaterialTheme.colorScheme.background
+                    style = WanderlustTheme.typography.medium16,
+                    color = WanderlustTheme.colors.primaryBackground
                 )
             }
         }

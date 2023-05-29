@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Wanderlust</string>
+    <!--    authorization-->
+    <string name="sign_in"> Вход</string>
+    <string name="sign_in_btn">Войти</string>
+    <string name="email">Почта</string>
+    <string name="password">Пароль</string>
+    <string name="or">Или</string>
+    <string name="forgot_pass">Забыли пароль?</string>
+    <string name="no_acc">Нет аккаунта?</string>
+    <string name="reg">Зарегистрироваться</string>
+
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_up_btn">Зарегистрироваться</string>
+    <string name="repeat_pass">Повторите пароль</string>
+    <string name="reg_via_social">Зарегистрироваться через соцсети</string>
+    <string name="have_acc">Уже есть аккаунт?</string>
+
+    <!--    BottomSheet-->
+    <string name="add_route">Добавить маршрут</string>
+    <string name="add_place">Добавить интересное место</string>
+
+    <!--    Profile-->
+    <string name="empty_profile_title">Пусто(</string>
+    <string name="empty_profile_description">Войдите, чтобы добавить информацию:</string>
+
+    <string name="subscribe">Подписаться</string>
+    <string name="unsubscribe">Отписаться</string>
+    <string name="edit">Редактировать</string>
+
+    <string name="copy">Скопировать</string>
+
+    <string name="routes">Муршруты</string>
+    <string name="subscribers">Подписчики</string>
+    <string name="subscriptions">Подписки</string>
+
+    <string name="popular_from_author">Популярное у автора:</string>
+    <string name="show_all_routes">Показать все маршруты</string>
+
+    <string name="default_rating">0.0</string>
+    <string name="default_distance">0 км</string>
+    <string name="default_number">0</string>
+
+    <!--    EditProfile-->
+    <string name="edit_profile">Редактирование профиля</string>
+    <string name="change_photo">Изменить фото</string>
+    <string name="save">Сохранить</string>
+
+    <string name="user_name">Имя пользователя</string>
+    <string name="birthday">День рождения</string>
+    <string name="country">Страна</string>
+    <string name="city">Город</string>
+    <string name="about_user">О пользователе</string>
+
+    <!--    Settings-->
+    <string name="settings">Настройки</string>
+
+    <string name="theme">Тема</string>
+    <string name="light">Светлая</string>
+    <string name="dark">Темная</string>
+    <string name="system">Системная</string>
+
+    <string name="language">Язык</string>
+    <string name="english">Английский</string>
+    <string name="russian">Русский</string>
+
+</resources>

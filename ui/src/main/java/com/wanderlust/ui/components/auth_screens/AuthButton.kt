@@ -8,7 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun AuthButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier) {
@@ -17,14 +17,14 @@ fun AuthButton(onClick: () -> Unit, text: String, modifier: Modifier = Modifier)
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.background,
-            contentColor = MaterialTheme.colorScheme.primary
+            containerColor = WanderlustTheme.colors.primaryBackground,
+            contentColor = WanderlustTheme.colors.primaryText
         )
     ) {
         Text(
             text = text,
-            style = WanderlustTextStyles.AuthorizationSemibold,
-            color = MaterialTheme.colorScheme.onBackground
+            style = WanderlustTheme.typography.semibold16,
+            color = WanderlustTheme.colors.primaryText
         )
     }
 }

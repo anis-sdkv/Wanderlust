@@ -1,8 +1,17 @@
 package com.wanderlust.ui.screens.sign_in
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -10,8 +19,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.R
-import com.wanderlust.ui.components.auth_screens.*
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.components.auth_screens.AuthBottomText
+import com.wanderlust.ui.components.auth_screens.AuthButton
+import com.wanderlust.ui.components.auth_screens.AuthPasswordField
+import com.wanderlust.ui.components.auth_screens.AuthTextField
+import com.wanderlust.ui.components.auth_screens.DecoratedText
+import com.wanderlust.ui.components.auth_screens.SocialMediaAuthButton
+import com.wanderlust.ui.components.auth_screens.authGradient
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun SignInScreen(
@@ -30,8 +45,8 @@ fun SignInScreen(
             Text(
                 text = stringResource(id = R.string.sign_in),
                 modifier = Modifier,
-                style = WanderlustTextStyles.AuthorizationMain,
-                color = MaterialTheme.colorScheme.background
+                style = WanderlustTheme.typography.bold40,
+                color = WanderlustTheme.colors.primaryBackground
             )
         }
 
@@ -97,8 +112,8 @@ fun ForgotPassButton(onclick: () -> Unit) {
         ) {
             Text(
                 text = stringResource(id = R.string.forgot_pass),
-                color = MaterialTheme.colorScheme.background,
-                style = WanderlustTextStyles.AuthorizationSemibold,
+                color = WanderlustTheme.colors.primaryBackground,
+                style = WanderlustTheme.typography.medium16,
                 textDecoration = TextDecoration.Underline
             )
         }
