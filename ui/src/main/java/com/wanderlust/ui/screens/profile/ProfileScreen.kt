@@ -279,21 +279,65 @@ fun ProfileScreen(
                                         end.linkTo(parent.end)
                                     }
                             ) {
-                                StatisticsColumn(
-                                    modifier = Modifier.weight(1f),
-                                    number = profileState.userRoutes.size.toString(),
-                                    subTitle = stringResource(id = R.string.routes)
-                                )
-                                StatisticsColumn(
-                                    modifier = Modifier.weight(1f),
-                                    number = profileState.userNumberOfSubscribers.toString(),
-                                    subTitle = stringResource(id = R.string.subscribers)
-                                )
-                                StatisticsColumn(
-                                    modifier = Modifier.weight(1f),
-                                    number = profileState.userNumberOfSubscriptions.toString(),
-                                    subTitle = stringResource(id = R.string.subscriptions)
-                                )
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            // TODO
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = profileState.userRoutes.size.toString(),
+                                        style = WanderlustTextStyles.ProfileNumbersText,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.routes),
+                                        style = WanderlustTextStyles.ProfileMedium13,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            // TODO
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = profileState.userNumberOfSubscribers.toString(),
+                                        style = WanderlustTextStyles.ProfileNumbersText,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.subscribers),
+                                        style = WanderlustTextStyles.ProfileMedium13,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
+                                Column(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .clickable {
+                                            // TODO
+                                        },
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        text = profileState.userNumberOfSubscriptions.toString(),
+                                        style = WanderlustTextStyles.ProfileNumbersText,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
+                                    Text(
+                                        text = stringResource(id = R.string.subscriptions),
+                                        style = WanderlustTextStyles.ProfileMedium13,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+
                             }
 
                             // Кнопка подписаться / редактировать профиль
@@ -397,31 +441,6 @@ fun ProfileScreen(
             }
         }
     )
-}
-@Composable
-fun StatisticsColumn(
-    modifier: Modifier,
-    number: String,
-    subTitle: String
-){
-    Column(
-        modifier = Modifier
-            .clickable {
-                // TODO
-            },
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = number,
-            style = WanderlustTextStyles.ProfileNumbersText,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = subTitle,
-            style = WanderlustTextStyles.ProfileMedium13,
-            color = MaterialTheme.colorScheme.primary
-        )
-    }
 }
 
 
