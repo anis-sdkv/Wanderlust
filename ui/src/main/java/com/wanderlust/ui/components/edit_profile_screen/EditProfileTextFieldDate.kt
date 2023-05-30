@@ -11,38 +11,33 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.components.edit_profile_screen.DateDefaults.DATE_LENGTH
 import com.wanderlust.ui.components.edit_profile_screen.DateDefaults.DATE_MASK
-import com.wanderlust.ui.custom.WanderlustTheme
+import com.wanderlust.ui.screens.edit_profile.EditProfileEvent
+import com.wanderlust.ui.theme.WanderlustTextStyles
 import kotlin.math.absoluteValue
 
 
 @Composable
-fun EditProfileTextFieldDate(label: String) {
+fun EditProfileTextFieldDate(label: String, inputValue: String) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 24.dp, end = 24.dp, top = 10.dp, bottom = 10.dp)
     ) {
-        var value by remember { mutableStateOf("") }
+        var value by remember { mutableStateOf(inputValue) }
 
         Text(
             text = label,
-            style = WanderlustTheme.typography.bold16,
+            style = WanderlustTextStyles.EditProfileInputTextLabel,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
                 .alpha(0.5f)
@@ -52,11 +47,12 @@ fun EditProfileTextFieldDate(label: String) {
             value = value,
             onValueChange = {
                 if (it.length <= DATE_LENGTH) {
+                    //eventHandler.invoke(EditProfileEvent.OnUserChanged(it))
                     value = it
                 }
             },
             singleLine = true,
-            textStyle = WanderlustTheme.typography.bold16,
+            textStyle = WanderlustTextStyles.EditProfileInputText,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(8.dp),
             visualTransformation = MaskVisualTransformation(DATE_MASK),

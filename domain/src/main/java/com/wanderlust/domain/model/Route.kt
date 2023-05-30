@@ -1,4 +1,7 @@
 package com.wanderlust.domain.model
 
-class Route {
-}
+data class Route (
+    val routeName: String,
+    val routeDescription: String,
+    val listOfPlaces: List<Place>
+)

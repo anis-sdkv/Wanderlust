@@ -66,4 +66,41 @@
     <string name="english">Английский</string>
     <string name="russian">Русский</string>
 
+    <!--    Map-->
+    <string name="creating_place">Создание места</string>
+    <string name="creating_route">Создание маршрута</string>
+    <string name="specify_location">Выберете местоположение или</string>
+    <string name="use_your_location">используйте ваше</string>
+    <string name="place_name">Название места</string>
+    <string name="place_description">Описание места</string>
+    <string name="route_name">Название маршрута</string>
+    <string name="route_description">Описание маршрута</string>
+    <string name="upload_photos">Загрузить фото</string>
+    <string name="longitude">Долгота</string>
+    <string name="latitude">Широта</string>
+    <string name="route">Маршрут</string>
+    <string name="select_tags">Выберите один или несколько тегов</string>
+    <string name="start_creating">Добавьте новое место, чтобы начать создание маршрута</string>
+    <string name="it_is_you">Это вы</string>
+
+
+    <string-array name="tags_array">
+
+        <item>День</item>
+        <item>Ночь</item>
+        <item>Длинное расстояние</item>
+        <item>Коротное расстояние</item>
+        <item>За городом</item>
+        <item>В городе</item>
+
+    </string-array>
+
+    <!--    Permissions-->
+    <string name="enable">Включить</string>
+    <string name="give_permission">Дать разрешение</string>
+    <string name="permission_request">Запрос разрешения</string>
+    <string name="rationale_message">Чтобы использовать функции этого приложения, вам необходимо предоставить нам разрешение на доступ к вашему местоположению</string>
+    <string name="location_permission_title">Включите службу определения местоположения</string>
+    <string name="location_permission_desc">Предоставьте приложению разрешение на продолжение. Если это не сработает, то вам придется сделать это вручную через настройки.</string>
+
 </resources>

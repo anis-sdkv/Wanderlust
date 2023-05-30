@@ -2,21 +2,11 @@ package com.wanderlust.ui.screens.edit_profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,24 +14,43 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextField
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDate
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDescription
-import com.wanderlust.ui.custom.WanderlustTheme
+import com.wanderlust.ui.screens.profile.ProfileEvent
+import com.wanderlust.ui.screens.profile.ProfileSideEffect
+import com.wanderlust.ui.screens.profile.ProfileViewModel
+import com.wanderlust.ui.theme.WanderlustTextStyles
 
 @Composable
 fun EditProfileScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: EditProfileViewModel = hiltViewModel()
 ) {
+
+    val editProfileState by viewModel.state.collectAsStateWithLifecycle()
+    val eventHandler = viewModel::event
+    val action by viewModel.action.collectAsStateWithLifecycle(null)
+
+    LaunchedEffect(action) {
+        when (action) {
+            null -> Unit
+            EditProfileSideEffect.NavigateBack -> {
+                onNavigateBack()
+            }
+        }
+    }
 
     LazyColumn(
         Modifier
-            .background(WanderlustTheme.colors.primaryBackground)
+            .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
             .padding(bottom = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    ){
         item {
             Row(
                 modifier = Modifier
@@ -51,7 +60,9 @@ fun EditProfileScreen(
             ) {
                 IconButton(
                     modifier = Modifier.padding(start = 16.dp),
-                    onClick = { onNavigateBack() }
+                    onClick = {
+                        eventHandler.invoke(EditProfileEvent.OnBackBtnClick)
+                        onNavigateBack() }
                 ) {
                     Image(
                         painterResource(R.drawable.ic_back),
@@ -63,8 +74,8 @@ fun EditProfileScreen(
                 Text(
                     modifier = Modifier.padding(start = 16.dp),
                     text = stringResource(id = R.string.edit_profile),
-                    style = WanderlustTheme.typography.bold20,
-                    color = WanderlustTheme.colors.primaryText
+                    style = WanderlustTextStyles.ProfileRoutesTitleText,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
         }
@@ -92,8 +103,8 @@ fun EditProfileScreen(
             ) {
                 Text(
                     text = stringResource(id = R.string.change_photo),
-                    style = WanderlustTheme.typography.medium12,
-                    color = WanderlustTheme.colors.accent
+                    style = WanderlustTextStyles.ProfileMedium13,
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -101,11 +112,30 @@ fun EditProfileScreen(
             Column(
                 modifier = Modifier.padding(top = 16.dp)
             ) {
-                EditProfileTextField(label = stringResource(id = R.string.user_name))
-                EditProfileTextFieldDate(label = stringResource(id = R.string.birthday))
-                EditProfileTextField(label = stringResource(id = R.string.country))
-                EditProfileTextField(label = stringResource(id = R.string.city))
-                EditProfileTextFieldDescription(label = stringResource(id = R.string.about_user))
+                EditProfileTextField(
+                    label = stringResource(id = R.string.user_name),
+                    editProfileState.userName,
+                    { name -> eventHandler.invoke(EditProfileEvent.OnUsernameChanged(name))}//eventHandler.invoke(EditProfileEvent.OnUsernameChanged(editProfileState.userName))
+                )
+                EditProfileTextFieldDate(
+                    label = stringResource(id = R.string.birthday),
+                    "",
+                )
+                EditProfileTextField(
+                    label = stringResource(id = R.string.country),
+                    editProfileState.userCountry,
+                    { country -> eventHandler.invoke(EditProfileEvent.OnUserCountryChanged(country))}
+                )
+                EditProfileTextField(
+                    label = stringResource(id = R.string.city),
+                    editProfileState.userCity,
+                    {city -> eventHandler.invoke(EditProfileEvent.OnUserCityChanged(city))}
+                )
+                EditProfileTextFieldDescription(
+                    label = stringResource(id = R.string.about_user),
+                    editProfileState.userDescription,
+                    {description -> eventHandler.invoke(EditProfileEvent.OnUserDescriptionChanged(description))}
+                )
             }
         }
 
@@ -118,13 +148,13 @@ fun EditProfileScreen(
                     .fillMaxWidth()
                     .padding(top = 22.dp, start = 24.dp, end = 24.dp, bottom = 80.dp)
                     .height(42.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.primaryBackground),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text(
                     text = stringResource(id = R.string.save),
-                    style = WanderlustTheme.typography.medium16,
-                    color = WanderlustTheme.colors.primaryBackground
+                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
+                    color = MaterialTheme.colorScheme.background
                 )
             }
         }

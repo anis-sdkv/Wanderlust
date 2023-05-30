@@ -11,14 +11,26 @@ class UserRepositoryImpl : UserRepository {
             "Kazan",
             "Russia",
             "12345",
-            listOf(Route()),
+            listOf(
+                Route(
+                    "Route Name",
+                    "Route Description",
+                    emptyList()
+                )
+            ),
             listOf(
                 User(
                     "Ivan",
                     "Kazan",
                     "Russia",
                     "12345",
-                    listOf(Route()),
+                    listOf(
+                        Route(
+                            "Route Name",
+                            "Route Description",
+                            emptyList()
+                        )
+                    ),
                     listOf(),
                     listOf()
                 )
@@ -29,7 +41,13 @@ class UserRepositoryImpl : UserRepository {
                     "Kazan",
                     "Russia",
                     "12345",
-                    listOf(Route()),
+                    listOf(
+                        Route(
+                            "Route Name",
+                            "Route Description",
+                            emptyList()
+                        )
+                    ),
                     listOf(),
                     listOf()
                 )

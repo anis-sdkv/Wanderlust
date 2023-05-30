@@ -10,13 +10,13 @@ import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.screens.home.HomeScreen
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.homeNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavGraphBuilder.homeNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Home.graph,
         startDestination = BottomNavigationItem.Home.route
     ) {
         composable(route = BottomNavigationItem.Home.route) {
-            bottomBarState.value = true
+            isBottomBarVisible.value = true
             HomeScreen()
         }
     }

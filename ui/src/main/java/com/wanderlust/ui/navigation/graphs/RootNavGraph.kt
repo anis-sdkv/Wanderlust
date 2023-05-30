@@ -25,7 +25,7 @@ import com.wanderlust.ui.screens.create_route.CreateRouteScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun RootNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun RootNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     AnimatedNavHost(
         navController = navController,
         route = Graph.ROOT,
@@ -34,23 +34,23 @@ fun RootNavGraph(navController: NavHostController, bottomBarState: MutableState<
             .systemBarsPadding()
             .navigationBarsPadding()) {
 
-        bottomNavGraph(navController = navController, bottomBarState)
+        bottomNavGraph(navController = navController, isBottomBarVisible)
     }
 }
 
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.bottomNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavGraphBuilder.bottomNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = Graph.BOTTOM,
         startDestination = BottomNavigationItem.Home.graph
     ) {
 
         //Графы к каждой вкладке Bottom Navigation:
-        homeNavGraph(navController = navController, bottomBarState)
-        mapNavGraph(navController = navController, bottomBarState)
-        notificationsNavGraph(navController = navController, bottomBarState)
-        profileNavGraph(navController = navController, bottomBarState)
+        homeNavGraph(navController = navController, isBottomBarVisible)
+        mapNavGraph(navController = navController, isBottomBarVisible)
+        notificationsNavGraph(navController = navController, isBottomBarVisible)
+        profileNavGraph(navController = navController, isBottomBarVisible)
 
 
         //authNavGraph(navController = navController)
@@ -66,8 +66,8 @@ fun NavGraphBuilder.bottomNavGraph(navController: NavHostController, bottomBarSt
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
             }
         ){
-            bottomBarState.value = false
-            CreatePlaceScreen()
+            isBottomBarVisible.value = false
+            CreatePlaceScreen(navController = navController)
         }
         composable(
             BottomSheetScreen.CreateRoute.route,
@@ -78,8 +78,8 @@ fun NavGraphBuilder.bottomNavGraph(navController: NavHostController, bottomBarSt
                 slideOutOfContainer(AnimatedContentScope.SlideDirection.Right, animationSpec = tween(700))
             }
         ){
-            bottomBarState.value = false
-            CreateRouteScreen()
+            isBottomBarVisible.value = false
+            CreateRouteScreen(navController = navController)
         }
     }
 
