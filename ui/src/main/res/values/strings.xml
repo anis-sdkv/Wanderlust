@@ -64,4 +64,41 @@
     <string name="english">English</string>
     <string name="russian">Russian</string>
 
+    <!--    Map-->
+    <string name="creating_place">Creating a place</string>
+    <string name="creating_route">Creating a route</string>
+    <string name="specify_location">Specify the location or</string>
+    <string name="use_your_location">use your location</string>
+    <string name="place_name">Place name</string>
+    <string name="place_description">Place description</string>
+    <string name="route_name">Route name</string>
+    <string name="route_description">Route description</string>
+    <string name="upload_photos">Upload photos</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
+    <string name="route">Route</string>
+    <string name="select_tags">Select one or more tags</string>
+    <string name="start_creating">Add a new place to start creating a route</string>
+    <string name="it_is_you">It\'s you</string>
+
+
+    <string-array name="tags_array">
+
+        <item>Day</item>
+        <item>Night</item>
+        <item>Long distance</item>
+        <item>Short distance</item>
+        <item>Outside the city</item>
+        <item>In the city</item>
+
+    </string-array>
+
+    <!--    Permissions-->
+    <string name="enable">Enable</string>
+    <string name="give_permission">Give permission</string>
+    <string name="permission_request">Permission Request</string>
+    <string name="rationale_message">To use this app\'s functionalities, you need to give us the permission.</string>
+    <string name="location_permission_title">Turn On Location Service</string>
+    <string name="location_permission_desc">Give this app a permission to proceed. If it doesn\'t work, then you\'ll have to do it manually from the settings.</string>
+
 </resources>

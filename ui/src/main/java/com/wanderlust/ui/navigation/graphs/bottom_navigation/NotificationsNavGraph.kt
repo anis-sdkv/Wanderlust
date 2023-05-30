@@ -4,19 +4,20 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.navigation
 import com.google.accompanist.navigation.animation.composable
+import androidx.navigation.compose.navigation
 import com.wanderlust.ui.navigation.BottomNavigationItem
+import com.wanderlust.ui.screens.notifications.NotificationsScreen
 import com.wanderlust.ui.screens.settings.SettingsScreen
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.notificationsNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavGraphBuilder.notificationsNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Notifications.graph,
         startDestination = BottomNavigationItem.Notifications.route
     ) {
         composable(route = BottomNavigationItem.Notifications.route) {
-            bottomBarState.value = true
+            isBottomBarVisible.value = true
             SettingsScreen(onNavigateBack = { navController.navigateUp() })
         }
     }

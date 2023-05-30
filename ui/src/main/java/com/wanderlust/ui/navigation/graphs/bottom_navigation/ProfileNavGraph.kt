@@ -15,7 +15,7 @@ import com.wanderlust.ui.screens.edit_profile.EditProfileScreen
 import com.wanderlust.ui.screens.profile.ProfileScreen
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.profileNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavGraphBuilder.profileNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Profile.graph,
         startDestination = BottomNavigationItem.Profile.route
@@ -29,13 +29,13 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController, bottomBarS
                     defaultValue = "myProfile"
                 }
             )
-            ) {
-                bottomBarState.value = true
-                ProfileScreen(
-                    onNavigateToSignIn = {navController.navigate(Graph.AUTHENTICATION)},
-                    onNavigateToEditProfile = { navController.navigate(ProfileNavScreen.EditProfile.route)},
-                )
-            }
+        ) {
+            isBottomBarVisible.value = true
+            ProfileScreen(
+                onNavigateToSignIn = {navController.navigate(Graph.AUTHENTICATION)},
+                onNavigateToEditProfile = { navController.navigate(ProfileNavScreen.EditProfile.route)},
+            )
+        }
 
         composable(
             route = ProfileNavScreen.EditProfile.route,
@@ -46,10 +46,10 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController, bottomBarS
                 }
             )
         ) {
-            bottomBarState.value = true
+            isBottomBarVisible.value = true
             EditProfileScreen(onNavigateBack = {navController.navigateUp()})
         }
-        authNavGraph(navController = navController, bottomBarState)
+        authNavGraph(navController = navController, isBottomBarVisible)
     }
 
 }

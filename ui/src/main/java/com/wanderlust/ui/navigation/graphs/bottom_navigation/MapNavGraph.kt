@@ -7,17 +7,18 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.compose.navigation
 import com.wanderlust.ui.navigation.BottomNavigationItem
+import com.wanderlust.ui.navigation.graphs.bottomNavGraph
 import com.wanderlust.ui.screens.map.MapScreen
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.mapNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavGraphBuilder.mapNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Map.graph,
         startDestination = BottomNavigationItem.Map.route
     ) {
         composable(route = BottomNavigationItem.Map.route) {
-            bottomBarState.value = true
-            MapScreen()
+            isBottomBarVisible.value = true
+            MapScreen(navController = navController)
         }
     }
 

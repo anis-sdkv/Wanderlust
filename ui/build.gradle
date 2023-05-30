@@ -42,6 +42,17 @@ dependencies {
     implementation project(path: ':domain')
     implementation project(path: ':data')
 
+    // google maps
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
+    implementation(libs.android.maps.utils)
+
+    // location
+    implementation(libs.play.services.location)
+
+    // permissions
+    implementation(libs.accompanist.permissions)
+
     // hilt
     implementation(libs.dagger.hilt)
     kapt(libs.dagger.hilt.compiler)

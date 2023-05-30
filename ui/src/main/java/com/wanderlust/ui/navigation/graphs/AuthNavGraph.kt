@@ -12,13 +12,13 @@ import com.wanderlust.ui.screens.sign_up.SignUpScreen
 
 @OptIn(ExperimentalAnimationApi::class)
 @SuppressLint("ComposableNavGraphInComposeScope")
-fun NavGraphBuilder.authNavGraph(navController: NavHostController, bottomBarState: MutableState<Boolean>) {
+fun NavGraphBuilder.authNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route
     ) {
         composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route) {
-            bottomBarState.value = false
+            isBottomBarVisible.value = false
             SignInScreen(onNavigateToSignUp = {
                 navController.navigate(com.wanderlust.ui.navigation.graphs.AuthScreen.SignUp.route){
                     navController.graph.route?.let { route ->
@@ -32,7 +32,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController, bottomBarStat
             })
         }
         composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.SignUp.route) {
-            bottomBarState.value = false
+            isBottomBarVisible.value = false
             SignUpScreen(onNavigateToSignIn = {
                 navController.navigate(com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route){
                     navController.graph.route?.let { route ->

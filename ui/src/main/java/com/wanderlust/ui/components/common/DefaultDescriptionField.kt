@@ -1,4 +1,4 @@
-package com.wanderlust.ui.components.edit_profile_screen
+package com.wanderlust.ui.components.common
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -20,10 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.theme.WanderlustTextStyles
 
 @Composable
-fun EditProfileTextFieldDescription(label: String, inputValue: String, onChanged: (String) -> Unit) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .padding(start = 24.dp, end = 24.dp, top = 10.dp, bottom = 10.dp)) {
+fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifier, onChanged: (String) -> Unit){
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+        //.padding(start = 20.dp, end = 20.dp)
+    ) {
 
         var value by remember { mutableStateOf(inputValue) }
         val maxChar = 300
@@ -31,7 +37,7 @@ fun EditProfileTextFieldDescription(label: String, inputValue: String, onChanged
 
         Text(
             text = label,
-            style = WanderlustTextStyles.EditProfileInputTextLabel,
+            style = WanderlustTextStyles.ProfileLocationText,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
                 .alpha(0.5f)
