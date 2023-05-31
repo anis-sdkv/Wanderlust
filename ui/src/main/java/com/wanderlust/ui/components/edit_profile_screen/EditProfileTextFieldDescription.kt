@@ -17,13 +17,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun EditProfileTextFieldDescription(label: String, inputValue: String, onChanged: (String) -> Unit) {
     Column(modifier = Modifier
         .fillMaxWidth()
-        .padding(start = 24.dp, end = 24.dp, top = 10.dp, bottom = 10.dp)) {
+        .padding(top = 10.dp, bottom = 10.dp)) {
 
         var value by remember { mutableStateOf(inputValue) }
         val maxChar = 300
@@ -31,7 +31,7 @@ fun EditProfileTextFieldDescription(label: String, inputValue: String, onChanged
 
         Text(
             text = label,
-            style = WanderlustTextStyles.EditProfileInputTextLabel,
+            style = WanderlustTheme.typography.semibold14,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
                 .alpha(0.5f)
@@ -46,7 +46,7 @@ fun EditProfileTextFieldDescription(label: String, inputValue: String, onChanged
             maxLines = maxLines,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             shape = RoundedCornerShape(8.dp),
-            textStyle = WanderlustTextStyles.ProfileUserInfoText,
+            textStyle = WanderlustTheme.typography.medium16,
             supportingText = {
                 Text(
                     text = "${value.length} / $maxChar",

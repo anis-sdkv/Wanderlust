@@ -20,8 +20,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.components.edit_profile_screen.DateDefaults.DATE_LENGTH
 import com.wanderlust.ui.components.edit_profile_screen.DateDefaults.DATE_MASK
-import com.wanderlust.ui.screens.edit_profile.EditProfileEvent
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 import kotlin.math.absoluteValue
 
 
@@ -31,13 +30,13 @@ fun EditProfileTextFieldDate(label: String, inputValue: String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 24.dp, end = 24.dp, top = 10.dp, bottom = 10.dp)
+            .padding(top = 10.dp, bottom = 10.dp)
     ) {
         var value by remember { mutableStateOf(inputValue) }
 
         Text(
             text = label,
-            style = WanderlustTextStyles.EditProfileInputTextLabel,
+            style = WanderlustTheme.typography.semibold14,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
                 .alpha(0.5f)
@@ -52,7 +51,7 @@ fun EditProfileTextFieldDate(label: String, inputValue: String) {
                 }
             },
             singleLine = true,
-            textStyle = WanderlustTextStyles.EditProfileInputText,
+            textStyle = WanderlustTheme.typography.bold16,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             shape = RoundedCornerShape(8.dp),
             visualTransformation = MaskVisualTransformation(DATE_MASK),

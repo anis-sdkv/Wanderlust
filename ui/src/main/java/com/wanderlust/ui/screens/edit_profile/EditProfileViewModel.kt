@@ -21,6 +21,7 @@ data class EditProfileState(
 )
 
 sealed interface EditProfileEvent{
+
     object OnBackBtnClick: EditProfileEvent
     data class OnUsernameChanged(val username: String) : EditProfileEvent
     data class OnUserCityChanged(val userCity: String) : EditProfileEvent
@@ -40,17 +41,27 @@ class EditProfileViewModel @Inject constructor (
     //private val userNameOfProfile: String = savedStateHandle["userName"]!!
     private val userNameOfProfile = "Ivan"
     private val user = getUserByName(userNameOfProfile)
-
-    private val internalState: MutableStateFlow<EditProfileState> = MutableStateFlow(
-        EditProfileState(
-            userName = user.userName
-        )
-    )
+  
     val state: StateFlow<EditProfileState> = internalState
 
     private val _action = MutableSharedFlow<EditProfileSideEffect?>()
     val action: SharedFlow<EditProfileSideEffect?>
         get() = _action.asSharedFlow()
+
+    init {
+        setData()
+    }
+
+    private fun setData(){
+        internalState.tryEmit(
+            internalState.value.copy(
+                userName = user.userName,
+                userCity = user.userCity,
+                userCountry = user.userCountry,
+                userDescription = user.userDescription,
+            )
+        )
+    }
 
     fun event (editProfileEvent: EditProfileEvent){
         when(editProfileEvent){

@@ -14,19 +14,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class ProfileState(
-    val isUserAuthorized: Boolean,
-    val isMyProfile: Boolean,
-    val isSubscribe: Boolean,
+    val isUserAuthorized: Boolean = false,
+    val isMyProfile: Boolean = false,
+    val isSubscribe: Boolean = false,
     //val subscribeBtnSelected: Boolean
     val userName: String = "",
     val userCity: String = "",
     val userCountry: String = "",
     val userDescription: String = "",
-    val userRoutes: List<Route> = listOf(),
-    val userNumberOfSubscribers: Int,
-    val userNumberOfSubscriptions: Int,
-    val userNumberOfRoutes: Int,
-    val isDropdownMenuExpanded: Boolean
+    val userRoutes: List<Route> = emptyList(),
+    val userNumberOfSubscribers: Int = 0,
+    val userNumberOfSubscriptions: Int = 0,
+    val userNumberOfRoutes: Int = 0,
+    val isDropdownMenuExpanded: Boolean = false
 )
 
 sealed interface ProfileSideEffect {
@@ -52,29 +52,39 @@ class ProfileViewModel @Inject constructor(
 
     private val isSubscribe = (user.userSubscriptions.find { it.userName == userNameOfProfile }) != null
 
-
-    private val internalState: MutableStateFlow<ProfileState> = MutableStateFlow(
-        ProfileState(
-            isUserAuthorized = false,
-            isMyProfile = true, //(userNameOfProfile == user.userName),
-            isSubscribe = false,
-            //isSubscribe,
-            userName = user.userName,
-            userRoutes = user.userRoutes,
-            userNumberOfSubscribers = user.userSubscribers.size,
-            userNumberOfSubscriptions = user.userSubscriptions.size,
-            userNumberOfRoutes = user.userSubscriptions.size,
-            isDropdownMenuExpanded = false
-        )
-    )
+    private val internalState: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
     val state: StateFlow<ProfileState> = internalState
 
     private val _action = MutableSharedFlow<ProfileSideEffect?>()
     val action: SharedFlow<ProfileSideEffect?>
         get() = _action.asSharedFlow()
 
-    fun event(profileEvent: ProfileEvent) {
-        when (profileEvent) {
+    init {
+        setData()
+    }
+
+    fun setData(){
+        internalState.tryEmit(
+            internalState.value.copy(
+                isUserAuthorized = true,
+                isMyProfile = true, //(userNameOfProfile == user.userName),
+                isSubscribe = false,
+                //isSubscribe,
+                userName = user.userName,
+                userCity = user.userCity,
+                userCountry = user.userCountry,
+                userDescription = user.userDescription,
+                userRoutes = user.userRoutes,
+                userNumberOfSubscribers = user.userSubscribers.size,
+                userNumberOfSubscriptions = user.userSubscriptions.size,
+                userNumberOfRoutes = user.userSubscriptions.size,
+                isDropdownMenuExpanded = false
+            )
+        )
+    }
+
+    fun event (profileEvent: ProfileEvent){
+        when(profileEvent){
             ProfileEvent.OnSubscribeBtnClick -> onSubscribeBtnClick()
             ProfileEvent.OnDropdownMenuClick -> onDropdownMenuClick()
             ProfileEvent.OnCloseDropdownMenu -> onCloseDropdownMenu()

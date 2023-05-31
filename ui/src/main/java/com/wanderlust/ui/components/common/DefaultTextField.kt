@@ -21,7 +21,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun DefaultTextField(label: String, inputValue: String, modifier: Modifier, onChanged: (String) -> Unit){
@@ -35,10 +35,9 @@ fun DefaultTextField(label: String, inputValue: String, modifier: Modifier, onCh
 
         Text(
             text = label,
-            style = WanderlustTextStyles.ProfileLocationText,
+            style = WanderlustTheme.typography.bold20,
             modifier = Modifier
-                .padding(start = 18.dp, bottom = 4.dp)
-                .alpha(0.5f)
+                .padding(start = 18.dp, bottom = 12.dp)
         )
 
         TextField(
@@ -50,7 +49,7 @@ fun DefaultTextField(label: String, inputValue: String, modifier: Modifier, onCh
                 }
             },
             singleLine = true,
-            textStyle = WanderlustTextStyles.EditProfileInputText,
+            textStyle = WanderlustTheme.typography.bold16,
             keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Text ),
             shape = RoundedCornerShape(8.dp),
             modifier = Modifier

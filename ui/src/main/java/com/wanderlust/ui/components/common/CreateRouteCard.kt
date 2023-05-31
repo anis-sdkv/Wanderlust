@@ -1,4 +1,4 @@
-package com.wanderlust.ui.components.profile_screen
+package com.wanderlust.ui.components.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -26,7 +26,7 @@ fun CreateRouteCard(
     //route: Route
 ){
     Card(modifier = Modifier
-        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp),
+        .padding(top = 12.dp, bottom = 12.dp),
         elevation = CardDefaults.cardElevation(10.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.secondaryBackground),

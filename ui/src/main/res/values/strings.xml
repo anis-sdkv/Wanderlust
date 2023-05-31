@@ -87,11 +87,11 @@
     <string-array name="tags_array">
 
         <item>Day</item>
-        <item>Night</item>
         <item>Long distance</item>
+        <item>Night</item>
         <item>Short distance</item>
-        <item>Outside the city</item>
         <item>In the city</item>
+        <item>Outside the city</item>
 
     </string-array>
 
