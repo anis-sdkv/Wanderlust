@@ -11,6 +11,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.wanderlust.app.utils.LocaleHelper
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.SetBottomNavigationBar
@@ -27,6 +29,7 @@ class MainActivity : ComponentActivity() {
             val settingsEventBus = remember { SettingsEventBus() }
             val currentSettings = settingsEventBus.currentSettings.collectAsState().value
             LocaleHelper.setLocale(currentSettings.language.locale, resources)
+            Firebase.auth.setLanguageCode(currentSettings.language.locale)
 
             WanderlustTheme(currentSettings.isDarkMode) {
 

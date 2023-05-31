@@ -16,6 +16,8 @@
     <string name="reg_via_social">Register via social networks</string>
     <string name="have_acc">Already have an account?</string>
 
+    <string name="reg_fail">Registration failed</string>
+
     <!--    BottomSheet-->
     <string name="add_route">Add a route</string>
     <string name="add_place">Add an interesting place</string>

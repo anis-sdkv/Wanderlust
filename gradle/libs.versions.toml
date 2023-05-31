@@ -11,11 +11,13 @@ accompanist-navigation-animation = "0.28.0"
 lifecycle-runtime-ktx = "2.6.1"
 constraintlayout = "1.0.1"
 material = "1.1.0-rc01"
+kotlinx-collections-immutable = "0.3.5"
 hilt-navigation = "1.0.0-alpha02"
 location = "21.0.1"
 maps = "18.1.0"
 maps-compose = "2.7.2"
 android-maps-utils = "3.4.0"
+firebase-bom = "32.1.0"
 
 [libraries]
 androidx-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "ktx" }
@@ -31,6 +33,7 @@ compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = 
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 
 compose-material = { group = "androidx.compose.material3", name = "material3", version.ref = "material" }
+kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx-collections-immutable" }
 
 androidx-constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayout" }
 
@@ -45,6 +48,11 @@ android-maps-utils = { group = "com.google.maps.android", name = "android-maps-u
 
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle-runtime-ktx" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-runtime-ktx" }
+
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-auth = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-firestore = { module = "com.google.firebase:firebase-firestore-ktx" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

@@ -5,8 +5,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.compose.navigation
+import com.google.accompanist.navigation.animation.composable
 import com.wanderlust.ui.screens.sign_in.SignInScreen
 import com.wanderlust.ui.screens.sign_up.SignUpScreen
 
@@ -20,30 +20,14 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController, isBottomBarVi
         composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route) {
             isBottomBarVisible.value = false
             SignInScreen(onNavigateToSignUp = {
-                navController.navigate(com.wanderlust.ui.navigation.graphs.AuthScreen.SignUp.route){
-                    navController.graph.route?.let { route ->
-                        popUpTo(route) {
-                            saveState = true
-                        }
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navController.navigate(AuthScreen.SignUp.route)
             })
         }
-        composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.SignUp.route) {
+        composable(route = AuthScreen.SignUp.route) {
             isBottomBarVisible.value = false
-            SignUpScreen(onNavigateToSignIn = {
-                navController.navigate(com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route){
-                    navController.graph.route?.let { route ->
-                        popUpTo(route) {
-                            saveState = true
-                        }
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            })
+            SignUpScreen(
+                navController
+            )
         }
         composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.Forgot.route) {
             //TODO

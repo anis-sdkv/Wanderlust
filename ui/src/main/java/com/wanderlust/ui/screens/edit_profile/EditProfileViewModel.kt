@@ -1,12 +1,8 @@
 package com.wanderlust.ui.screens.edit_profile
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.usecases.GetUserByName
-import com.wanderlust.ui.screens.profile.ProfileSideEffect
-import com.wanderlust.ui.screens.profile.ProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,8 +41,7 @@ class EditProfileViewModel @Inject constructor (
     //private val userNameOfProfile: String = savedStateHandle["userName"]!!
     private val userNameOfProfile = "Ivan"
     private val user = getUserByName(userNameOfProfile)
-
-    private val internalState: MutableStateFlow<EditProfileState> = MutableStateFlow(EditProfileState())
+  
     val state: StateFlow<EditProfileState> = internalState
 
     private val _action = MutableSharedFlow<EditProfileSideEffect?>()

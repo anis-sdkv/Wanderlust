@@ -30,14 +30,14 @@ data class ProfileState(
 )
 
 sealed interface ProfileSideEffect {
-    object NavigateToEditProfileScreen: ProfileSideEffect
+    object NavigateToEditProfileScreen : ProfileSideEffect
 }
-sealed interface ProfileEvent{
+
+sealed interface ProfileEvent {
     object OnSubscribeBtnClick : ProfileEvent
     object OnDropdownMenuClick : ProfileEvent
-    object OnCloseDropdownMenu: ProfileEvent
-    object OnEditProfileBtnClick: ProfileEvent
-
+    object OnCloseDropdownMenu : ProfileEvent
+    object OnEditProfileBtnClick : ProfileEvent
 }
 
 @HiltViewModel
@@ -51,7 +51,6 @@ class ProfileViewModel @Inject constructor(
     private val user = getUserByName(userNameOfProfile)
 
     private val isSubscribe = (user.userSubscriptions.find { it.userName == userNameOfProfile }) != null
-
 
     private val internalState: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
     val state: StateFlow<ProfileState> = internalState
@@ -93,20 +92,21 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun onSubscribeBtnClick(){
+    private fun onSubscribeBtnClick() {
         internalState.tryEmit(
             internalState.value.copy(
                 isSubscribe = !internalState.value.isSubscribe
             )
         )
     }
-    private fun onEditProfileBtnClick(){
+
+    private fun onEditProfileBtnClick() {
         viewModelScope.launch {
             _action.emit(ProfileSideEffect.NavigateToEditProfileScreen)
         }
     }
 
-    private fun onDropdownMenuClick(){
+    private fun onDropdownMenuClick() {
         internalState.tryEmit(
             internalState.value.copy(
                 isDropdownMenuExpanded = true
