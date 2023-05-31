@@ -13,8 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.ScreenHeader
-import com.wanderlust.ui.components.settings_screen.SelectableItem
-import com.wanderlust.ui.components.settings_screen.Selector
+import com.wanderlust.ui.components.common.SelectableItem
+import com.wanderlust.ui.components.common.Selector
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.settings.WanderlustLanguage

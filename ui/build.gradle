@@ -67,6 +67,7 @@ dependencies {
     // compose add-ons
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.constraintlayout.compose)
+    implementation(libs.kotlinx.collections.immutable)
 
     // navigation
     implementation(libs.androidx.navigation)

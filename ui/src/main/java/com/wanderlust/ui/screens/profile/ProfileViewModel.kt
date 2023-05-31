@@ -18,11 +18,11 @@ data class ProfileState(
     val isMyProfile: Boolean,
     val isSubscribe: Boolean,
     //val subscribeBtnSelected: Boolean
-    val userName: String,
-    val userCity: String,
-    val userCountry: String,
-    val userDescription: String,
-    val userRoutes: List<Route>,
+    val userName: String = "",
+    val userCity: String = "",
+    val userCountry: String = "",
+    val userDescription: String = "",
+    val userRoutes: List<Route> = listOf(),
     val userNumberOfSubscribers: Int,
     val userNumberOfSubscriptions: Int,
     val userNumberOfRoutes: Int,
@@ -30,14 +30,14 @@ data class ProfileState(
 )
 
 sealed interface ProfileSideEffect {
-    object NavigateToEditProfileScreen: ProfileSideEffect
+    object NavigateToEditProfileScreen : ProfileSideEffect
 }
-sealed interface ProfileEvent{
+
+sealed interface ProfileEvent {
     object OnSubscribeBtnClick : ProfileEvent
     object OnDropdownMenuClick : ProfileEvent
-    object OnCloseDropdownMenu: ProfileEvent
-    object OnEditProfileBtnClick: ProfileEvent
-
+    object OnCloseDropdownMenu : ProfileEvent
+    object OnEditProfileBtnClick : ProfileEvent
 }
 
 @HiltViewModel
@@ -55,14 +55,11 @@ class ProfileViewModel @Inject constructor(
 
     private val internalState: MutableStateFlow<ProfileState> = MutableStateFlow(
         ProfileState(
-            isUserAuthorized = true,
+            isUserAuthorized = false,
             isMyProfile = true, //(userNameOfProfile == user.userName),
             isSubscribe = false,
             //isSubscribe,
             userName = user.userName,
-            userCity = user.userCity,
-            userCountry = user.userCountry,
-            userDescription = user.userDescription,
             userRoutes = user.userRoutes,
             userNumberOfSubscribers = user.userSubscribers.size,
             userNumberOfSubscriptions = user.userSubscriptions.size,
@@ -76,8 +73,8 @@ class ProfileViewModel @Inject constructor(
     val action: SharedFlow<ProfileSideEffect?>
         get() = _action.asSharedFlow()
 
-    fun event (profileEvent: ProfileEvent){
-        when(profileEvent){
+    fun event(profileEvent: ProfileEvent) {
+        when (profileEvent) {
             ProfileEvent.OnSubscribeBtnClick -> onSubscribeBtnClick()
             ProfileEvent.OnDropdownMenuClick -> onDropdownMenuClick()
             ProfileEvent.OnCloseDropdownMenu -> onCloseDropdownMenu()
@@ -85,20 +82,21 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun onSubscribeBtnClick(){
+    private fun onSubscribeBtnClick() {
         internalState.tryEmit(
             internalState.value.copy(
                 isSubscribe = !internalState.value.isSubscribe
             )
         )
     }
-    private fun onEditProfileBtnClick(){
+
+    private fun onEditProfileBtnClick() {
         viewModelScope.launch {
             _action.emit(ProfileSideEffect.NavigateToEditProfileScreen)
         }
     }
 
-    private fun onDropdownMenuClick(){
+    private fun onDropdownMenuClick() {
         internalState.tryEmit(
             internalState.value.copy(
                 isDropdownMenuExpanded = true

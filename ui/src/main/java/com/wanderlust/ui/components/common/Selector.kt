@@ -1,4 +1,4 @@
-package com.wanderlust.ui.components.settings_screen
+package com.wanderlust.ui.components.common
 
 import android.view.animation.AnticipateOvershootInterpolator
 import androidx.compose.animation.core.animateFloatAsState

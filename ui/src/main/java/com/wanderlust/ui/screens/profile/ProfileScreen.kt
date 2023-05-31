@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.profile_screen.CreateRouteCard
+import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.theme.WanderlustTextStyles
 
 @Composable

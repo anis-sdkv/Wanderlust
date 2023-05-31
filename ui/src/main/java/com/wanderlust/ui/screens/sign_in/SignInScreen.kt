@@ -52,9 +52,9 @@ fun SignInScreen(
 
         // fields
         Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-            AuthTextField(stringResource(id = R.string.email))
+    //      AuthTextField(stringResource(id = R.string.email))
             Spacer(modifier = Modifier.height(20.dp))
-            AuthPasswordField(stringResource(id = R.string.password))
+//            AuthPasswordField(stringResource(id = R.string.password))
             ForgotPassButton {
                 //TODO
             }

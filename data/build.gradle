@@ -33,7 +33,12 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':domain')
+    implementation project(':domain')
+
+    // firebase
+    implementation platform(libs.firebase.bom)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 
     // hilt
     implementation(libs.dagger.hilt)

@@ -24,7 +24,7 @@ fun Modifier.authGradient(): Modifier = composed {
     this.background(
         ShaderBrush(
             RadialGradientShader(
-                colors = listOf(WanderlustTheme.colors.primaryBackground, WanderlustTheme.colors.accent),
+                colors = listOf(WanderlustTheme.colors.tint, WanderlustTheme.colors.accent),
                 center = Offset(screenSize.width / 2f, screenSize.height / 3f),
                 radius = screenSize.maxDimension / 2f,
                 colorStops = listOf(0f, 0.95f)
