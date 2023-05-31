@@ -41,7 +41,8 @@ class EditProfileViewModel @Inject constructor (
     //private val userNameOfProfile: String = savedStateHandle["userName"]!!
     private val userNameOfProfile = "Ivan"
     private val user = getUserByName(userNameOfProfile)
-  
+
+    val internalState = MutableStateFlow<EditProfileState>(EditProfileState())
     val state: StateFlow<EditProfileState> = internalState
 
     private val _action = MutableSharedFlow<EditProfileSideEffect?>()
@@ -56,9 +57,9 @@ class EditProfileViewModel @Inject constructor (
         internalState.tryEmit(
             internalState.value.copy(
                 userName = user.userName,
-                userCity = user.userCity,
-                userCountry = user.userCountry,
-                userDescription = user.userDescription,
+                userCity = user.userCity ?: "",
+                userCountry = user.userCountry ?: "",
+                userDescription = user.userDescription ?: "",
             )
         )
     }
@@ -106,7 +107,4 @@ class EditProfileViewModel @Inject constructor (
             _action.emit(EditProfileSideEffect.NavigateBack)
         }
     }
-
-
-
 }
