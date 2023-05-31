@@ -31,9 +31,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavController
 import com.wanderlust.ui.R
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun CustomDialogLocation(
@@ -80,7 +79,7 @@ fun CustomDialogLocation(
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = WanderlustTextStyles.ProfileTitleText,
+                    style = WanderlustTheme.typography.bold24,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -92,7 +91,7 @@ fun CustomDialogLocation(
                         .padding(top = 10.dp, start = 25.dp, end = 25.dp)
                         .fillMaxWidth(),
                     letterSpacing = 1.sp,
-                    style = WanderlustTextStyles.ProfileUserInfoText,
+                    style = WanderlustTheme.typography.medium16,
                     color = MaterialTheme.colorScheme.onBackground,
                 )
 
@@ -126,7 +125,7 @@ fun CustomDialogLocation(
                     ) {
                         Text(
                             text = stringResource(id = R.string.enable),
-                            style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
+                            style = WanderlustTheme.typography.semibold16,
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     }

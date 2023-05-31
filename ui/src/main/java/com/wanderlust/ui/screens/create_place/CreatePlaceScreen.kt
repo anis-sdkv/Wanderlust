@@ -4,15 +4,18 @@ import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
@@ -48,9 +51,10 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
+import com.wanderlust.ui.components.common.ScreenHeader
+import com.wanderlust.ui.components.common.TagsField
+import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.permissions.RequestPermission
-
-import com.wanderlust.ui.theme.WanderlustTextStyles
 import com.wanderlust.ui.utils.LocationUtils
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -69,10 +73,14 @@ fun CreatePlaceScreen(
     val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(LocalContext.current)
 
     val cameraPositionState = rememberCameraPositionState()
-    cameraPositionState.position = CameraPosition.fromLatLngZoom(
-        LocationUtils.getPosition(currentLocation),
-        13f
-    )
+    cameraPositionState.position = if(createPlaceState.isShowCurrentLocation){
+        CameraPosition.fromLatLngZoom(
+            LocationUtils.getPosition(currentLocation),
+            13f
+        )
+    } else {
+        createPlaceState.placeCameraPosition
+    }
 
     val mapUiSettings by remember {
         mutableStateOf(
@@ -106,170 +114,150 @@ fun CreatePlaceScreen(
         )
     }
 
-    LazyColumn(
+    Column(
         Modifier
             .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(top = 48.dp, start = 20.dp, end = 20.dp),
     ){
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    modifier = Modifier.padding(start = 16.dp),
-                    onClick = {
-                        eventHandler.invoke(CreatePlaceEvent.OnBackBtnClick)
-                    }
-                ) {
-                    Image(
-                        painterResource(R.drawable.ic_back),
-                        contentDescription = "icon_back",
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = stringResource(id = R.string.creating_place),
-                    style = WanderlustTextStyles.ProfileRoutesTitleText,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+        ScreenHeader(screenName = stringResource(id = R.string.creating_place)) {
+            eventHandler.invoke(CreatePlaceEvent.OnBackBtnClick)
         }
-
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(id = R.string.specify_location),
-                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                GpsTextButton(
-                    onTextClick = {
-                        eventHandler.invoke(
-                            CreatePlaceEvent.OnShowCurrentLocationClicked(
-                                LocationUtils.getPosition(currentLocation).latitude,
-                                LocationUtils.getPosition(currentLocation).longitude
-                            )
-                        )
-                        requestLocationUpdate = true
-                    }
-                )
-            }
-        }
-
-        item{
-            GoogleMap(
-                modifier = Modifier
-                    .padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .fillMaxWidth()
-                    .height(450.dp),
-                cameraPositionState = cameraPositionState,
-                uiSettings = mapUiSettings,
-                onMapClick = {
-                    eventHandler.invoke(CreatePlaceEvent.OnMapClick(placeLon = it.longitude, placeLat = it.latitude))
-                }
-            ) {
-                Marker(
-                    state = MarkerState(
-                        position =
-                        if(
-                            createPlaceState.isShowCurrentLocation
-                        ){
-                            LocationUtils.getPosition(currentLocation)
-                        } else {
-                            LatLng(createPlaceState.placeLat, createPlaceState.placeLon)
-                        }
-                    ),
-                    title = createPlaceState.placeName
-                )
-            }
-        }
-
-        item {
-            DefaultTextField(
-                label = stringResource(id = R.string.place_name),
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 26.dp),
-                inputValue = createPlaceState.placeName
-            ) { placeName -> eventHandler.invoke(CreatePlaceEvent.OnPlaceNameChanged(placeName)) }
-
-        }
-
-        item {
-            DefaultDescriptionField(
-                label = stringResource(id = R.string.place_description),
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 16.dp),
-                inputValue = createPlaceState.placeDescription
-            ) { placeDescription ->
+        GpsTextButton (
+            modifier = Modifier.padding(top = 40.dp),
+            onTextClick = {
                 eventHandler.invoke(
-                    CreatePlaceEvent.OnPlaceDescriptionChanged(
-                        placeDescription
+                    CreatePlaceEvent.OnShowCurrentLocationClicked(
+                        LocationUtils.getPosition(currentLocation).latitude,
+                        LocationUtils.getPosition(currentLocation).longitude
                     )
+                )
+                requestLocationUpdate = true
+            }
+        )
+
+
+        GoogleMap(
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 8.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth()
+                .height(450.dp),
+            cameraPositionState = cameraPositionState,
+            uiSettings = mapUiSettings,
+            onMapClick = {
+                eventHandler.invoke(
+                    CreatePlaceEvent.OnMapClick(
+                        placeLon = it.longitude,
+                        placeLat = it.latitude,
+                        placeCameraPosition = cameraPositionState.position
+                    )
+                )
+            }
+        ) {
+            Marker(
+                state = MarkerState(
+                    position =
+                    if(
+                        createPlaceState.isShowCurrentLocation
+                    ){
+                        LocationUtils.getPosition(currentLocation)
+                    } else {
+                        LatLng(createPlaceState.placeLat, createPlaceState.placeLon)
+                    }
+                ),
+                title = createPlaceState.placeName
+            )
+        }
+
+        DefaultTextField(
+            label = stringResource(id = R.string.place_name),
+            modifier = Modifier.padding(top = 26.dp),
+            inputValue = createPlaceState.placeName
+        ) { placeName -> eventHandler.invoke(CreatePlaceEvent.OnPlaceNameChanged(placeName)) }
+
+        DefaultDescriptionField(
+            label = stringResource(id = R.string.place_description),
+            modifier = Modifier.padding(top = 20.dp),
+            inputValue = createPlaceState.placeDescription
+        ) { placeDescription ->
+            eventHandler.invoke(
+                CreatePlaceEvent.OnPlaceDescriptionChanged(
+                    placeDescription
+                )
+            )
+        }
+
+        TagsField(
+            modifier = Modifier,
+            onTagClick = { tag -> eventHandler.invoke(CreatePlaceEvent.OnSelectedTagsChanged(tag))},
+            selectedTags = createPlaceState.selectedTags)
+
+        LazyRow(
+            modifier = Modifier.padding(top = 16.dp)
+        ){
+            items(5){
+                Image(
+                    modifier = Modifier
+                        .padding(start = 4.dp, end = 4.dp)
+                        .size(120.dp)
+                        .clip(shape = RoundedCornerShape(16.dp)),
+                    painter = painterResource(id = R.drawable.test_user_photo),
+                    contentDescription = "Place Image"
                 )
             }
         }
 
-        item {
-            LazyRow(
-                modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 16.dp)
-            ){
-                items(5){
-                    Image(
-                        modifier = Modifier
-                            .padding(start = 4.dp, end = 4.dp)
-                            .size(120.dp)
-                            .clip(shape = RoundedCornerShape(16.dp)),
-                        painter = painterResource(id = R.drawable.test_user_photo),
-                        contentDescription = "Place Image"
-                    )
-                }
-            }
-        }
-
-        item {
-            Button(
-                onClick = {
-                    // TODO
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 22.dp, start = 24.dp, end = 24.dp, bottom = 80.dp)
-                    .height(42.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.save),
-                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
-                    color = MaterialTheme.colorScheme.background
-                )
-            }
+        Button(
+            onClick = {
+                // TODO
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 22.dp, bottom = 80.dp)
+                .height(42.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.save),
+                style = WanderlustTheme.typography.semibold16,
+                color = MaterialTheme.colorScheme.background
+            )
         }
     }
 }
 
 @Composable
-private fun GpsTextButton(onTextClick: () -> Unit) {
-    TextButton(
-        modifier = Modifier,
-        onClick = {
-            onTextClick()
-        }
+private fun GpsTextButton(modifier: Modifier, onTextClick: () -> Unit) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = stringResource(id = R.string.use_your_location),
-            style = WanderlustTextStyles.ProfileUserInfoText,
-            color = MaterialTheme.colorScheme.primary,
+            text = stringResource(id = R.string.specify_location),
+            style = WanderlustTheme.typography.semibold16,
+            color = MaterialTheme.colorScheme.onBackground
         )
+        TextButton(
+            modifier = Modifier,
+            contentPadding = PaddingValues(
+                start = 4.dp,
+                top = 0.dp,
+                end = 0.dp,
+                bottom = 4.dp,
+            ),
+            onClick = {
+                onTextClick()
+            }
+        ) {
+            Text(
+                text = stringResource(id = R.string.use_your_location),
+                style = WanderlustTheme.typography.medium16,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        }
     }
 }

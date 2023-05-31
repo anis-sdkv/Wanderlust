@@ -2,6 +2,9 @@ package com.wanderlust.ui.screens.create_place
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.wanderlust.ui.screens.create_route.CreateRouteEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,13 +19,16 @@ data class CreatePlaceState(
     val placeLon: Double,
     val placeName: String,
     val placeDescription: String,
+    val placeCameraPosition: CameraPosition,
     val isShowCurrentLocation: Boolean,
+    val selectedTags: List<String>
 )
 
 sealed interface CreatePlaceEvent{
     object OnBackBtnClick: CreatePlaceEvent
+    data class OnSelectedTagsChanged(val tag: String) : CreatePlaceEvent
     data class OnShowCurrentLocationClicked(val placeLon: Double, val placeLat: Double): CreatePlaceEvent
-    data class OnMapClick(val placeLon: Double, val placeLat: Double) : CreatePlaceEvent
+    data class OnMapClick(val placeLon: Double, val placeLat: Double, val placeCameraPosition: CameraPosition) : CreatePlaceEvent
     data class OnPlaceNameChanged(val placeName: String) : CreatePlaceEvent
     data class OnPlaceDescriptionChanged(val placeDescription: String) : CreatePlaceEvent
 }
@@ -41,7 +47,12 @@ class CreatePlaceViewModel @Inject constructor (
             placeLon = 49.13472200000001,
             placeName = "",
             placeDescription = "",
+            placeCameraPosition = CameraPosition.fromLatLngZoom(
+                LatLng(55.790278, 49.13472200000001),
+                13f
+            ),
             isShowCurrentLocation = true,
+            emptyList()
         )
     )
     val state: StateFlow<CreatePlaceState> = internalState
@@ -52,12 +63,23 @@ class CreatePlaceViewModel @Inject constructor (
 
     fun event (createPlaceEvent: CreatePlaceEvent){
         when(createPlaceEvent){
+            is CreatePlaceEvent.OnSelectedTagsChanged -> onSelectedTagsChanged(createPlaceEvent)
             is CreatePlaceEvent.OnShowCurrentLocationClicked -> onShowCurrentLocationClicked(createPlaceEvent)
             CreatePlaceEvent.OnBackBtnClick -> onBackBtnClick()
             is CreatePlaceEvent.OnMapClick -> onMapClick(createPlaceEvent)
             is CreatePlaceEvent.OnPlaceNameChanged -> onPlaceNameChanged(createPlaceEvent)
             is CreatePlaceEvent.OnPlaceDescriptionChanged -> onPlaceDescriptionChanged(createPlaceEvent)
         }
+    }
+
+    private fun onSelectedTagsChanged(event: CreatePlaceEvent.OnSelectedTagsChanged){
+        internalState.tryEmit(
+            internalState.value.copy(
+                selectedTags = internalState.value.selectedTags.toMutableList().also {
+                    if(it.contains(event.tag)) it.remove(event.tag) else it.add(event.tag)
+                }
+            )
+        )
     }
 
     private fun onShowCurrentLocationClicked(event: CreatePlaceEvent.OnShowCurrentLocationClicked){
@@ -97,6 +119,7 @@ class CreatePlaceViewModel @Inject constructor (
             internalState.value.copy(
                 placeLat = event.placeLat,
                 placeLon = event.placeLon,
+                placeCameraPosition = event.placeCameraPosition,
                 isShowCurrentLocation = false
             )
         )

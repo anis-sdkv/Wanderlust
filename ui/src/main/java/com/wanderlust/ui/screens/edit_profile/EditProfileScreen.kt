@@ -4,7 +4,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,13 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextField
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDate
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDescription
-import com.wanderlust.ui.screens.profile.ProfileEvent
-import com.wanderlust.ui.screens.profile.ProfileSideEffect
-import com.wanderlust.ui.screens.profile.ProfileViewModel
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun EditProfileScreen(
@@ -44,119 +44,87 @@ fun EditProfileScreen(
         }
     }
 
-    LazyColumn(
+    Column(
         Modifier
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
-            .padding(bottom = 64.dp),
+            .verticalScroll(rememberScrollState())
+            .padding(top = 48.dp, start = 20.dp, end = 20.dp, bottom = 64.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    modifier = Modifier.padding(start = 16.dp),
-                    onClick = {
-                        eventHandler.invoke(EditProfileEvent.OnBackBtnClick)
-                        onNavigateBack() }
-                ) {
-                    Image(
-                        painterResource(R.drawable.ic_back),
-                        contentDescription = "icon_back",
-                        contentScale = ContentScale.Crop,
-                    )
-                }
-
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = stringResource(id = R.string.edit_profile),
-                    style = WanderlustTextStyles.ProfileRoutesTitleText,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
+        ScreenHeader(screenName = stringResource(id = R.string.edit_profile)) {
+            eventHandler.invoke(EditProfileEvent.OnBackBtnClick)
         }
 
-        item {
-            Image(
-                painterResource(R.drawable.test_user_photo),
-                contentDescription = "user_photo",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .padding(top = 30.dp)
-                    .size(154.dp)
-                    .clip(
-                        shape = RoundedCornerShape(32.dp)
-                    ),
+        Image(
+            painterResource(R.drawable.test_user_photo),
+            contentDescription = "user_photo",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .padding(top = 30.dp)
+                .size(154.dp)
+                .clip(
+                    shape = RoundedCornerShape(32.dp)
+                ),
 
-                )
+            )
+        TextButton(
+            onClick = {
+                // TODO
+            },
+            modifier = Modifier.padding(4.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.change_photo),
+                style = WanderlustTheme.typography.medium13,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
-        item {
-            TextButton(
-                onClick = {
-                    // TODO
-                },
-                modifier = Modifier.padding(4.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.change_photo),
-                    style = WanderlustTextStyles.ProfileMedium13,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-        }
-        item {
-            Column(
-                modifier = Modifier.padding(top = 16.dp)
-            ) {
-                EditProfileTextField(
-                    label = stringResource(id = R.string.user_name),
-                    editProfileState.userName,
-                    { name -> eventHandler.invoke(EditProfileEvent.OnUsernameChanged(name))}//eventHandler.invoke(EditProfileEvent.OnUsernameChanged(editProfileState.userName))
-                )
-                EditProfileTextFieldDate(
-                    label = stringResource(id = R.string.birthday),
-                    "",
-                )
-                EditProfileTextField(
-                    label = stringResource(id = R.string.country),
-                    editProfileState.userCountry,
-                    { country -> eventHandler.invoke(EditProfileEvent.OnUserCountryChanged(country))}
-                )
-                EditProfileTextField(
-                    label = stringResource(id = R.string.city),
-                    editProfileState.userCity,
-                    {city -> eventHandler.invoke(EditProfileEvent.OnUserCityChanged(city))}
-                )
-                EditProfileTextFieldDescription(
-                    label = stringResource(id = R.string.about_user),
-                    editProfileState.userDescription,
-                    {description -> eventHandler.invoke(EditProfileEvent.OnUserDescriptionChanged(description))}
-                )
-            }
+        Column(
+            modifier = Modifier.padding(top = 16.dp)
+        ) {
+            EditProfileTextField(
+                label = stringResource(id = R.string.user_name),
+                editProfileState.userName
+            ) { name -> eventHandler.invoke(EditProfileEvent.OnUsernameChanged(name)) }//eventHandler.invoke(EditProfileEvent.OnUsernameChanged(editProfileState.userName))
+
+            EditProfileTextFieldDate(
+                label = stringResource(id = R.string.birthday),
+                "",
+            )
+
+            EditProfileTextField(
+                label = stringResource(id = R.string.country),
+                editProfileState.userCountry
+            ) { country -> eventHandler.invoke(EditProfileEvent.OnUserCountryChanged(country)) }
+
+            EditProfileTextField(
+                label = stringResource(id = R.string.city),
+                editProfileState.userCity
+            ) { city -> eventHandler.invoke(EditProfileEvent.OnUserCityChanged(city)) }
+
+            EditProfileTextFieldDescription(
+                label = stringResource(id = R.string.about_user),
+                editProfileState.userDescription
+            ) { description -> eventHandler.invoke(EditProfileEvent.OnUserDescriptionChanged(description)) }
         }
 
-        item {
-            Button(
-                onClick = {
-                    // TODO
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 22.dp, start = 24.dp, end = 24.dp, bottom = 80.dp)
-                    .height(42.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Text(
-                    text = stringResource(id = R.string.save),
-                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
-                    color = MaterialTheme.colorScheme.background
-                )
-            }
+        Button(
+            onClick = {
+                // TODO
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 22.dp, bottom = 80.dp)
+                .height(42.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.save),
+                style = WanderlustTheme.typography.semibold16,
+                color = MaterialTheme.colorScheme.background
+            )
         }
     }
 }

@@ -69,8 +69,8 @@
     <!--    Map-->
     <string name="creating_place">Создание места</string>
     <string name="creating_route">Создание маршрута</string>
-    <string name="specify_location">Выберете местоположение или</string>
-    <string name="use_your_location">используйте ваше</string>
+    <string name="specify_location">Выберете место или</string>
+    <string name="use_your_location">используйте ваше местоположение</string>
     <string name="place_name">Название места</string>
     <string name="place_description">Описание места</string>
     <string name="route_name">Название маршрута</string>
@@ -87,11 +87,11 @@
     <string-array name="tags_array">
 
         <item>День</item>
-        <item>Ночь</item>
         <item>Длинное расстояние</item>
+        <item>Ночь</item>
         <item>Коротное расстояние</item>
-        <item>За городом</item>
         <item>В городе</item>
+        <item>За городом</item>
 
     </string-array>
 
