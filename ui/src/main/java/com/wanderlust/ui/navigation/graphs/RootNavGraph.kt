@@ -3,6 +3,7 @@ package com.wanderlust.ui.navigation.graphs
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
@@ -32,7 +33,8 @@ fun RootNavGraph(navController: NavHostController, isBottomBarVisible: MutableSt
         startDestination = Graph.BOTTOM,
         modifier = Modifier
             .systemBarsPadding()
-            .navigationBarsPadding()) {
+            .navigationBarsPadding()
+    ) {
 
         bottomNavGraph(navController = navController, isBottomBarVisible)
     }

@@ -26,8 +26,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wanderlust.ui.R
-import com.wanderlust.ui.components.profile_screen.CreateRouteCard
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.components.common.CreateRouteCard
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun ProfileScreen(
@@ -135,14 +135,14 @@ fun ProfileScreen(
                                 text = stringResource(id = R.string.empty_profile_title),
                                 modifier = Modifier
                                     .padding(top = 32.dp),
-                                style = WanderlustTextStyles.ProfileTitleText,
+                                style = WanderlustTheme.typography.bold24,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
                             Text(
                                 text = stringResource(id = R.string.empty_profile_description),
                                 modifier = Modifier.padding(top = 32.dp),
-                                style = WanderlustTextStyles.ProfileLocationText,
+                                style = WanderlustTheme.typography.semibold14,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
@@ -159,7 +159,7 @@ fun ProfileScreen(
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.sign_in),
-                                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
+                                    style = WanderlustTheme.typography.semibold16,
                                     color = MaterialTheme.colorScheme.background
                                 )
                             }
@@ -168,6 +168,7 @@ fun ProfileScreen(
                         ConstraintLayout(
                             Modifier
                                 .background(MaterialTheme.colorScheme.background)
+                                .padding(start = 20.dp, end = 20.dp)
                                 .fillMaxSize()
                         ) {
                             val (userName,
@@ -188,9 +189,9 @@ fun ProfileScreen(
                                 modifier = Modifier
                                     .constrainAs(userName) {
                                         top.linkTo(parent.top, margin = 32.dp)
-                                        start.linkTo(parent.start, margin = 20.dp)
-                                        end.linkTo(parent.end, margin = 20.dp)},
-                                style = WanderlustTextStyles.ProfileTitleText,
+                                        start.linkTo(parent.start)
+                                        end.linkTo(parent.end)},
+                                style = WanderlustTheme.typography.bold24,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
@@ -203,7 +204,7 @@ fun ProfileScreen(
                                 },
                                 modifier = Modifier.constrainAs(dropdownMenuIcon) {
                                     top.linkTo(parent.top, margin = 28.dp)
-                                    end.linkTo(parent.end, margin = 20.dp)}
+                                    end.linkTo(parent.end)}
 
                             ) {
                                 Image(
@@ -263,7 +264,7 @@ fun ProfileScreen(
                                 Text(
                                     text = "${profileState.userCity}, ${profileState.userCountry}",
                                     modifier = Modifier.padding(start = 8.dp),
-                                    style = WanderlustTextStyles.ProfileLocationText,
+                                    style = WanderlustTheme.typography.semibold14,
                                     color = MaterialTheme.colorScheme.onBackground
                                 )
                             }
@@ -272,7 +273,6 @@ fun ProfileScreen(
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 20.dp, end = 20.dp)
                                     .constrainAs(subscribers) {
                                         top.linkTo(location.bottom, margin = 32.dp)
                                         start.linkTo(parent.start)
@@ -289,12 +289,12 @@ fun ProfileScreen(
                                 ) {
                                     Text(
                                         text = profileState.userRoutes.size.toString(),
-                                        style = WanderlustTextStyles.ProfileNumbersText,
+                                        style = WanderlustTheme.typography.extraBold26,
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Text(
                                         text = stringResource(id = R.string.routes),
-                                        style = WanderlustTextStyles.ProfileMedium13,
+                                        style = WanderlustTheme.typography.medium13,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -308,12 +308,12 @@ fun ProfileScreen(
                                 ) {
                                     Text(
                                         text = profileState.userNumberOfSubscribers.toString(),
-                                        style = WanderlustTextStyles.ProfileNumbersText,
+                                        style = WanderlustTheme.typography.extraBold26,
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Text(
                                         text = stringResource(id = R.string.subscribers),
-                                        style = WanderlustTextStyles.ProfileMedium13,
+                                        style = WanderlustTheme.typography.medium13,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -328,12 +328,12 @@ fun ProfileScreen(
                                 ) {
                                     Text(
                                         text = profileState.userNumberOfSubscriptions.toString(),
-                                        style = WanderlustTextStyles.ProfileNumbersText,
+                                        style = WanderlustTheme.typography.extraBold26,
                                         color = MaterialTheme.colorScheme.onBackground
                                     )
                                     Text(
                                         text = stringResource(id = R.string.subscriptions),
-                                        style = WanderlustTextStyles.ProfileMedium13,
+                                        style = WanderlustTheme.typography.medium13,
                                         color = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -351,7 +351,6 @@ fun ProfileScreen(
                                 },
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(start = 20.dp, end = 20.dp)
                                     .height(42.dp)
                                     .constrainAs(btnSubscribeOrEdit) {
                                         top.linkTo(subscribers.bottom, margin = 24.dp)
@@ -363,7 +362,7 @@ fun ProfileScreen(
                             ) {
                                 Text(
                                     text = if (isMyProfile) stringResource(id = R.string.edit) else btnText,
-                                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
+                                    style = WanderlustTheme.typography.semibold16,
                                     color = MaterialTheme.colorScheme.background
                                 )
                             }
@@ -374,13 +373,12 @@ fun ProfileScreen(
                                 /*"1. Шел медведь по лесу, видит — машина горит, ну он вызвал пожарных, они приехали, оценили ситуацию, сели в машину и сгорели.\n" +
                                         "2. Шел медведь по лесу, видит — машина горит, он сел в неё, а она ему как раз."*/,
                                 modifier = Modifier
-                                    .padding(start = 20.dp, end = 20.dp)
                                     .constrainAs(userInfo) {
                                         top.linkTo(btnSubscribeOrEdit.bottom, margin = 20.dp)
                                         start.linkTo(parent.start)
                                         end.linkTo(parent.end)
                                     },
-                                style = WanderlustTextStyles.ProfileUserInfoText,
+                                style = WanderlustTheme.typography.medium16,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
@@ -390,9 +388,9 @@ fun ProfileScreen(
                                 modifier = Modifier
                                     .constrainAs(routesTitle) {
                                         top.linkTo(userInfo.bottom, margin = 28.dp)
-                                        start.linkTo(parent.start, margin = 20.dp)
+                                        start.linkTo(parent.start)
                                     },
-                                style = WanderlustTextStyles.ProfileRoutesTitleText,
+                                style = WanderlustTheme.typography.bold20,
                                 color = MaterialTheme.colorScheme.onBackground
                             )
 
@@ -431,7 +429,7 @@ fun ProfileScreen(
                             ) {
                                 Text(
                                     text = stringResource(id = R.string.show_all_routes),
-                                    style = WanderlustTextStyles.ProfileUserInfoText,
+                                    style = WanderlustTheme.typography.medium16,
                                     color = MaterialTheme.colorScheme.primary,
                                 )
                             }

@@ -22,10 +22,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
@@ -72,9 +72,11 @@ import com.wanderlust.domain.model.Place
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
+import com.wanderlust.ui.components.common.ScreenHeader
+import com.wanderlust.ui.components.common.TagsField
+import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.permissions.RequestPermission
 import com.wanderlust.ui.utils.LocationUtils
-import com.wanderlust.ui.theme.WanderlustTextStyles
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -127,185 +129,87 @@ fun CreateRouteScreen(
         }
     }
 
-    /*if(requestLocationUpdate) {
-        LocationPermissionsAndSettingDialogs(
-            updateCurrentLocation = {
-                requestLocationUpdate = false
-                LocationUtils.requestLocationResultCallback(fusedLocationProviderClient) { locationResult ->
-
-                    locationResult.lastLocation?.let { location ->
-
-                        currentLocation = location
-                    }
-                }
-            }
-        )
-    }*/
-
-
-    LazyColumn(
+    // content
+    Column(
         Modifier
             .background(MaterialTheme.colorScheme.background)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(top = 48.dp, start = 20.dp, end = 20.dp),
     ){
-        item {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(
-                    modifier = Modifier.padding(start = 16.dp),
-                    onClick = {
-                        eventHandler.invoke(CreateRouteEvent.OnBackBtnClick)
-                    }
-                ) {
-                    Image(
-                        painterResource(R.drawable.ic_back),
-                        contentDescription = "icon_back",
-                        contentScale = ContentScale.Crop,
-                    )
-                }
 
-                Text(
-                    modifier = Modifier.padding(start = 16.dp),
-                    text = stringResource(id = R.string.creating_route),
-                    style = WanderlustTextStyles.ProfileRoutesTitleText,
-                    color = MaterialTheme.colorScheme.onBackground
+        ScreenHeader(screenName = stringResource(id = R.string.creating_route)) {
+            eventHandler.invoke(CreateRouteEvent.OnBackBtnClick)
+        }
+
+        GoogleMap(
+            modifier = Modifier
+                .padding(top = 26.dp, bottom = 8.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .fillMaxWidth()
+                .height(450.dp),
+            cameraPositionState = cameraPositionState,
+            uiSettings = mapUiSettings,
+        ) {
+            createRouteState.listOfPlaces.forEach { place ->
+                Marker(
+                    state = MarkerState(
+                        position = LatLng(place.lat, place.lon)
+                    ),
+                    title = place.placeName
                 )
             }
-        }
-
-        item{
-            GoogleMap(
-                modifier = Modifier
-                    .padding(start = 20.dp, end = 20.dp, top = 26.dp, bottom = 8.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .fillMaxWidth()
-                    .height(450.dp),
-                cameraPositionState = cameraPositionState,
-                uiSettings = mapUiSettings,
-            ) {
-                createRouteState.listOfPlaces.forEach { place ->
-                    Marker(
-                        state = MarkerState(
-                            position = LatLng(place.lat, place.lon)
-                        ),
-                        title = place.placeName
-                    )
-                }
-                val latLonList: MutableList<LatLng> = mutableListOf()
-                createRouteState.listOfPlaces.forEach {
-                        place -> latLonList.add(LatLng(place.lat,place.lon))
-                }
-                Polyline(
-                    points = latLonList,
-                    color = MaterialTheme.colorScheme.primary
-                )
+            val latLonList: MutableList<LatLng> = mutableListOf()
+            createRouteState.listOfPlaces.forEach {
+                    place -> latLonList.add(LatLng(place.lat,place.lon))
             }
+            Polyline(
+                points = latLonList,
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
-        item {
-            DefaultTextField(
-                label = stringResource(id = R.string.route_name),
-                createRouteState.routeName,
-                Modifier.padding(start = 20.dp, end = 20.dp, top = 26.dp)
-            ) { routeName -> eventHandler.invoke(CreateRouteEvent.OnRouteNameChanged(routeName)) }
-        }
+        DefaultTextField(
+            label = stringResource(id = R.string.route_name),
+            createRouteState.routeName,
+            Modifier.padding(top = 26.dp)
+        ) { routeName -> eventHandler.invoke(CreateRouteEvent.OnRouteNameChanged(routeName)) }
 
-        item {
-            DefaultDescriptionField(
-                label = stringResource(id = R.string.route_description),
-                createRouteState.routeDescription,
-                Modifier.padding(start = 20.dp, end = 20.dp, top = 16.dp)
-            ) { routeDescription -> eventHandler.invoke(CreateRouteEvent.OnRouteDescriptionChanged(routeDescription)) }
-        }
+        DefaultDescriptionField(
+            label = stringResource(id = R.string.route_description),
+            createRouteState.routeDescription,
+            Modifier.padding(top = 16.dp)
+        ) { routeDescription -> eventHandler.invoke(CreateRouteEvent.OnRouteDescriptionChanged(routeDescription)) }
 
-        item{
-            Card(
-                modifier = Modifier
-                    .padding(top = 16.dp, start = 20.dp, end = 20.dp)
-                    .fillMaxWidth(),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceTint),
-            ) {
-                Text(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .fillMaxWidth()
-                        .alpha(0.6f),
-                    text = stringResource(id = R.string.select_tags),
-                    textAlign = TextAlign.Center,
-                    style = WanderlustTextStyles.ProfileLocationText,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                val tags = stringArrayResource(id = R.array.tags_array)
-                FlowRow(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    for (tag in tags) {
-                        Button(
-                            modifier = Modifier.padding(start = 4.dp, end = 4.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            colors =
-                            if(createRouteState.selectedTags.contains(tag)){
-                                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                            } else {
-                                ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                            },
-                            onClick = {
-                                eventHandler.invoke(CreateRouteEvent.OnSelectedTagsChanged(tag))
-                            }
-                        ) {
-                            Text(
-                                modifier =
-                                if (!createRouteState.selectedTags.contains(tag)){
-                                    Modifier
-                                        .alpha(0.4f)
-                                } else Modifier,
-                                text = tag,
-                                style = WanderlustTextStyles.ProfileLocationText,
-                                color =
-                                if(createRouteState.selectedTags.contains(tag)){
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else {
-                                    MaterialTheme.colorScheme.onBackground
-                                }
-                            )
-                        }
-                    }
-                }
-            }
-        }
+        TagsField(
+            modifier = Modifier,
+            onTagClick = { tag -> eventHandler.invoke(CreateRouteEvent.OnSelectedTagsChanged(tag))},
+            selectedTags = createRouteState.selectedTags
+        )
 
-        item{
+        Text(
+            textAlign = TextAlign.Center,
+            text = stringResource(id = R.string.route),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 60.dp, bottom = 20.dp),
+            style = WanderlustTheme.typography.bold20,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        if(createRouteState.listOfPlaces.isEmpty()) {
             Text(
-                textAlign = TextAlign.Center,
-                text = stringResource(id = R.string.route),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 60.dp, bottom = 20.dp),
-                style = WanderlustTextStyles.ProfileRoutesTitleText,
+                    .alpha(0.6f),
+                text = stringResource(id = R.string.start_creating),
+                textAlign = TextAlign.Center,
+                style = WanderlustTheme.typography.semibold14,
                 color = MaterialTheme.colorScheme.onBackground
             )
         }
-        item{
-            if(createRouteState.listOfPlaces.isEmpty()) {
-                Text(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .alpha(0.6f),
-                    text = stringResource(id = R.string.start_creating),
-                    textAlign = TextAlign.Center,
-                    style = WanderlustTextStyles.ProfileLocationText,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-        }
 
-        itemsIndexed(createRouteState.listOfPlaces){ index, place ->
+        createRouteState.listOfPlaces.forEachIndexed { index, place ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -322,8 +226,7 @@ fun CreateRouteScreen(
                     )
                 }
                 Card(
-                    modifier = Modifier
-                        .padding(start = 20.dp, end = 20.dp),
+                    modifier = Modifier,
                     elevation = CardDefaults.cardElevation(10.dp),
                     shape = RoundedCornerShape(16.dp)
                     //.background(colorResource(R.color.colorPrimaryDark))
@@ -369,67 +272,62 @@ fun CreateRouteScreen(
                     }
                 }
             }
-
         }
 
-        item{
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Button(
-                    onClick = {
-                        eventHandler.invoke(
-                            CreateRouteEvent.OnAddPlaceClick(
-                                Place(
-                                    currentLocation.latitude,
-                                    currentLocation.longitude,
-                                    "Interesting Place",
-                                    ""
-                                )
-                            )
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(top = 22.dp, bottom = 16.dp)
-                        .height(42.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Icon(
-                        Icons.Rounded.Add,
-                        contentDescription = "icon_add",
-                        modifier = Modifier,
-                        MaterialTheme.colorScheme.onPrimary
-                    )
-                    Text(
-                        text = stringResource(id = R.string.add_place),
-                        style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-
-            }
-        }
-
-        item {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Button(
                 onClick = {
-                    // TODO
+                    eventHandler.invoke(
+                        CreateRouteEvent.OnAddPlaceClick(
+                            Place(
+                                currentLocation.latitude,
+                                currentLocation.longitude,
+                                "Interesting Place",
+                                ""
+                            )
+                        )
+                    )
                 },
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 80.dp, start = 24.dp, end = 24.dp, bottom = 80.dp)
+                    .padding(top = 22.dp, bottom = 16.dp)
                     .height(42.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(16.dp)
             ) {
+                Icon(
+                    Icons.Rounded.Add,
+                    contentDescription = "icon_add",
+                    modifier = Modifier,
+                    MaterialTheme.colorScheme.onPrimary
+                )
                 Text(
-                    text = stringResource(id = R.string.save),
-                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
-                    color = MaterialTheme.colorScheme.background
+                    text = stringResource(id = R.string.add_place),
+                    style = WanderlustTheme.typography.semibold16,
+                    color = MaterialTheme.colorScheme.onPrimary
                 )
             }
+
+        }
+
+        Button(
+            onClick = {
+                // TODO
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 80.dp, bottom = 80.dp)
+                .height(42.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = stringResource(id = R.string.save),
+                style = WanderlustTheme.typography.semibold16,
+                color = MaterialTheme.colorScheme.background
+            )
         }
     }
 }
@@ -444,7 +342,7 @@ private fun GpsTextButton(onTextClick: () -> Unit) {
     ) {
         Text(
             text = stringResource(id = R.string.use_your_location),
-            style = WanderlustTextStyles.ProfileLocationText,
+            style = WanderlustTheme.typography.semibold14,
             color = MaterialTheme.colorScheme.primary,
         )
     }
@@ -478,7 +376,7 @@ fun HeaderView(
         ) {
             Text(
                 text = headerText,
-                style = WanderlustTextStyles.ProfileRouteTitleAndBtnText,
+                style = WanderlustTheme.typography.semibold16,
                 color = MaterialTheme.colorScheme.onBackground,
                 modifier = Modifier
                 //.fillMaxWidth()
@@ -595,7 +493,7 @@ fun ExpandableView(
                 Text(
                     modifier = Modifier.alpha(0.5f),
                     text = stringResource(id = R.string.specify_location),
-                    style = WanderlustTextStyles.ProfileLocationText,
+                    style = WanderlustTheme.typography.semibold14,
                     color = MaterialTheme.colorScheme.onBackground
                 )
                 GpsTextButton(

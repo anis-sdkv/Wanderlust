@@ -30,7 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.wanderlust.ui.navigation.graphs.RootNavGraph
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.wanderlust.ui.R
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -113,12 +113,14 @@ fun SetBottomNavigationBar() {
     // BottomSheet content:
     if (openBottomSheet) {
         ModalBottomSheet(
+            modifier = Modifier,
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
             containerColor = MaterialTheme.colorScheme.background
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OutlinedButton(
@@ -145,7 +147,7 @@ fun SetBottomNavigationBar() {
                     )
                     Text(
                         text = stringResource(id = R.string.add_place),
-                        style = WanderlustTextStyles.BottomSheetText,
+                        style = WanderlustTheme.typography.bold16,
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -173,7 +175,7 @@ fun SetBottomNavigationBar() {
                     )
                     Text(
                         text = stringResource(id = R.string.add_route),
-                        style = WanderlustTextStyles.BottomSheetText,
+                        style = WanderlustTheme.typography.bold16,
                     )
                 }
             }
@@ -218,7 +220,7 @@ fun SetBottomNavigationBar() {
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
-        content = {
+        content = { value ->
             RootNavGraph(navController = navController, isBottomBarVisible)
         }
     )

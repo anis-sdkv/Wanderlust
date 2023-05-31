@@ -27,8 +27,10 @@ data class WanderlustTypography(
     val semibold16: TextStyle,
     val semibold14: TextStyle,
     val medium16: TextStyle,
+    val medium13: TextStyle,
     val medium12: TextStyle,
-    val regular16: TextStyle
+    val regular16: TextStyle,
+    val extraBold26: TextStyle
 )
 
 data class WanderlustShape(

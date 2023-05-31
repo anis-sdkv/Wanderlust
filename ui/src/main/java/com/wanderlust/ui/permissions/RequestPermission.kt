@@ -12,7 +12,7 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.wanderlust.ui.R
-import com.wanderlust.ui.theme.WanderlustTextStyles
+import com.wanderlust.ui.custom.WanderlustTheme
 
 @ExperimentalPermissionsApi
 @Composable
@@ -94,7 +94,7 @@ fun PermissionDeniedContent(
             title = {
                 Text(
                     text = stringResource(id = R.string.permission_request),
-                    style = WanderlustTextStyles.ProfileRouteTitleAndBtnText
+                    style = WanderlustTheme.typography.semibold16
                 )
             },
             text = {

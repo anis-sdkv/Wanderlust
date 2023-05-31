@@ -18,13 +18,14 @@ import javax.inject.Inject
 
 
 data class EditProfileState(
-    val userName: String,
-    val userCity: String,
-    val userCountry: String,
-    val userDescription: String,
+    val userName: String = "",
+    val userCity: String = "",
+    val userCountry: String = "",
+    val userDescription: String = "",
 )
 
 sealed interface EditProfileEvent{
+
     object OnBackBtnClick: EditProfileEvent
     data class OnUsernameChanged(val username: String) : EditProfileEvent
     data class OnUserCityChanged(val userCity: String) : EditProfileEvent
@@ -45,19 +46,27 @@ class EditProfileViewModel @Inject constructor (
     private val userNameOfProfile = "Ivan"
     private val user = getUserByName(userNameOfProfile)
 
-    private val internalState: MutableStateFlow<EditProfileState> = MutableStateFlow(
-        EditProfileState(
-            userName = user.userName,
-            userCity = user.userCity,
-            userCountry = user.userCountry,
-            userDescription = user.userDescription,
-        )
-    )
+    private val internalState: MutableStateFlow<EditProfileState> = MutableStateFlow(EditProfileState())
     val state: StateFlow<EditProfileState> = internalState
 
     private val _action = MutableSharedFlow<EditProfileSideEffect?>()
     val action: SharedFlow<EditProfileSideEffect?>
         get() = _action.asSharedFlow()
+
+    init {
+        setData()
+    }
+
+    private fun setData(){
+        internalState.tryEmit(
+            internalState.value.copy(
+                userName = user.userName,
+                userCity = user.userCity,
+                userCountry = user.userCountry,
+                userDescription = user.userDescription,
+            )
+        )
+    }
 
     fun event (editProfileEvent: EditProfileEvent){
         when(editProfileEvent){
