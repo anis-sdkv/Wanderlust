@@ -1,10 +1,10 @@
-package com.wanderlust.ui.screens.sign_up
+package com.wanderlust.ui.screens.sign_in
 
 import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wanderlust.domain.action_results.RegisterResult
-import com.wanderlust.domain.usecases.RegisterUseCase
+import com.wanderlust.domain.action_results.LoginResult
+import com.wanderlust.domain.usecases.LoginUseCase
 import com.wanderlust.domain.usecases.SetCurrentUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
@@ -20,46 +20,40 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Immutable
-data class SignUpState(
-    val username: String = "",
+data class SignInState(
     val email: String = "",
     val password: String = "",
-    val confirmPassword: String = "",
     val passwordVisible: Boolean = false,
     val showLoadingProgressBar: Boolean = false,
     val showErrorDialog: Boolean = false,
     val errors: PersistentList<String> = persistentListOf()
 )
 
-sealed interface SignUpSideEffect {
-    object NavigateProfile : SignUpSideEffect
-    object NavigateSignIn : SignUpSideEffect
+sealed interface SignInSideEffect {
+    object NavigateProfile : SignInSideEffect
+    object NavigateSignUp : SignInSideEffect
 }
 
-sealed interface SignUpEvent {
-    object OnRegisterButtonClick : SignUpEvent
-    object OnSignInButtonCLick : SignUpEvent
-    object OnPasswordVisibilityChange : SignUpEvent
-    object OnDismissRegisterRequest : SignUpEvent
-    object OnDismissErrorDialog : SignUpEvent
-    data class OnUsernameChange(val value: String) : SignUpEvent
-    data class OnEmailChange(val value: String) : SignUpEvent
-    data class OnPasswordChange(val value: String) : SignUpEvent
-    data class OnConfirmPasswordChange(val value: String) : SignUpEvent
+sealed interface SignInEvent {
+    object OnLoginButtonClick : SignInEvent
+    object OnSignUpButtonCLick : SignInEvent
+    object OnPasswordVisibilityChange : SignInEvent
+    object OnDismissLoginRequest : SignInEvent
+    object OnDismissErrorDialog : SignInEvent
+    data class OnEmailChange(val value: String) : SignInEvent
+    data class OnPasswordChange(val value: String) : SignInEvent
 }
 
 @HiltViewModel
-class SignUpViewModel @Inject constructor(
-    private val setCurrentUserUseCase: SetCurrentUserUseCase,
-    private val register: RegisterUseCase
+class SignInViewModel @Inject constructor(
+    private val loginUseCase: LoginUseCase,
+    private val setCurrentUserUseCase: SetCurrentUserUseCase
 ) : ViewModel() {
-    private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(
-        SignUpState()
-    )
-    val state: StateFlow<SignUpState> = _state
+    private val _state: MutableStateFlow<SignInState> = MutableStateFlow(SignInState())
+    val state: StateFlow<SignInState> = _state
 
-    private val _action = MutableSharedFlow<SignUpSideEffect?>()
-    val action: SharedFlow<SignUpSideEffect?>
+    private val _action = MutableSharedFlow<SignInSideEffect?>()
+    val action: SharedFlow<SignInSideEffect?>
         get() = _action.asSharedFlow()
 
     private var currentJob: Job? = null
@@ -70,22 +64,16 @@ class SignUpViewModel @Inject constructor(
         currentJob = null
     }
 
-    fun event(event: SignUpEvent) {
+    fun event(event: SignInEvent) {
         when (event) {
-            SignUpEvent.OnRegisterButtonClick -> onRegisterButtonClick()
-            SignUpEvent.OnSignInButtonCLick -> onSignInButtonClick()
-            SignUpEvent.OnPasswordVisibilityChange -> onPasswordVisibilityChange()
-            SignUpEvent.OnDismissErrorDialog -> onDismissErrorDialog()
-            SignUpEvent.OnDismissRegisterRequest -> onDismissRegisterRequest()
-            is SignUpEvent.OnUsernameChange -> onUsernameChange(event.value)
-            is SignUpEvent.OnEmailChange -> onEmailChange(event.value)
-            is SignUpEvent.OnPasswordChange -> onPasswordChange(event.value)
-            is SignUpEvent.OnConfirmPasswordChange -> onConfirmPasswordChange(event.value)
+            SignInEvent.OnPasswordVisibilityChange -> onPasswordVisibilityChange()
+            SignInEvent.OnDismissErrorDialog -> onDismissErrorDialog()
+            SignInEvent.OnDismissLoginRequest -> onDismissLoginRequest()
+            is SignInEvent.OnEmailChange -> onEmailChange(event.value)
+            is SignInEvent.OnPasswordChange -> onPasswordChange(event.value)
+            SignInEvent.OnLoginButtonClick -> onLoginButtonClick()
+            SignInEvent.OnSignUpButtonCLick -> onSignUpButtonCLick()
         }
-    }
-
-    private fun onUsernameChange(username: String) {
-        _state.tryEmit(_state.value.copy(username = username))
     }
 
     private fun onEmailChange(email: String) {
@@ -96,10 +84,6 @@ class SignUpViewModel @Inject constructor(
         _state.tryEmit(_state.value.copy(password = password))
     }
 
-    private fun onConfirmPasswordChange(password: String) {
-        _state.tryEmit(_state.value.copy(confirmPassword = password))
-    }
-
     private fun onPasswordVisibilityChange() {
         _state.tryEmit(_state.value.copy(passwordVisible = !_state.value.passwordVisible))
     }
@@ -108,37 +92,34 @@ class SignUpViewModel @Inject constructor(
         _state.tryEmit(_state.value.copy(showErrorDialog = false))
     }
 
-    private fun onDismissRegisterRequest() {
+    private fun onDismissLoginRequest() {
         currentJob?.cancel()
         _state.tryEmit(_state.value.copy(showLoadingProgressBar = false))
     }
 
-    private fun onSignInButtonClick() {
+    private fun onSignUpButtonCLick() {
         currentJob?.cancel()
-        viewModelScope.launch {
-            _action.emit(SignUpSideEffect.NavigateSignIn)
-        }
+        viewModelScope.launch { _action.emit(SignInSideEffect.NavigateSignUp) }
     }
 
-    private fun onRegisterButtonClick() {
+    private fun onLoginButtonClick() {
         currentJob?.cancel()
         currentJob = viewModelScope.launch {
             val errors = mutableListOf<String>()
             _state.emit(_state.value.copy(showLoadingProgressBar = true))
-            val result =
-                if (validateFields(errors)) with(state.value) {
-                    register(username, email, password)
-                }
-                else RegisterResult.FailRegister()
+            val result = if (validateFields(errors)) with(state.value) {
+                loginUseCase(email, password)
+            }
+            else LoginResult.FailLogin()
             _state.emit(_state.value.copy(showLoadingProgressBar = false))
 
             when (result) {
-                is RegisterResult.SuccessRegister -> {
-                    setCurrentUserUseCase(result.id)
-                    _action.emit(SignUpSideEffect.NavigateProfile)
+                is LoginResult.SuccessLogin -> {
+                    setCurrentUserUseCase(result.userId)
+                    _action.emit(SignInSideEffect.NavigateProfile)
                 }
 
-                is RegisterResult.FailRegister -> {
+                is LoginResult.FailLogin -> {
                     result.errorMessage?.let { errors.add(it) }
                     _state.emit(_state.value.copy(showErrorDialog = true, errors = errors.toPersistentList()))
                 }
@@ -147,11 +128,6 @@ class SignUpViewModel @Inject constructor(
     }
 
     private fun validateFields(errors: MutableList<String>): Boolean {
-        if (state.value.username.length < 3) {
-            errors.add("Имя пользователя должно состоять не менее чем из 3 символов.")
-            return false
-        }
-
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(state.value.email).matches()) {
             errors.add("Неверный формат почты.")
             return false
@@ -177,11 +153,6 @@ class SignUpViewModel @Inject constructor(
         if (password.length < 8) {
             passValidate = false
             errors.add("Пароль должен содержать минимум 8 символов.")
-        }
-
-        if (password != state.value.confirmPassword) {
-            passValidate = false
-            errors.add("Пароли не совпадают.")
         }
 
         return passValidate

@@ -18,15 +18,15 @@ import com.wanderlust.ui.screens.profile.ProfileScreen
 fun NavGraphBuilder.profileNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Profile.graph,
-        startDestination = BottomNavigationItem.Profile.route
+        startDestination = ProfileNavScreen.Profile.route
     ) {
 
         composable(
-            route = BottomNavigationItem.Profile.route,
+            route = ProfileNavScreen.Profile.route,
             arguments = listOf(
-                navArgument("userName") {
+                navArgument(ProfileNavScreen.USER_ID_KEY) {
                     type = NavType.StringType
-                    defaultValue = "myProfile"
+                    defaultValue = ProfileNavScreen.SELF_PROFILE
                 }
             )
         ) {
@@ -40,9 +40,9 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController, isBottomBa
         composable(
             route = ProfileNavScreen.EditProfile.route,
             arguments = listOf(
-                navArgument("userName") {
+                navArgument(ProfileNavScreen.USER_ID_KEY) {
                     type = NavType.StringType
-                    defaultValue = "myProfile"
+                    defaultValue = ProfileNavScreen.SELF_PROFILE
                 }
             )
         ) {
@@ -55,5 +55,16 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController, isBottomBa
 }
 
 sealed class ProfileNavScreen(val route: String) {
-    object EditProfile : ProfileNavScreen(route = "edit_profile?userName={userName}")
+    object EditProfile : ProfileNavScreen(route = "edit_profile/$USER_ID_KEY") {
+        fun passUserId(id: String) = "edit_profile/$id"
+    }
+
+    object Profile : ProfileNavScreen(route = "profile/{$USER_ID_KEY}") {
+        fun passUserId(id: String) = "profile/$id"
+    }
+
+    companion object {
+        const val USER_ID_KEY = "userId"
+        const val SELF_PROFILE = "self"
+    }
 }

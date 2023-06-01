@@ -56,10 +56,10 @@ class EditProfileViewModel @Inject constructor (
     private fun setData(){
         internalState.tryEmit(
             internalState.value.copy(
-                userName = user.userName,
-                userCity = user.userCity ?: "",
-                userCountry = user.userCountry ?: "",
-                userDescription = user.userDescription ?: "",
+                userName = user.username,
+                userCity = user.city ?: "",
+                userCountry = user.country ?: "",
+                userDescription = user.description ?: "",
             )
         )
     }

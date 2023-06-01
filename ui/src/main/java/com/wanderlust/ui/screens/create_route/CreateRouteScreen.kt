@@ -280,16 +280,17 @@ fun CreateRouteScreen(
         ) {
             Button(
                 onClick = {
-                    eventHandler.invoke(
-                        CreateRouteEvent.OnAddPlaceClick(
-                            Place(
-                                currentLocation.latitude,
-                                currentLocation.longitude,
-                                "Interesting Place",
-                                ""
-                            )
-                        )
-                    )
+//                    eventHandler.invoke(
+//                        CreateRouteEvent.OnAddPlaceClick(
+//                            Place(
+//                                "",
+//                                currentLocation.latitude,
+//                                currentLocation.longitude,
+//                                "Interesting Place",
+//                                ""
+//                            )
+//                        )
+//                    )
                 },
                 modifier = Modifier
                     .padding(top = 22.dp, bottom = 16.dp)
