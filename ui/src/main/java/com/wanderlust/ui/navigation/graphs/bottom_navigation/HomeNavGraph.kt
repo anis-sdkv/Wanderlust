@@ -17,7 +17,7 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController, isBottomBarVi
     ) {
         composable(route = HomeNavScreen.Home.route) {
             isBottomBarVisible.value = true
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
     }
 

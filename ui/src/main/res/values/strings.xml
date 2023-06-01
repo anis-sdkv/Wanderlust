@@ -66,6 +66,9 @@
     <string name="english">English</string>
     <string name="russian">Russian</string>
 
+    <!--    Home-->
+    <string name="search">Search</string>
+
     <!--    Map-->
     <string name="creating_place">Creating a place</string>
     <string name="creating_route">Creating a route</string>

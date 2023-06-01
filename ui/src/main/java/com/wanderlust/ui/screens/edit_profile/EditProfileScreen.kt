@@ -46,7 +46,7 @@ fun EditProfileScreen(
 
     Column(
         Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(top = 48.dp, start = 20.dp, end = 20.dp, bottom = 64.dp),
@@ -77,7 +77,7 @@ fun EditProfileScreen(
             Text(
                 text = stringResource(id = R.string.change_photo),
                 style = WanderlustTheme.typography.medium13,
-                color = MaterialTheme.colorScheme.primary
+                color = WanderlustTheme.colors.accent
             )
         }
         Column(
@@ -117,13 +117,13 @@ fun EditProfileScreen(
                 .fillMaxWidth()
                 .padding(top = 22.dp, bottom = 80.dp)
                 .height(42.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.save),
                 style = WanderlustTheme.typography.semibold16,
-                color = MaterialTheme.colorScheme.background
+                color = WanderlustTheme.colors.onAccent
             )
         }
     }

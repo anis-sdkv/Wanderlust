@@ -14,9 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
@@ -26,7 +24,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,7 +49,7 @@ fun CustomDialogLocation(
             modifier = Modifier
                 .padding(top = 20.dp, bottom = 20.dp)
                 .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    color = WanderlustTheme.colors.solid,
                     shape = RoundedCornerShape(25.dp, 5.dp, 25.dp, 5.dp)
                 )
                 .verticalScroll(rememberScrollState())
@@ -80,7 +77,7 @@ fun CustomDialogLocation(
                     modifier = Modifier
                         .fillMaxWidth(),
                     style = WanderlustTheme.typography.bold24,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = WanderlustTheme.colors.primaryText,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -92,13 +89,13 @@ fun CustomDialogLocation(
                         .fillMaxWidth(),
                     letterSpacing = 1.sp,
                     style = WanderlustTheme.typography.medium16,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = WanderlustTheme.colors.primaryText,
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
 
                 val cornerRadius = 16.dp
-                val gradientColors = listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.primaryContainer)
+                val gradientColors = listOf(WanderlustTheme.colors.accent, WanderlustTheme.colors.tint)
                 val roundedCornerShape = RoundedCornerShape(topStart = 30.dp,bottomEnd = 30.dp)
 
                 Button(
@@ -126,7 +123,7 @@ fun CustomDialogLocation(
                         Text(
                             text = stringResource(id = R.string.enable),
                             style = WanderlustTheme.typography.semibold16,
-                            color = MaterialTheme.colorScheme.onPrimary
+                            color = WanderlustTheme.colors.onAccent
                         )
                     }
                 }

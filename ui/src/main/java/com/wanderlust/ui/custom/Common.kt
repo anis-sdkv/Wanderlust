@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.Dp
 
 data class WanderlustColors(
     val accent: Color,
+    val onAccent: Color,
     val tint: Color,
     val primaryText: Color,
     val primaryBackground: Color,

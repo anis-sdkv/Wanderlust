@@ -34,7 +34,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -47,10 +46,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -74,6 +71,8 @@ import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.common.TagsField
+import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextField
+import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDescription
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.permissions.RequestPermission
 import com.wanderlust.ui.utils.LocationUtils
@@ -132,7 +131,7 @@ fun CreateRouteScreen(
     // content
     Column(
         Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(top = 48.dp, start = 20.dp, end = 20.dp),
@@ -165,7 +164,7 @@ fun CreateRouteScreen(
             }
             Polyline(
                 points = latLonList,
-                color = MaterialTheme.colorScheme.primary
+                color = WanderlustTheme.colors.accent
             )
         }
 
@@ -194,7 +193,7 @@ fun CreateRouteScreen(
                 .fillMaxWidth()
                 .padding(top = 60.dp, bottom = 20.dp),
             style = WanderlustTheme.typography.bold20,
-            color = MaterialTheme.colorScheme.onBackground
+            color = WanderlustTheme.colors.primaryText
         )
 
         if(createRouteState.listOfPlaces.isEmpty()) {
@@ -205,7 +204,7 @@ fun CreateRouteScreen(
                 text = stringResource(id = R.string.start_creating),
                 textAlign = TextAlign.Center,
                 style = WanderlustTheme.typography.semibold14,
-                color = MaterialTheme.colorScheme.onBackground
+                color = WanderlustTheme.colors.primaryText
             )
         }
 
@@ -222,7 +221,7 @@ fun CreateRouteScreen(
                         contentDescription = "icon_trash",
                         modifier = Modifier
                             .size(48.dp),
-                        MaterialTheme.colorScheme.primary
+                        WanderlustTheme.colors.accent
                     )
                 }
                 Card(
@@ -295,19 +294,19 @@ fun CreateRouteScreen(
                 modifier = Modifier
                     .padding(top = 22.dp, bottom = 16.dp)
                     .height(42.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+                colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(
                     Icons.Rounded.Add,
                     contentDescription = "icon_add",
                     modifier = Modifier,
-                    MaterialTheme.colorScheme.onPrimary
+                    WanderlustTheme.colors.onAccent
                 )
                 Text(
                     text = stringResource(id = R.string.add_place),
                     style = WanderlustTheme.typography.semibold16,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = WanderlustTheme.colors.onAccent
                 )
             }
 
@@ -321,13 +320,13 @@ fun CreateRouteScreen(
                 .fillMaxWidth()
                 .padding(top = 80.dp, bottom = 80.dp)
                 .height(42.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.save),
                 style = WanderlustTheme.typography.semibold16,
-                color = MaterialTheme.colorScheme.background
+                color = WanderlustTheme.colors.primaryBackground
             )
         }
     }
@@ -344,7 +343,7 @@ private fun GpsTextButton(onTextClick: () -> Unit) {
         Text(
             text = stringResource(id = R.string.use_your_location),
             style = WanderlustTheme.typography.semibold14,
-            color = MaterialTheme.colorScheme.primary,
+            color = WanderlustTheme.colors.accent,
         )
     }
 }
@@ -357,7 +356,7 @@ fun HeaderView(
     isExpanded: Boolean
 ) {
     Card(
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, WanderlustTheme.colors.outline),
         modifier = Modifier
             .fillMaxWidth()
             .clickable(
@@ -366,7 +365,7 @@ fun HeaderView(
                 onClick = onClickItem
             ),
         shape = if(isExpanded) RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp) else RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+        colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.solid)
     ) {
         Row(
             modifier = Modifier
@@ -378,7 +377,7 @@ fun HeaderView(
             Text(
                 text = headerText,
                 style = WanderlustTheme.typography.semibold16,
-                color = MaterialTheme.colorScheme.onBackground,
+                color = WanderlustTheme.colors.primaryText,
                 modifier = Modifier
                 //.fillMaxWidth()
             )
@@ -394,7 +393,7 @@ fun HeaderView(
                     contentDescription = "icon_trash",
                     modifier = Modifier
                         .size(30.dp),
-                    MaterialTheme.colorScheme.primary
+                    WanderlustTheme.colors.accent
                 )
             }
         }
@@ -480,8 +479,8 @@ fun ExpandableView(
     ) {
         Column(
             modifier = Modifier
-                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
-                .background(MaterialTheme.colorScheme.surfaceVariant),
+                .background(WanderlustTheme.colors.solid)
+                .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -495,7 +494,7 @@ fun ExpandableView(
                     modifier = Modifier.alpha(0.5f),
                     text = stringResource(id = R.string.specify_location),
                     style = WanderlustTheme.typography.semibold14,
-                    color = MaterialTheme.colorScheme.onBackground
+                    color = WanderlustTheme.colors.primaryText
                 )
                 GpsTextButton(
                     onTextClick = {
@@ -513,7 +512,7 @@ fun ExpandableView(
             }
             GoogleMap(
                 modifier = Modifier
-                    //.padding(top = 8.dp)
+                    .padding(bottom = 8.dp)
                     .clip(RoundedCornerShape(16.dp))
                     .fillMaxWidth()
                     .height(270.dp),
@@ -531,16 +530,16 @@ fun ExpandableView(
                     title = createRouteState.listOfPlaces[index].placeName
                 )
             }
-            DefaultTextField(
+            EditProfileTextField(
                 label = stringResource(id = R.string.place_name),
                 inputValue = createRouteState.listOfPlaces[index].placeName,
-                modifier = Modifier.padding(top = 28.dp),
+                //modifier = Modifier.padding(top = 28.dp),
             ){ placeName -> onPlaceNameChanged(placeName) }
 
-            DefaultDescriptionField(
+            EditProfileTextFieldDescription(
                 label = stringResource(id = R.string.place_description),
                 inputValue = createRouteState.listOfPlaces[index].placeDescription,
-                modifier = Modifier.padding(top = 16.dp),
+                //modifier = Modifier.padding(top = 16.dp),
             ){ placeDescription -> onPlaceDescriptionChanged(placeDescription) }
 
             LazyRow(

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -39,7 +38,8 @@ fun EditProfileTextFieldDate(label: String, inputValue: String) {
             style = WanderlustTheme.typography.semibold14,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
-                .alpha(0.5f)
+                .alpha(0.5f),
+            color = WanderlustTheme.colors.primaryText
         )
 
         TextField(
@@ -59,15 +59,17 @@ fun EditProfileTextFieldDate(label: String, inputValue: String) {
                 .height(52.dp)
                 .fillMaxWidth()
                 .border(width = (1.5).dp,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = WanderlustTheme.colors.outline,
                     shape = RoundedCornerShape(8.dp)
                 ),
             colors = TextFieldDefaults.colors(
-                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedTextColor = WanderlustTheme.colors.primaryText,
+                unfocusedTextColor = WanderlustTheme.colors.primaryText,
+                cursorColor = WanderlustTheme.colors.accent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                focusedContainerColor = WanderlustTheme.colors.solid,
+                unfocusedContainerColor = WanderlustTheme.colors.solid
             )
         )
     }
