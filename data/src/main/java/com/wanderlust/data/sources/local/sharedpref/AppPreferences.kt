@@ -7,7 +7,7 @@ class AppPreferences(private val context: Context) {
 
     private val storage = context.getSharedPreferences(USER_STORAGE, Context.MODE_PRIVATE)
 
-    fun saveUserId(userId: String) {
+    fun saveUserId(userId: String?) {
         storage
             .edit()
             .putString(USER_ID, userId)

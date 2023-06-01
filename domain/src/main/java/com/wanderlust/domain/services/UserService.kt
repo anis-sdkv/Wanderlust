@@ -8,4 +8,5 @@ interface UserService {
     suspend fun sendVerification(): Boolean
     suspend fun login(email: String, password: String): LoginResult
     suspend fun updatePassword(newPassword: String): Boolean
+    fun signOut()
 }

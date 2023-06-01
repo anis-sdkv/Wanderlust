@@ -7,4 +7,5 @@ interface UserRepository {
     suspend fun getById(id: String): UserProfile?
     fun getUserByUserName(name: String): UserProfile
 
+    suspend fun update(userProfile: UserProfile)
 }

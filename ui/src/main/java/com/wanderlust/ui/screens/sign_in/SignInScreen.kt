@@ -40,9 +40,12 @@ import com.wanderlust.ui.components.auth_screens.AuthTextField
 import com.wanderlust.ui.components.auth_screens.DecoratedText
 import com.wanderlust.ui.components.auth_screens.SocialMediaAuthButton
 import com.wanderlust.ui.components.auth_screens.authGradient
+import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.navigation.graphs.AuthScreen
+import com.wanderlust.ui.screens.sign_up.SignUpEvent
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 
 @Composable
@@ -161,60 +164,18 @@ fun SignInMainContent(state: SignInState, eventHandler: (SignInEvent) -> Unit) {
 
 @Composable
 private fun Dialogs(state: SignInState, eventHandler: (SignInEvent) -> Unit) {
-    if (state.showLoadingProgressBar)
-        Dialog(onDismissRequest = { eventHandler.invoke(SignInEvent.OnDismissLoginRequest) }) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(200.dp)
-                    .background(WanderlustTheme.colors.primaryBackground, shape = RoundedCornerShape(20.dp))
-            ) {
-                CircularProgressIndicator(color = WanderlustTheme.colors.accent)
 
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(20.dp),
-                    text = "Авторизация...",
-                    style = WanderlustTheme.typography.semibold16,
-                    color = WanderlustTheme.colors.primaryText
-                )
-            }
-        }
+    if (state.showLoadingProgressBar)
+        LoadingDialog(
+            stringResource(id = R.string.loading_login),
+            onDismiss = { eventHandler.invoke(SignInEvent.OnDismissLoginRequest) }
+        )
 
     if (state.showErrorDialog)
-        AlertDialog(
-            containerColor = WanderlustTheme.colors.primaryBackground,
-            shape = RoundedCornerShape(20.dp),
-            title = {
-                Text(
-                    text = stringResource(id = R.string.reg_fail),
-                    style = WanderlustTheme.typography.semibold16,
-                    color = WanderlustTheme.colors.primaryText
-                )
-            },
-            text = {
-                LazyColumn {
-                    items(state.errors.size) {
-                        Text(
-                            text = state.errors[it],
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            style = WanderlustTheme.typography.medium12,
-                            color = WanderlustTheme.colors.error
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { eventHandler.invoke(SignInEvent.OnDismissErrorDialog) }) {
-                    Text(
-                        text = "OK",
-                        style = WanderlustTheme.typography.semibold14,
-                        color = WanderlustTheme.colors.accent
-                    )
-                }
-            },
-            onDismissRequest = { eventHandler.invoke(SignInEvent.OnDismissErrorDialog) },
+        ErrorDialog(
+            title = stringResource(id = R.string.login_fail),
+            errors = state.errors,
+            onDismiss = { eventHandler.invoke(SignInEvent.OnDismissErrorDialog) }
         )
 }
 

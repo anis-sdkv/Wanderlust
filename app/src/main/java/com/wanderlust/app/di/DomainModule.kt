@@ -10,6 +10,8 @@ import com.wanderlust.domain.usecases.GetUserByName
 import com.wanderlust.domain.usecases.LoginUseCase
 import com.wanderlust.domain.usecases.RegisterUseCase
 import com.wanderlust.domain.usecases.SetCurrentUserUseCase
+import com.wanderlust.domain.usecases.SignOutUseCase
+import com.wanderlust.domain.usecases.UpdateUserUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,4 +44,14 @@ class DomainModule {
     fun provideSetCurrentUserUseCase(currentUserRepository: CurrentUserRepository): SetCurrentUserUseCase =
         SetCurrentUserUseCase(currentUserRepository)
 
+    @Provides
+    fun provideSignOutUseCase(currentUserRepository: CurrentUserRepository): SignOutUseCase =
+        SignOutUseCase(currentUserRepository)
+
+    @Provides
+    fun provideUpdateUserUseCase(
+        userRepository: UserRepository,
+        currentUserRepository: CurrentUserRepository
+    ): UpdateUserUseCase =
+        UpdateUserUseCase(userRepository, currentUserRepository)
 }
