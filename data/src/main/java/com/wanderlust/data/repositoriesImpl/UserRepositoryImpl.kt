@@ -17,75 +17,32 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun createUser(id: String, username: String) {
         val user = mapper.map(UserProfile(id, username, Date()))
         db.collection(USERS_COLLECTION)
-            .add(user)
+            .document(id)
+            .set(user)
             .await()
     }
 
     override suspend fun getById(id: String): UserProfile? {
-        val query = db.collection(USERS_COLLECTION)
-            .whereEqualTo("id", id)
+        val doc = db.collection(USERS_COLLECTION)
+            .document(id)
             .get()
             .await()
 
-        return if (!query.isEmpty) {
-            val entity = query.documents.first()
-                .toObject(UserEntity::class.java) ?: return null
+        return if (doc.exists()) {
+            val entity = doc.toObject(UserEntity::class.java) ?: return null
             mapper.map(entity)
         } else null
     }
 
+    override suspend fun update(userProfile: UserProfile) {
+        val entity = mapper.map(userProfile)
+        db.collection(USERS_COLLECTION)
+            .document(userProfile.id)
+            .set(entity)
+    }
+
     override fun getUserByUserName(name: String): UserProfile {
         TODO()
-//        return UserProfile(
-//            "1",
-//            "Ivan",
-//            "Kazan",
-//            "Russia",
-//            "12345",
-//            listOf(
-//                Route(
-//                    "Route Name",
-//                    "Route Description",
-//                    emptyList()
-//                )
-//            ),
-//            listOf(
-//                UserProfile(
-//                    "1",
-//                    "Ivan",
-//                    "Kazan",
-//                    "Russia",
-//                    "12345",
-//                    listOf(
-//                        Route(
-//                            "Route Name",
-//                            "Route Description",
-//                            emptyList()
-//                        )
-//                    ),
-//                    listOf(),
-//                    listOf()
-//                )
-//            ),
-//            listOf(
-//                UserProfile(
-//                    "1",
-//                    "Ivan",
-//                    "Kazan",
-//                    "Russia",
-//                    "12345",
-//                    listOf(
-//                        Route(
-//                            "Route Name",
-//                            "Route Description",
-//                            emptyList()
-//                        )
-//                    ),
-//                    listOf(),
-//                    listOf()
-//                )
-//            )
-//        )
     }
 
     companion object {

@@ -1,8 +1,6 @@
 package com.wanderlust.ui.screens.sign_up
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -27,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -39,6 +30,8 @@ import com.wanderlust.ui.components.auth_screens.AuthTextField
 import com.wanderlust.ui.components.auth_screens.DecoratedText
 import com.wanderlust.ui.components.auth_screens.SocialMediaAuthButton
 import com.wanderlust.ui.components.auth_screens.authGradient
+import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.settings.LocalSettingsEventBus
@@ -172,58 +165,15 @@ private fun SignUpMainContent(state: SignUpState, eventHandler: (SignUpEvent) ->
 @Composable
 private fun Dialogs(state: SignUpState, eventHandler: (SignUpEvent) -> Unit) {
     if (state.showLoadingProgressBar)
-        Dialog(onDismissRequest = { eventHandler.invoke(SignUpEvent.OnDismissRegisterRequest) }) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(200.dp)
-                    .background(WanderlustTheme.colors.primaryBackground, shape = RoundedCornerShape(20.dp))
-            ) {
-                CircularProgressIndicator(color = WanderlustTheme.colors.accent)
-
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(20.dp),
-                    text = "Регистрация...",
-                    style = WanderlustTheme.typography.semibold16,
-                    color = WanderlustTheme.colors.primaryText
-                )
-            }
-        }
+        LoadingDialog(
+            stringResource(id = R.string.loading_reg),
+            onDismiss = { eventHandler.invoke(SignUpEvent.OnDismissRegisterRequest) }
+        )
 
     if (state.showErrorDialog)
-        AlertDialog(
-            containerColor = WanderlustTheme.colors.primaryBackground,
-            shape = RoundedCornerShape(20.dp),
-            title = {
-                Text(
-                    text = stringResource(id = R.string.reg_fail),
-                    style = WanderlustTheme.typography.semibold16,
-                    color = WanderlustTheme.colors.primaryText
-                )
-            },
-            text = {
-                LazyColumn {
-                    items(state.errors.size) {
-                        Text(
-                            text = state.errors[it],
-                            modifier = Modifier.padding(vertical = 4.dp),
-                            style = WanderlustTheme.typography.medium12,
-                            color = WanderlustTheme.colors.error
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = { eventHandler.invoke(SignUpEvent.OnDismissErrorDialog) }) {
-                    Text(
-                        text = "OK",
-                        style = WanderlustTheme.typography.semibold14,
-                        color = WanderlustTheme.colors.accent
-                    )
-                }
-            },
-            onDismissRequest = { eventHandler.invoke(SignUpEvent.OnDismissErrorDialog) },
+        ErrorDialog(
+            title = stringResource(id = R.string.reg_fail),
+            errors = state.errors,
+            onDismiss = { eventHandler.invoke(SignUpEvent.OnDismissErrorDialog) }
         )
 }

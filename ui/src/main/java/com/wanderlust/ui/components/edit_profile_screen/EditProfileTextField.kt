@@ -23,7 +23,6 @@ fun EditProfileTextField(label: String, inputValue: String, onChanged: (String) 
             .fillMaxWidth()
             .padding(top = 10.dp, bottom = 10.dp)
     ) {
-        var value by remember { mutableStateOf(inputValue) }
         val maxChar = 25
 
         Text(
@@ -36,11 +35,10 @@ fun EditProfileTextField(label: String, inputValue: String, onChanged: (String) 
         )
 
         TextField(
-            value = value,
+            value = inputValue,
             onValueChange = {
                 if (it.length <= maxChar) {
                     onChanged(it)
-                    value = it
                 }
             },
             singleLine = true,

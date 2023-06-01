@@ -2,13 +2,22 @@ package com.wanderlust.ui.screens.edit_profile
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextField
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDate
@@ -31,7 +42,7 @@ fun EditProfileScreen(
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
 
-    val editProfileState by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val eventHandler = viewModel::event
     val action by viewModel.action.collectAsStateWithLifecycle(null)
 
@@ -85,7 +96,7 @@ fun EditProfileScreen(
         ) {
             EditProfileTextField(
                 label = stringResource(id = R.string.user_name),
-                editProfileState.userName
+                state.userName
             ) { name -> eventHandler.invoke(EditProfileEvent.OnUsernameChanged(name)) }//eventHandler.invoke(EditProfileEvent.OnUsernameChanged(editProfileState.userName))
 
             EditProfileTextFieldDate(
@@ -95,23 +106,23 @@ fun EditProfileScreen(
 
             EditProfileTextField(
                 label = stringResource(id = R.string.country),
-                editProfileState.userCountry
+                state.userCountry
             ) { country -> eventHandler.invoke(EditProfileEvent.OnUserCountryChanged(country)) }
 
             EditProfileTextField(
                 label = stringResource(id = R.string.city),
-                editProfileState.userCity
+                state.userCity
             ) { city -> eventHandler.invoke(EditProfileEvent.OnUserCityChanged(city)) }
 
             EditProfileTextFieldDescription(
                 label = stringResource(id = R.string.about_user),
-                editProfileState.userDescription
+                state.userDescription
             ) { description -> eventHandler.invoke(EditProfileEvent.OnUserDescriptionChanged(description)) }
         }
 
         Button(
             onClick = {
-                // TODO
+                eventHandler.invoke(EditProfileEvent.OnUpdateButtonClick)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,4 +138,20 @@ fun EditProfileScreen(
             )
         }
     }
+}
+
+@Composable
+private fun Dialogs(state: EditProfileState, eventHandler: (EditProfileEvent) -> Unit) {
+    if (state.showLoadingProgressBar)
+        LoadingDialog(
+            stringResource(id = R.string.loading_reg),
+            onDismiss = { eventHandler.invoke(EditProfileEvent.OnDismissUpdateRequest) }
+        )
+
+    if (state.showErrorDialog)
+        ErrorDialog(
+            title = stringResource(id = R.string.reg_fail),
+            errors = state.errors,
+            onDismiss = { eventHandler.invoke(EditProfileEvent.OnDismissErrorDialog) }
+        )
 }
