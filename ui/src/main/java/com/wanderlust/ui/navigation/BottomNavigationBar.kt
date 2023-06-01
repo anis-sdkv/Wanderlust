@@ -5,32 +5,25 @@ import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.*
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.wanderlust.ui.navigation.graphs.RootNavGraph
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
+import com.wanderlust.ui.navigation.graphs.RootNavGraph
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,10 +76,10 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
                             indicatorColor = WanderlustTheme.colors.primaryBackground,
                         ),
                         alwaysShowLabel = false,
-                        selected = currentDestination?.hierarchy?.any { it.route == item.route || it.route == item.graph } == true,
+                        selected = currentDestination?.hierarchy?.any { it.route == item.graph } == true,
                         onClick = {
 
-                            navController.navigate(item.route) {
+                            navController.navigate(item.graph) {
                                 navController.graph.startDestinationRoute?.let { route ->
                                     popUpTo(route) {
                                         saveState = true
