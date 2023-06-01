@@ -11,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -26,7 +25,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.wanderlust.ui.R
-import com.wanderlust.ui.components.common.CreateRouteCard
 import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
@@ -411,7 +409,7 @@ fun ProfileScreen(
                                 //  Но пока что так:
                                 val items = listOf(1, 2, 3, 4, 5)
                                 items.forEach { _ ->
-                                    CreateRouteCard()
+                                    //CreateRouteCard()
                                 }
                             }
 

@@ -35,16 +35,6 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
     shape = RoundedCornerShape(16.dp),
     colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.secondaryBackground),
     ) {
-        Text(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth()
-                .alpha(0.6f),
-            text = stringResource(id = R.string.select_tags),
-            textAlign = TextAlign.Center,
-            style = WanderlustTheme.typography.semibold14,
-            color = WanderlustTheme.colors.primaryText
-        )
         val tags = stringArrayResource(id = R.array.tags_array)
         FlowRow(
             modifier = Modifier
@@ -55,9 +45,7 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
             for (tag in tags) {
                 Box(
                     modifier = Modifier
-                        .height(IntrinsicSize.Min)
                         .padding(4.dp)
-                        //.padding(start = 4.dp, end = 4.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             color = if(selectedTags.contains(tag)){
@@ -82,5 +70,15 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
                 }
             }
         }
+        Text(
+            modifier = Modifier
+                .padding(bottom = 16.dp)
+                .fillMaxWidth()
+                .alpha(0.6f),
+            text = stringResource(id = R.string.select_tags),
+            textAlign = TextAlign.Center,
+            style = WanderlustTheme.typography.semibold14,
+            color = WanderlustTheme.colors.primaryText
+        )
     }
 }

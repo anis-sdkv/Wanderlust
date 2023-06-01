@@ -1,16 +1,24 @@
 package com.wanderlust.ui.screens.map
 
 import android.Manifest
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.location.LocationServices
@@ -20,7 +28,11 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.SearchTextField
+import com.wanderlust.ui.components.common.SquareButton
+import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.Graph
+import com.wanderlust.ui.navigation.graphs.bottom_navigation.MapNavScreen
 import com.wanderlust.ui.permissions.RequestPermission
 import com.wanderlust.ui.utils.LocationUtils
 
@@ -28,8 +40,12 @@ import com.wanderlust.ui.utils.LocationUtils
 @Composable
 fun MapScreen(
     navController: NavController,
+
     viewModel: MapViewModel = hiltViewModel()
 ) {
+    val mapState by viewModel.state.collectAsStateWithLifecycle()
+    val eventHandler = viewModel::event
+    val action by viewModel.action.collectAsStateWithLifecycle(null)
 
     var currentLocation by remember { mutableStateOf(LocationUtils.getDefaultLocation()) }
 
@@ -58,14 +74,62 @@ fun MapScreen(
             }
         )
     }
+    LaunchedEffect(action) {
+        when (action) {
+            null -> Unit
+            MapSideEffect.NavigateToSearchScreen -> {
+                navController.navigate(
+                    MapNavScreen.Search.passSearchValue(
+                        if (mapState.searchValue == "") "empty" else mapState.searchValue,
+                        "map"
+                    )
+                )
+            }
+        }
+    }
 
-    GoogleMap(
-        modifier = Modifier.fillMaxSize(),
-        cameraPositionState = cameraPositionState,
-    ) {
-        Marker(
-            state = MarkerState(position = LocationUtils.getPosition(currentLocation)),
-            title = stringResource(id = R.string.it_is_you)
-        )
+    Box(
+        modifier = Modifier.fillMaxSize()
+    ){
+        GoogleMap(
+            modifier = Modifier
+                .padding(bottom = 64.dp)
+                .fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+        ) {
+            Marker(
+                state = MarkerState(position = LocationUtils.getPosition(currentLocation)),
+                title = stringResource(id = R.string.it_is_you)
+            )
+        }
+        Row(
+            modifier = Modifier
+                .padding(top = 48.dp, start = 20.dp, end = 20.dp)
+                .align(Alignment.TopCenter),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SearchTextField(
+                modifier = Modifier.weight(0.8f),
+                searchValue = mapState.searchValue,
+                onChange = { searchValue -> eventHandler.invoke(MapEvent.OnSearchValueChanged(searchValue)) }
+            )
+            SquareButton(
+                modifier = Modifier
+                    .weight(0.2f),
+                icon = R.drawable.ic_filter,
+                iconColor = WanderlustTheme.colors.secondaryText,
+                backgroundColor = WanderlustTheme.colors.solid
+            ) {
+                eventHandler.invoke(MapEvent.OnFilterBtnClick)
+            }
+            SquareButton(
+                modifier = Modifier.weight(0.2f),
+                icon = R.drawable.ic_search,
+                iconColor = WanderlustTheme.colors.onAccent,
+                backgroundColor = WanderlustTheme.colors.accent
+            ) {
+                eventHandler.invoke(MapEvent.OnSearchBtnClick)
+            }
+        }
     }
 }

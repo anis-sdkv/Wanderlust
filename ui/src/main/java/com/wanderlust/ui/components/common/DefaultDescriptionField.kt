@@ -11,10 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -30,8 +26,6 @@ fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifie
         modifier = modifier
             .fillMaxWidth()
     ) {
-
-        var value by remember { mutableStateOf(inputValue) }
         val maxChar = 300
         val maxLines = 15
 
@@ -44,10 +38,9 @@ fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifie
         )
 
         TextField(
-            value = value,
+            value = inputValue,
             onValueChange = { if (it.length <= maxChar)
                 onChanged(it)
-                value = it
             },
             maxLines = maxLines,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -55,7 +48,7 @@ fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifie
             textStyle = WanderlustTheme.typography.medium16,
             supportingText = {
                 Text(
-                    text = "${value.length} / $maxChar",
+                    text = "${inputValue.length} / $maxChar",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 4.dp),
