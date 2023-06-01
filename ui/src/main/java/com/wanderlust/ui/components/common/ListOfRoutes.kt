@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -16,15 +18,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.wanderlust.domain.model.Route
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
+
 @Composable
-fun CreateRouteCard(
-    //route: Route
+fun ListOfRoutes(routes: List<Route>) {
+    LazyColumn(
+        content = {
+            items(routes) {
+                CreateRouteCard(it)
+            }
+        }
+    )
+}
+
+@Composable
+private fun CreateRouteCard(
+    route: Route
 ){
     Card(modifier = Modifier
         .padding(top = 12.dp, bottom = 12.dp),
@@ -57,8 +71,7 @@ fun CreateRouteCard(
                     }
             )
             Text(
-                text = //route.name
-                "Route Name",
+                text = route.routeName,
                 modifier = Modifier
                     .constrainAs(routeName) {
                         top.linkTo(parent.top)
@@ -82,13 +95,12 @@ fun CreateRouteCard(
                     tint = WanderlustTheme.colors.primaryText
                 )
                 Text(
-                    text = //route.rating
-                    stringResource(id = R.string.default_rating),
+                    text = (route.totalRating/route.ratingCount).toString(),
                     modifier = Modifier.padding(start = 8.dp),
                     style = WanderlustTheme.typography.semibold14,
                     color = WanderlustTheme.colors.primaryText
                 )
-                Text(
+                /*Text(
                     text = //route.distance
                     stringResource(id = R.string.default_distance),
                     modifier = Modifier
@@ -96,7 +108,7 @@ fun CreateRouteCard(
                         //.alpha(0.5f),
                     style = WanderlustTheme.typography.semibold14,
                     color = WanderlustTheme.colors.secondaryText
-                )
+                )*/
             }
 
             Image(

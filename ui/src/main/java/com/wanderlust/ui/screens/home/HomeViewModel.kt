@@ -1,8 +1,11 @@
 package com.wanderlust.ui.screens.home
 
+import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wanderlust.domain.model.Route
+import com.wanderlust.ui.R
 import com.wanderlust.ui.screens.edit_profile.EditProfileEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,6 +20,9 @@ import javax.inject.Inject
 data class HomeState(
     val routes: List<Route>,
     val searchValue: String,
+    val selectedCategory: SortCategory,
+    val selectedTags: List<String>,
+    val searchType: Boolean
 )
 
 sealed interface HomeEvent{
@@ -24,6 +30,7 @@ sealed interface HomeEvent{
     object OnFilterBtnClick: HomeEvent
     object OnSearchBtnClick: HomeEvent
     data class OnSearchValueChanged(val searchValue: String): HomeEvent
+    data class OnCategoryClick(val selectedCategory: SortCategory) : HomeEvent
 }
 
 sealed interface HomeSideEffect {
@@ -33,13 +40,21 @@ sealed interface HomeSideEffect {
 
 @HiltViewModel
 class HomeViewModel @Inject constructor (
-    //savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+
+    private val searchValue: String = savedStateHandle["searchValue"] ?: ""
+    private val searchType: Boolean = savedStateHandle["searchType"] ?: true
+
+    //private val selectedTags: TagsList = savedStateHandle["searchTags"] ?: TagsList(emptyList())
 
     private val internalState: MutableStateFlow<HomeState> = MutableStateFlow(
         HomeState(
             emptyList(),
-            ""
+            if (searchValue == "empty") "" else searchValue,
+            SortCategory.ALL_ROUTES,
+            emptyList(),// selectedTags.tags
+            searchType
         )
     )
     val state: StateFlow<HomeState> = internalState
@@ -54,7 +69,16 @@ class HomeViewModel @Inject constructor (
             HomeEvent.OnRouteClick -> onRouteClick()
             HomeEvent.OnSearchBtnClick -> onSearchBtnClick()
             is HomeEvent.OnSearchValueChanged -> onSearchValueChanged(homeEvent)
+            is HomeEvent.OnCategoryClick -> onCategoryClick(homeEvent)
         }
+    }
+
+    private fun onCategoryClick(event: HomeEvent.OnCategoryClick){
+        internalState.tryEmit(
+            internalState.value.copy(
+                selectedCategory = event.selectedCategory
+            )
+        )
     }
 
     private fun onSearchValueChanged(event: HomeEvent.OnSearchValueChanged){
@@ -67,7 +91,7 @@ class HomeViewModel @Inject constructor (
 
     private fun onSearchBtnClick(){
         viewModelScope.launch {
-            _action.emit(HomeSideEffect.NavigateToSearchScreen)
+            // TODO
         }
     }
 

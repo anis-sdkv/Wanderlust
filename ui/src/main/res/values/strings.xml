@@ -81,6 +81,18 @@
 
     <!--    Home-->
     <string name="search">Search</string>
+    <string name="all_routes">All routes</string>
+    <string name="all_places">All places</string>
+    <string name="favourites">Favourites</string>
+
+    <!--    Search-->
+    <string name="type_of_search">Type of search</string>
+    <string name="by_name">by name</string>
+    <string name="by_author">by author</string>
+    <string name="choose_tags">Choose tags</string>
+
+
+
 
     <!--    Map-->
     <string name="creating_place">Creating a place</string>

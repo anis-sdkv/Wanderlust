@@ -228,7 +228,6 @@ fun CreateRouteScreen(
                     modifier = Modifier,
                     elevation = CardDefaults.cardElevation(10.dp),
                     shape = RoundedCornerShape(16.dp)
-                    //.background(colorResource(R.color.colorPrimaryDark))
                 ) {
                     Column {
                         HeaderView(

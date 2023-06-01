@@ -82,6 +82,15 @@
 
     <!--    Home-->
     <string name="search">Поиск</string>
+    <string name="all_routes">Все маршруты</string>
+    <string name="all_places">Все места</string>
+    <string name="favourites">Избранное</string>
+
+    <!--    Search-->
+    <string name="type_of_search">Тип поиска</string>
+    <string name="by_name">по названию</string>
+    <string name="by_author">по автору</string>
+    <string name="choose_tags">Выберите теги</string>
 
     <!--    Map-->
     <string name="creating_place">Создание места</string>

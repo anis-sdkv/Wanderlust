@@ -1,5 +1,7 @@
 package com.wanderlust.ui.navigation.graphs
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
@@ -11,17 +13,21 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.wanderlust.ui.navigation.BottomNavigationItem
+import com.wanderlust.ui.navigation.graphs.bottom_navigation.HomeNavScreen
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.homeNavGraph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.mapNavGraph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.notificationsNavGraph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.profileNavGraph
 import com.wanderlust.ui.screens.create_place.CreatePlaceScreen
 import com.wanderlust.ui.screens.create_route.CreateRouteScreen
+import com.wanderlust.ui.screens.search.SearchScreen
 
 
 @OptIn(ExperimentalAnimationApi::class)
