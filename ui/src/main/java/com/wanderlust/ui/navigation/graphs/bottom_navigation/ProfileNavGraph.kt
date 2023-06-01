@@ -31,10 +31,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController, isBottomBa
             )
         ) {
             isBottomBarVisible.value = true
-            ProfileScreen(
-                onNavigateToSignIn = {navController.navigate(Graph.AUTHENTICATION)},
-                onNavigateToEditProfile = { navController.navigate(ProfileNavScreen.EditProfile.route)},
-            )
+            ProfileScreen(navController)
         }
 
         composable(

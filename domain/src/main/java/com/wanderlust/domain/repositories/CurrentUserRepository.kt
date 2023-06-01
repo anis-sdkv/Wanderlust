@@ -6,4 +6,5 @@ interface CurrentUserRepository {
     suspend fun get(): UserProfile?
     fun set(id: String)
     fun notifyUpdated()
+    fun signOut()
 }

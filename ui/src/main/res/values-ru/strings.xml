@@ -18,8 +18,19 @@
     <string name="reg_via_social">Зарегистрироваться через соцсети</string>
     <string name="have_acc">Уже есть аккаунт?</string>
 
+    <string name="sign_out">Выйти</string>
 
     <string name="reg_fail">Ошибка регистрации</string>
+    <string name="login_fail">Ошибка авторизации</string>
+    <string name="error">Ошибка</string>
+
+    <!--    Dialogs-->
+    <string name="loading_reg">Регистрация…</string>
+    <string name="loading_login">Авторизация…</string>
+    <string name="loading_update">Обновление…</string>
+
+    <string name="try_again">Попробуй еще раз</string>
+
 
     <!--    BottomSheet-->
     <string name="add_route">Добавить маршрут</string>

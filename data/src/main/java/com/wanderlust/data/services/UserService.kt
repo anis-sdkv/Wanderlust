@@ -63,4 +63,8 @@ class UserService @Inject constructor(private val auth: FirebaseAuth, private va
             .await()
         return result
     }
+
+    override fun signOut() {
+        auth.signOut()
+    }
 }
