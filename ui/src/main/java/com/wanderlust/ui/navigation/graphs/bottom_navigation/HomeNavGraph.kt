@@ -4,8 +4,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
-import com.google.accompanist.navigation.animation.composable
 import androidx.navigation.compose.navigation
+import com.google.accompanist.navigation.animation.composable
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.screens.home.HomeScreen
 
@@ -13,9 +13,9 @@ import com.wanderlust.ui.screens.home.HomeScreen
 fun NavGraphBuilder.homeNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Home.graph,
-        startDestination = BottomNavigationItem.Home.route
+        startDestination = HomeNavScreen.Home.route
     ) {
-        composable(route = BottomNavigationItem.Home.route) {
+        composable(route = HomeNavScreen.Home.route) {
             isBottomBarVisible.value = true
             HomeScreen()
         }

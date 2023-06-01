@@ -17,7 +17,7 @@ import com.wanderlust.ui.components.common.SelectableItem
 import com.wanderlust.ui.components.common.Selector
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.settings.LocalSettingsEventBus
-import com.wanderlust.ui.settings.WanderlustLanguage
+import com.wanderlust.domain.model.WanderlustLanguage
 
 @Composable
 fun SettingsScreen(onNavigateBack: () -> Unit) {
@@ -31,7 +31,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
     )
 
     val languages = listOf(
-        SelectableItem(stringResource(id = R.string.english)) { settingsEventBus.updateLanguage(WanderlustLanguage.ENLISH) },
+        SelectableItem(stringResource(id = R.string.english)) { settingsEventBus.updateLanguage(WanderlustLanguage.ENGLISH) },
         SelectableItem(stringResource(id = R.string.russian)) { settingsEventBus.updateLanguage(WanderlustLanguage.RUSSIAN) }
     )
 
@@ -50,14 +50,14 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
         Selector(
             label = stringResource(id = R.string.theme),
             items = themes,
-            initIndex = if (currentSettings.isDarkMode == null) 2 else if (currentSettings.isDarkMode) 1 else 0
+            initIndex = if (currentSettings.isDarkMode == null) 2 else if (currentSettings.isDarkMode!!) 1 else 0
         )
 
         Spacer(modifier = Modifier.height(32.dp))
         Selector(
             label = stringResource(id = R.string.language),
             items = languages,
-            initIndex = if (currentSettings.language == WanderlustLanguage.ENLISH) 0 else 1
+            initIndex = if (currentSettings.language == WanderlustLanguage.ENGLISH) 0 else 1
         )
     }
 }

@@ -1,28 +1,35 @@
 package com.wanderlust.ui.screens.profile
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wanderlust.domain.model.Route
-import com.wanderlust.domain.usecases.GetUserByName
+import com.wanderlust.domain.usecases.GetCurrentUserUseCase
+import com.wanderlust.domain.usecases.GetRoutesByIdListUseCase
+import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
+@Immutable
 data class ProfileState(
     val isUserAuthorized: Boolean = false,
-    val isMyProfile: Boolean = false,
+    val isSelfProfile: Boolean = false,
     val isSubscribe: Boolean = false,
-    //val subscribeBtnSelected: Boolean
     val userName: String = "",
-    val userCity: String = "",
-    val userCountry: String = "",
+    val userCity: String? = null,
+    val userCountry: String? = null,
     val userDescription: String = "",
-    val userRoutes: List<Route> = emptyList(),
+    val userRoutes: PersistentList<Route> = persistentListOf(),
     val userNumberOfSubscribers: Int = 0,
     val userNumberOfSubscriptions: Int = 0,
     val userNumberOfRoutes: Int = 0,
@@ -42,49 +49,31 @@ sealed interface ProfileEvent {
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-//    savedStateHandle: SavedStateHandle,
-    private val getUserByName: GetUserByName,
+    savedStateHandle: SavedStateHandle,
+    private val getCurrentUserUseCase: GetCurrentUserUseCase,
+    private val getRoutesByIdListUseCase: GetRoutesByIdListUseCase
 ) : ViewModel() {
 
-    //    private val userNameOfProfile: String = savedStateHandle["userName"]!!
-    private val userNameOfProfile: String = "Ivan"
-    private val user = getUserByName(userNameOfProfile)
 
-    private val isSubscribe = (user.userSubscriptions.find { it.userName == userNameOfProfile }) != null
-
-    private val internalState: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
-    val state: StateFlow<ProfileState> = internalState
+    private val _state: MutableStateFlow<ProfileState> = MutableStateFlow(ProfileState())
+    val state: StateFlow<ProfileState> = _state
 
     private val _action = MutableSharedFlow<ProfileSideEffect?>()
     val action: SharedFlow<ProfileSideEffect?>
         get() = _action.asSharedFlow()
 
     init {
-        setData()
+        val id = savedStateHandle.get<String>(ProfileNavScreen.USER_ID_KEY) ?: ProfileNavScreen.SELF_PROFILE
+        if (id == ProfileNavScreen.SELF_PROFILE) {
+            _state.tryEmit(_state.value.copy(isSelfProfile = true))
+            loadSelfProfile()
+        } else {
+            loadProfileById(id)
+        }
     }
 
-    fun setData(){
-        internalState.tryEmit(
-            internalState.value.copy(
-                isUserAuthorized = true,
-                isMyProfile = true, //(userNameOfProfile == user.userName),
-                isSubscribe = false,
-                //isSubscribe,
-                userName = user.userName,
-                userCity = user.userCity ?: "",
-                userCountry = user.userCountry ?: "",
-                userDescription = user.userDescription ?: "",
-                userRoutes = user.userRoutes,
-                userNumberOfSubscribers = user.userSubscribers.size,
-                userNumberOfSubscriptions = user.userSubscriptions.size,
-                userNumberOfRoutes = user.userSubscriptions.size,
-                isDropdownMenuExpanded = false
-            )
-        )
-    }
-
-    fun event (profileEvent: ProfileEvent){
-        when(profileEvent){
+    fun event(profileEvent: ProfileEvent) {
+        when (profileEvent) {
             ProfileEvent.OnSubscribeBtnClick -> onSubscribeBtnClick()
             ProfileEvent.OnDropdownMenuClick -> onDropdownMenuClick()
             ProfileEvent.OnCloseDropdownMenu -> onCloseDropdownMenu()
@@ -93,9 +82,9 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun onSubscribeBtnClick() {
-        internalState.tryEmit(
-            internalState.value.copy(
-                isSubscribe = !internalState.value.isSubscribe
+        _state.tryEmit(
+            _state.value.copy(
+                isSubscribe = !_state.value.isSubscribe
             )
         )
     }
@@ -107,33 +96,50 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun onDropdownMenuClick() {
-        internalState.tryEmit(
-            internalState.value.copy(
+        _state.tryEmit(
+            _state.value.copy(
                 isDropdownMenuExpanded = true
             )
         )
-        /*viewModelScope.launch {
-            internalState.emit(
-                internalState.value.copy(
-                    isDropdownMenuExpanded = true
-                )
-            )
-        }*/
     }
 
     private fun onCloseDropdownMenu() {
-        internalState.tryEmit(
-            internalState.value.copy(
+        _state.tryEmit(
+            _state.value.copy(
                 isDropdownMenuExpanded = false
             )
         )
-        /*viewModelScope.launch {
-            internalState.emit(
-                internalState.value.copy(
-                    isDropdownMenuExpanded = false
-                )
-            )
-        }*/
     }
 
+    private fun loadSelfProfile() {
+        viewModelScope.launch {
+            val user = getCurrentUserUseCase()
+            if (user != null) {
+                _state.emit(_state.value.copy(isUserAuthorized = true))
+                _state.emit(
+                    _state.value.copy(
+                        userName = user.username,
+                        userCity = user.city,
+                        userCountry = user.country,
+                        userDescription = user.description ?: "",
+                        userNumberOfRoutes = user.routes.size,
+                        userNumberOfSubscribers = user.subscribers.size,
+                        userNumberOfSubscriptions = user.subscriptions.size
+                    )
+                )
+                try {
+                    val routes = getRoutesByIdListUseCase(user.routes)
+                    _state.emit(_state.value.copy(userRoutes = routes.toPersistentList()))
+                } catch (e: Exception) {
+                    e
+                }
+            }
+        }
+    }
+
+    private fun loadProfileById(id: String) {
+        viewModelScope.launch {
+
+        }
+    }
 }

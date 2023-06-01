@@ -77,10 +77,10 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
                         indicatorColor = MaterialTheme.colorScheme.surfaceVariant,
                     ),
                     alwaysShowLabel = false,
-                    selected = currentDestination?.hierarchy?.any { it.route == item.route || it.route == item.graph } == true,
+                    selected = currentDestination?.hierarchy?.any { it.route == item.graph } == true,
                     onClick = {
 
-                        navController.navigate(item.route) {
+                        navController.navigate(item.graph) {
                             navController.graph.startDestinationRoute?.let { route ->
                                 popUpTo(route) {
                                     saveState = true
