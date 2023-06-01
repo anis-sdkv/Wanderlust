@@ -18,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -31,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -116,7 +113,7 @@ fun CreatePlaceScreen(
 
     Column(
         Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(top = 48.dp, start = 20.dp, end = 20.dp),
@@ -217,13 +214,13 @@ fun CreatePlaceScreen(
                 .fillMaxWidth()
                 .padding(top = 22.dp, bottom = 80.dp)
                 .height(42.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
             shape = RoundedCornerShape(12.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.save),
                 style = WanderlustTheme.typography.semibold16,
-                color = MaterialTheme.colorScheme.background
+                color = WanderlustTheme.colors.onAccent
             )
         }
     }
@@ -239,7 +236,7 @@ private fun GpsTextButton(modifier: Modifier, onTextClick: () -> Unit) {
         Text(
             text = stringResource(id = R.string.specify_location),
             style = WanderlustTheme.typography.semibold16,
-            color = MaterialTheme.colorScheme.onBackground
+            color = WanderlustTheme.colors.primaryText
         )
         TextButton(
             modifier = Modifier,
@@ -256,7 +253,7 @@ private fun GpsTextButton(modifier: Modifier, onTextClick: () -> Unit) {
             Text(
                 text = stringResource(id = R.string.use_your_location),
                 style = WanderlustTheme.typography.medium16,
-                color = MaterialTheme.colorScheme.primary,
+                color = WanderlustTheme.colors.accent,
             )
         }
     }

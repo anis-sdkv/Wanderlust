@@ -31,7 +31,8 @@ fun EditProfileTextField(label: String, inputValue: String, onChanged: (String) 
             style = WanderlustTheme.typography.semibold14,
             modifier = Modifier
                 .padding(start = 18.dp, bottom = 4.dp)
-                .alpha(0.5f)
+                .alpha(0.5f),
+            color = WanderlustTheme.colors.primaryText
         )
 
         TextField(
@@ -51,15 +52,17 @@ fun EditProfileTextField(label: String, inputValue: String, onChanged: (String) 
                 .fillMaxWidth()
                 .border(
                     width = (1.5).dp,
-                    color = MaterialTheme.colorScheme.outline,
+                    color = WanderlustTheme.colors.outline,
                     shape = RoundedCornerShape(8.dp)
                 ),
             colors = TextFieldDefaults.colors(
-                cursorColor = MaterialTheme.colorScheme.primary,
+                focusedTextColor = WanderlustTheme.colors.primaryText,
+                unfocusedTextColor = WanderlustTheme.colors.primaryText,
+                cursorColor = WanderlustTheme.colors.accent,
                 focusedIndicatorColor = Color.Transparent,
                 unfocusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant
+                focusedContainerColor = WanderlustTheme.colors.solid,
+                unfocusedContainerColor = WanderlustTheme.colors.solid
             )
         )
     }

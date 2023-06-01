@@ -4,6 +4,7 @@ package com.wanderlust.ui.navigation
 import android.annotation.SuppressLint
 import androidx.compose.animation.*
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -12,7 +13,6 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.*
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -50,47 +50,54 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
 
-        NavigationBar(
-            modifier = Modifier.height(64.dp)
-                .border(width = 1.dp, color = MaterialTheme.colorScheme.outline, shape = RoundedCornerShape(topStart = 0.dp, topEnd = 0.dp) ),
-            containerColor = MaterialTheme.colorScheme.background,
-        ) {
-            items.forEach { item ->
-                NavigationBarItem(
-                    modifier = Modifier.offset(
-                        when (item.title) {
-                            "Notifications" -> 20.dp
-                            "Map" -> (-20).dp
-                            else -> 0.dp
-                        }
-                    ),
-                    icon = {
-                        Icon(
-                            painter = painterResource(id = item.icon),
-                            contentDescription = item.title,
-                            modifier = Modifier.size(27.dp)
-                        )
-                    },
-                    colors = NavigationBarItemDefaults.colors(
-                        selectedIconColor = MaterialTheme.colorScheme.primary,
-                        unselectedIconColor = Color.Black.copy(0.4f),
-                        indicatorColor = MaterialTheme.colorScheme.surfaceVariant,
-                    ),
-                    alwaysShowLabel = false,
-                    selected = currentDestination?.hierarchy?.any { it.route == item.route || it.route == item.graph } == true,
-                    onClick = {
-
-                        navController.navigate(item.route) {
-                            navController.graph.startDestinationRoute?.let { route ->
-                                popUpTo(route) {
-                                    saveState = true
-                                }
+        Column {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(WanderlustTheme.colors.outline)
+            )
+            NavigationBar(
+                modifier = Modifier
+                    .height(64.dp),
+                containerColor = WanderlustTheme.colors.primaryBackground,
+            ) {
+                items.forEach { item ->
+                    NavigationBarItem(
+                        modifier = Modifier.offset(
+                            when (item.title) {
+                                "Notifications" -> 20.dp
+                                "Map" -> (-20).dp
+                                else -> 0.dp
                             }
-                            launchSingleTop = true
-                            restoreState = true
+                        ),
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = item.icon),
+                                contentDescription = item.title,
+                                modifier = Modifier.size(27.dp)
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = WanderlustTheme.colors.accent,
+                            unselectedIconColor = WanderlustTheme.colors.primaryText.copy(0.4f),
+                            indicatorColor = WanderlustTheme.colors.primaryBackground,
+                        ),
+                        alwaysShowLabel = false,
+                        selected = currentDestination?.hierarchy?.any { it.route == item.route || it.route == item.graph } == true,
+                        onClick = {
+
+                            navController.navigate(item.route) {
+                                navController.graph.startDestinationRoute?.let { route ->
+                                    popUpTo(route) {
+                                        saveState = true
+                                    }
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }
@@ -116,7 +123,7 @@ fun SetBottomNavigationBar() {
             modifier = Modifier,
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = WanderlustTheme.colors.primaryBackground
         ) {
             Column(
                 modifier = Modifier
@@ -132,7 +139,7 @@ fun SetBottomNavigationBar() {
                             }
                         }
                     },
-                    border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                    border = BorderStroke(1.dp, color = WanderlustTheme.colors.accent),
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()
@@ -143,12 +150,13 @@ fun SetBottomNavigationBar() {
                         contentDescription = null,
                         modifier = Modifier
                             .padding(end = 12.dp)
-                            .size(40.dp)
+                            .size(40.dp),
+                        tint = WanderlustTheme.colors.accent
                     )
                     Text(
                         text = stringResource(id = R.string.add_place),
                         style = WanderlustTheme.typography.bold16,
-                        color = MaterialTheme.colorScheme.primary
+                        color = WanderlustTheme.colors.accent
                     )
                 }
                 OutlinedButton(
@@ -160,7 +168,7 @@ fun SetBottomNavigationBar() {
                             }
                         }
                     },
-                    border = BorderStroke(1.dp, color = MaterialTheme.colorScheme.primary),
+                    border = BorderStroke(1.dp, color = WanderlustTheme.colors.accent),
                     modifier = Modifier
                         .padding(8.dp)
                         .fillMaxWidth()
@@ -171,11 +179,13 @@ fun SetBottomNavigationBar() {
                         contentDescription = null,
                         modifier = Modifier
                             .padding(end = 12.dp)
-                            .size(40.dp)
+                            .size(40.dp),
+                        tint = WanderlustTheme.colors.accent
                     )
                     Text(
                         text = stringResource(id = R.string.add_route),
                         style = WanderlustTheme.typography.bold16,
+                        color = WanderlustTheme.colors.accent
                     )
                 }
             }
@@ -213,9 +223,14 @@ fun SetBottomNavigationBar() {
                         openBottomSheet = !openBottomSheet
                     },
                     shape = fabShape,
-                    containerColor = MaterialTheme.colorScheme.primary
+                    containerColor = WanderlustTheme.colors.accent
                 ) {
-                    Icon(Icons.Rounded.Add, "", modifier = Modifier.size(40.dp))
+                    Icon(
+                        Icons.Rounded.Add,
+                        "",
+                        modifier = Modifier.size(40.dp),
+                        tint = WanderlustTheme.colors.onAccent
+                    )
                 }
             }
         },

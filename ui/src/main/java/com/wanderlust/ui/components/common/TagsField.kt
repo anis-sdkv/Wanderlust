@@ -7,16 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -37,7 +33,7 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
     .padding(top = 16.dp)
     .fillMaxWidth(),
     shape = RoundedCornerShape(16.dp),
-    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceTint),
+    colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.secondaryBackground),
     ) {
         Text(
             modifier = Modifier
@@ -47,7 +43,7 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
             text = stringResource(id = R.string.select_tags),
             textAlign = TextAlign.Center,
             style = WanderlustTheme.typography.semibold14,
-            color = MaterialTheme.colorScheme.onBackground
+            color = WanderlustTheme.colors.primaryText
         )
         val tags = stringArrayResource(id = R.array.tags_array)
         FlowRow(
@@ -65,25 +61,12 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
                         .clip(RoundedCornerShape(8.dp))
                         .background(
                             color = if(selectedTags.contains(tag)){
-                                MaterialTheme.colorScheme.primary
+                                WanderlustTheme.colors.accent
                             } else {
-                                MaterialTheme.colorScheme.surfaceVariant
+                                WanderlustTheme.colors.primaryBackground
                             }
                         )
                         .clickable { onTagClick(tag) }
-                    ,
-                    //contentPadding = PaddingValues(vertical = 0.dp, horizontal = 0.dp),
-
-                    //shape = RoundedCornerShape(8.dp),
-                    /*colors =
-                    if(selectedTags.contains(tag)){
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-                    } else {
-                        ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
-                    },*/
-                    /*onClick = {
-                        onTagClick(tag)
-                    }*/
                 ) {
                     Text(
                         modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
@@ -91,9 +74,9 @@ fun TagsField(modifier: Modifier, onTagClick: (String) -> Unit, selectedTags: Li
                         style = WanderlustTheme.typography.semibold14,
                         color =
                         if(selectedTags.contains(tag)){
-                            MaterialTheme.colorScheme.onPrimary
+                            WanderlustTheme.colors.onAccent
                         } else {
-                            MaterialTheme.colorScheme.onBackground
+                            WanderlustTheme.colors.secondaryText
                         }
                     )
                 }

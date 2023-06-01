@@ -59,7 +59,7 @@ fun ProfileScreen(
     // TODO Подписан ли пользователь на того, чей профиль открыл?
     val isSubscribe = profileState.isSubscribe
 
-    val btnColor = if (profileState.isSubscribe) MaterialTheme.colorScheme.surface else MaterialTheme.colorScheme.primary
+    val btnColor = if (profileState.isSubscribe) WanderlustTheme.colors.secondaryBackground else WanderlustTheme.colors.accent
     val btnText = if(profileState.isSubscribe) stringResource(id = R.string.unsubscribe) else stringResource(id = R.string.subscribe)
 
     val firstItemTranslationY by remember {
@@ -87,7 +87,7 @@ fun ProfileScreen(
 
     LazyColumn(
         modifier = Modifier
-            .background(MaterialTheme.colorScheme.background)
+            .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
             .padding(bottom = 64.dp),
         state = lazyListState,
@@ -123,7 +123,7 @@ fun ProfileScreen(
             item{
                 Card(
                     shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                    colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
                 ) {
 
                     // Если пользователь не авторизован и открыл свой профиль:
@@ -136,14 +136,14 @@ fun ProfileScreen(
                                 modifier = Modifier
                                     .padding(top = 32.dp),
                                 style = WanderlustTheme.typography.bold24,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = WanderlustTheme.colors.primaryText
                             )
 
                             Text(
                                 text = stringResource(id = R.string.empty_profile_description),
                                 modifier = Modifier.padding(top = 32.dp),
                                 style = WanderlustTheme.typography.semibold14,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = WanderlustTheme.colors.primaryText
                             )
 
                             Button(
@@ -160,14 +160,14 @@ fun ProfileScreen(
                                 Text(
                                     text = stringResource(id = R.string.sign_in),
                                     style = WanderlustTheme.typography.semibold16,
-                                    color = MaterialTheme.colorScheme.background
+                                    color = WanderlustTheme.colors.onAccent
                                 )
                             }
                         }
                     } else {
                         ConstraintLayout(
                             Modifier
-                                .background(MaterialTheme.colorScheme.background)
+                                .background(WanderlustTheme.colors.primaryBackground)
                                 .padding(start = 20.dp, end = 20.dp)
                                 .fillMaxSize()
                         ) {
@@ -192,7 +192,7 @@ fun ProfileScreen(
                                         start.linkTo(parent.start)
                                         end.linkTo(parent.end)},
                                 style = WanderlustTheme.typography.bold24,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = WanderlustTheme.colors.primaryText
                             )
 
 
@@ -207,11 +207,11 @@ fun ProfileScreen(
                                     end.linkTo(parent.end)}
 
                             ) {
-                                Image(
+                                Icon(
                                     painterResource(R.drawable.ic_dropdown_menu),
-                                    modifier = Modifier.alpha(0.5f),
+                                    modifier = Modifier,
                                     contentDescription = "icon_dropdown_menu",
-                                    contentScale = ContentScale.Crop
+                                    tint = WanderlustTheme.colors.secondaryText
                                 )
                             }
 
@@ -224,7 +224,7 @@ fun ProfileScreen(
                                     }
                             ) {
                                 DropdownMenu(
-                                    modifier = Modifier.background(color = MaterialTheme.colorScheme.outline),
+                                    modifier = Modifier.background(color = WanderlustTheme.colors.outline),
                                     expanded = profileState.isDropdownMenuExpanded,
                                     onDismissRequest = {
                                         eventHandler.invoke(ProfileEvent.OnCloseDropdownMenu)
@@ -255,17 +255,18 @@ fun ProfileScreen(
                                 },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Image(
+                                Icon(
                                     painterResource(R.drawable.baseline_location_on_24),
                                     contentDescription = "icon_location",
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.size(18.dp)
+                                    //contentScale = ContentScale.Crop,
+                                    modifier = Modifier.size(18.dp),
+                                    tint = WanderlustTheme.colors.primaryText
                                 )
                                 Text(
                                     text = "${profileState.userCity}, ${profileState.userCountry}",
                                     modifier = Modifier.padding(start = 8.dp),
                                     style = WanderlustTheme.typography.semibold14,
-                                    color = MaterialTheme.colorScheme.onBackground
+                                    color = WanderlustTheme.colors.primaryText
                                 )
                             }
 
@@ -290,12 +291,12 @@ fun ProfileScreen(
                                     Text(
                                         text = profileState.userRoutes.size.toString(),
                                         style = WanderlustTheme.typography.extraBold26,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                        color = WanderlustTheme.colors.primaryText
                                     )
                                     Text(
                                         text = stringResource(id = R.string.routes),
                                         style = WanderlustTheme.typography.medium13,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = WanderlustTheme.colors.accent
                                     )
                                 }
                                 Column(
@@ -309,12 +310,12 @@ fun ProfileScreen(
                                     Text(
                                         text = profileState.userNumberOfSubscribers.toString(),
                                         style = WanderlustTheme.typography.extraBold26,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                        color = WanderlustTheme.colors.primaryText
                                     )
                                     Text(
                                         text = stringResource(id = R.string.subscribers),
                                         style = WanderlustTheme.typography.medium13,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = WanderlustTheme.colors.accent
                                     )
                                 }
 
@@ -329,12 +330,12 @@ fun ProfileScreen(
                                     Text(
                                         text = profileState.userNumberOfSubscriptions.toString(),
                                         style = WanderlustTheme.typography.extraBold26,
-                                        color = MaterialTheme.colorScheme.onBackground
+                                        color = WanderlustTheme.colors.primaryText
                                     )
                                     Text(
                                         text = stringResource(id = R.string.subscriptions),
                                         style = WanderlustTheme.typography.medium13,
-                                        color = MaterialTheme.colorScheme.primary
+                                        color = WanderlustTheme.colors.accent
                                     )
                                 }
 
@@ -357,13 +358,13 @@ fun ProfileScreen(
                                         start.linkTo(parent.start)
                                         end.linkTo(parent.end)
                                     },
-                                colors = ButtonDefaults.buttonColors(containerColor = if (isMyProfile) MaterialTheme.colorScheme.surface else btnColor),
+                                colors = ButtonDefaults.buttonColors(containerColor = if (isMyProfile) WanderlustTheme.colors.secondaryBackground else btnColor),
                                 shape = RoundedCornerShape(12.dp)
                             ) {
                                 Text(
                                     text = if (isMyProfile) stringResource(id = R.string.edit) else btnText,
                                     style = WanderlustTheme.typography.semibold16,
-                                    color = MaterialTheme.colorScheme.background
+                                    color = if (isMyProfile) WanderlustTheme.colors.secondaryText else WanderlustTheme.colors.onAccent
                                 )
                             }
 
@@ -376,10 +377,9 @@ fun ProfileScreen(
                                     .constrainAs(userInfo) {
                                         top.linkTo(btnSubscribeOrEdit.bottom, margin = 20.dp)
                                         start.linkTo(parent.start)
-                                        end.linkTo(parent.end)
                                     },
                                 style = WanderlustTheme.typography.medium16,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = WanderlustTheme.colors.primaryText
                             )
 
                             // Популярное у автора
@@ -391,7 +391,7 @@ fun ProfileScreen(
                                         start.linkTo(parent.start)
                                     },
                                 style = WanderlustTheme.typography.bold20,
-                                color = MaterialTheme.colorScheme.onBackground
+                                color = WanderlustTheme.colors.primaryText
                             )
 
                             // Список маршрутов
@@ -430,7 +430,7 @@ fun ProfileScreen(
                                 Text(
                                     text = stringResource(id = R.string.show_all_routes),
                                     style = WanderlustTheme.typography.medium16,
-                                    color = MaterialTheme.colorScheme.primary,
+                                    color = WanderlustTheme.colors.accent,
                                 )
                             }
                         }
