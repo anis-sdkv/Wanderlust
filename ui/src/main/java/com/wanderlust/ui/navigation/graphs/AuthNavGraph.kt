@@ -19,9 +19,7 @@ fun NavGraphBuilder.authNavGraph(navController: NavHostController, isBottomBarVi
     ) {
         composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route) {
             isBottomBarVisible.value = false
-            SignInScreen(onNavigateToSignUp = {
-                navController.navigate(AuthScreen.SignUp.route)
-            })
+            SignInScreen(navController)
         }
         composable(route = AuthScreen.SignUp.route) {
             isBottomBarVisible.value = false

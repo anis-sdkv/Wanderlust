@@ -54,7 +54,7 @@ fun ProfileScreen(
     val isAuthorized = profileState.isUserAuthorized
 
     // TODO Пользователь открыл свой профиль?
-    val isMyProfile = profileState.isMyProfile
+    val isMyProfile = profileState.isSelfProfile
 
     // TODO Подписан ли пользователь на того, чей профиль открыл?
     val isSubscribe = profileState.isSubscribe

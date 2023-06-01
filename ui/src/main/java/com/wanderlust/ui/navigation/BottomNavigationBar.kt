@@ -49,7 +49,7 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
-
+      
         Column {
             Box(modifier = Modifier
                 .fillMaxWidth()

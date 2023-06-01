@@ -1,5 +1,6 @@
 package com.wanderlust.ui.screens.sign_in
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,15 +10,28 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.auth_screens.AuthBottomText
 import com.wanderlust.ui.components.auth_screens.AuthButton
@@ -27,21 +41,58 @@ import com.wanderlust.ui.components.auth_screens.DecoratedText
 import com.wanderlust.ui.components.auth_screens.SocialMediaAuthButton
 import com.wanderlust.ui.components.auth_screens.authGradient
 import com.wanderlust.ui.custom.WanderlustTheme
+import com.wanderlust.ui.navigation.BottomNavigationItem
+import com.wanderlust.ui.navigation.graphs.AuthScreen
+import com.wanderlust.ui.settings.LocalSettingsEventBus
 
 @Composable
 fun SignInScreen(
-    onNavigateToSignUp: () -> Unit
+    navController: NavController,
+    viewModel: SignInViewModel = hiltViewModel()
 ) {
+    val settingsEventBus = LocalSettingsEventBus.current
+    val currentSettings = settingsEventBus.currentSettings.collectAsState().value
+    val originDarkMode = currentSettings.isDarkMode
+
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val eventHandler = viewModel::event
+    val action by viewModel.action.collectAsStateWithLifecycle(null)
+
+    LaunchedEffect(Unit) {
+        settingsEventBus.updateDarkMode(false)
+    }
+
+    LaunchedEffect(action) {
+        when (action) {
+            SignInSideEffect.NavigateProfile -> navController.navigate(BottomNavigationItem.Profile.graph)
+            SignInSideEffect.NavigateSignUp -> navController.navigate(AuthScreen.SignUp.route)
+            else -> Unit
+        }
+    }
+
+    SignInMainContent(state = state, eventHandler = eventHandler)
+    Dialogs(state = state, eventHandler = eventHandler)
+
+    DisposableEffect(Unit) {
+        onDispose {
+            settingsEventBus.updateDarkMode(originDarkMode)
+        }
+    }
+}
+
+@Composable
+fun SignInMainContent(state: SignInState, eventHandler: (SignInEvent) -> Unit) {
     Column(
         Modifier
             .fillMaxSize()
-            .authGradient(),
+            .authGradient()
+            .padding(horizontal = 20.dp)
+            .padding(top = 60.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
 
         Column {
-            Spacer(modifier = Modifier.height(24.dp))
             Text(
                 text = stringResource(id = R.string.sign_in),
                 modifier = Modifier,
@@ -51,19 +102,28 @@ fun SignInScreen(
         }
 
         // fields
-        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
-    //      AuthTextField(stringResource(id = R.string.email))
+        Column {
+            AuthTextField(stringResource(id = R.string.email), state.email) {
+                eventHandler.invoke(SignInEvent.OnEmailChange(it))
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
-//            AuthPasswordField(stringResource(id = R.string.password))
+            AuthPasswordField(
+                stringResource(id = R.string.password), state.password,
+                onChange = { eventHandler.invoke(SignInEvent.OnPasswordChange(it)) },
+                state.passwordVisible,
+                onVisibleChange = { eventHandler.invoke(SignInEvent.OnPasswordVisibilityChange) }
+            )
+
             ForgotPassButton {
                 //TODO
             }
         }
 
         // Buttons
-        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+        Column {
             AuthButton(
-                onClick = { /*TODO*/ },
+                onClick = { eventHandler.invoke(SignInEvent.OnLoginButtonClick) },
                 text = stringResource(id = R.string.sign_in_btn),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -94,9 +154,68 @@ fun SignInScreen(
         }
 
         AuthBottomText(stringResource(id = R.string.forgot_pass), stringResource(id = R.string.reg)) {
-            onNavigateToSignUp()
+            eventHandler.invoke(SignInEvent.OnSignUpButtonCLick)
         }
     }
+}
+
+@Composable
+private fun Dialogs(state: SignInState, eventHandler: (SignInEvent) -> Unit) {
+    if (state.showLoadingProgressBar)
+        Dialog(onDismissRequest = { eventHandler.invoke(SignInEvent.OnDismissLoginRequest) }) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(200.dp)
+                    .background(WanderlustTheme.colors.primaryBackground, shape = RoundedCornerShape(20.dp))
+            ) {
+                CircularProgressIndicator(color = WanderlustTheme.colors.accent)
+
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(20.dp),
+                    text = "Авторизация...",
+                    style = WanderlustTheme.typography.semibold16,
+                    color = WanderlustTheme.colors.primaryText
+                )
+            }
+        }
+
+    if (state.showErrorDialog)
+        AlertDialog(
+            containerColor = WanderlustTheme.colors.primaryBackground,
+            shape = RoundedCornerShape(20.dp),
+            title = {
+                Text(
+                    text = stringResource(id = R.string.reg_fail),
+                    style = WanderlustTheme.typography.semibold16,
+                    color = WanderlustTheme.colors.primaryText
+                )
+            },
+            text = {
+                LazyColumn {
+                    items(state.errors.size) {
+                        Text(
+                            text = state.errors[it],
+                            modifier = Modifier.padding(vertical = 4.dp),
+                            style = WanderlustTheme.typography.medium12,
+                            color = WanderlustTheme.colors.error
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { eventHandler.invoke(SignInEvent.OnDismissErrorDialog) }) {
+                    Text(
+                        text = "OK",
+                        style = WanderlustTheme.typography.semibold14,
+                        color = WanderlustTheme.colors.accent
+                    )
+                }
+            },
+            onDismissRequest = { eventHandler.invoke(SignInEvent.OnDismissErrorDialog) },
+        )
 }
 
 @Composable
