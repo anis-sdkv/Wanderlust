@@ -1,6 +1,6 @@
 package com.wanderlust.data.repositoriesImpl
 
-import com.wanderlust.data.services.UserService
+import com.wanderlust.data.services.UserServiceImpl
 import com.wanderlust.data.sources.local.sharedpref.AppPreferences
 import com.wanderlust.domain.model.UserProfile
 import com.wanderlust.domain.repositories.CurrentUserRepository
@@ -10,7 +10,7 @@ import javax.inject.Inject
 class CurrentUserRepositoryImpl @Inject constructor(
     private val preferences: AppPreferences,
     private val userRepository: UserRepository,
-    private val userService: UserService
+    private val userService: UserServiceImpl
 ) : CurrentUserRepository {
     private var savedUser: UserProfile? = null
 
@@ -21,6 +21,9 @@ class CurrentUserRepositoryImpl @Inject constructor(
             id?.let { userRepository.getById(it) }
         }
     }
+
+    override fun getId(): String? =
+        if (savedUser != null) savedUser!!.id else preferences.getUserId()
 
     override fun set(id: String) {
         preferences.saveUserId(id)

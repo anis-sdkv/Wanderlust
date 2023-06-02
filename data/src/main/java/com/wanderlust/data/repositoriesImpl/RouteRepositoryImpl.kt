@@ -1,8 +1,10 @@
 package com.wanderlust.data.repositoriesImpl
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.RouteEntity
 import com.wanderlust.data.mappers.RouteMapper
+import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.repositories.RouteRepository
 import kotlinx.coroutines.tasks.await
@@ -10,6 +12,18 @@ import javax.inject.Inject
 
 class RouteRepositoryImpl @Inject constructor(private val db: FirebaseFirestore, private val mapper: RouteMapper) :
     RouteRepository {
+
+    override suspend fun create(userId: String, route: Route) {
+        val entity = mapper.map(route)
+
+        db.runTransaction { transaction ->
+            val routeDoc = db.collection(ROUTES_COLLECTION).document()
+            val userDoc = db.collection(UserRepositoryImpl.USERS_COLLECTION).document(userId)
+
+            transaction.set(routeDoc, entity)
+            transaction.update(userDoc, "routes", FieldValue.arrayUnion(routeDoc.id))
+        }.await()
+    }
     override suspend fun getByIdArray(ids: List<String>): List<Route> {
         if (ids.isEmpty()) return listOf()
 
@@ -20,8 +34,8 @@ class RouteRepositoryImpl @Inject constructor(private val db: FirebaseFirestore,
 
         val result = mutableListOf<Route>()
         query.documents.forEach {
-            val route = it.toObject(RouteEntity::class.java)
-            route?.let { it1 -> result.add(mapper.map(route)) }
+            val entity = it.toObject(RouteEntity::class.java)
+            entity?.let { route -> result.add(mapper.map(route)) }
         }
         return result
     }

@@ -7,14 +7,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.wanderlust.data.repositoriesImpl.CurrentUserRepositoryImpl
+import com.wanderlust.data.repositoriesImpl.PlaceRepositoryImpl
 import com.wanderlust.data.repositoriesImpl.RouteRepositoryImpl
 import com.wanderlust.data.repositoriesImpl.SettingsRepositoryImpl
 import com.wanderlust.data.repositoriesImpl.UserRepositoryImpl
+import com.wanderlust.data.services.GeocoderServiceImpl
 import com.wanderlust.data.sources.local.sharedpref.AppPreferences
 import com.wanderlust.domain.repositories.CurrentUserRepository
+import com.wanderlust.domain.repositories.PlaceRepository
 import com.wanderlust.domain.repositories.RouteRepository
 import com.wanderlust.domain.repositories.SettingsRepository
 import com.wanderlust.domain.repositories.UserRepository
+import com.wanderlust.domain.services.GeocoderService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -24,12 +28,10 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 
 
-@Module
-@InstallIn(ActivityComponent::class)
-abstract class SettingsModule {
-    @Binds
-    abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
-}
+//@Module
+//@InstallIn(ActivityComponent::class)
+//abstract class SettingsModule {
+//}
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -42,6 +44,11 @@ abstract class DataModule {
 
     @Binds
     abstract fun bindRouteRepositoryImpl(impl: RouteRepositoryImpl): RouteRepository
+
+    @Binds
+    abstract fun bindPlaceRepositoryImpl(impl: PlaceRepositoryImpl): PlaceRepository
+    @Binds
+    abstract fun bindSettingsRepository(impl: SettingsRepositoryImpl): SettingsRepository
 }
 
 @Module
@@ -55,4 +62,8 @@ class DataProvideModule {
 
     @Provides
     fun provideAppPreferences(@ApplicationContext appContext: Context): AppPreferences = AppPreferences(appContext)
+
+    @Provides
+    fun provideGeocoderService(@ApplicationContext appContext: Context): GeocoderService =
+        GeocoderServiceImpl(appContext)
 }

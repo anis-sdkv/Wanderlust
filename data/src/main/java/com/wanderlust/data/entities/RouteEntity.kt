@@ -1,16 +1,24 @@
 package com.wanderlust.data.entities
 
 import com.google.firebase.Timestamp
-import com.wanderlust.domain.model.Comment
-import com.wanderlust.domain.model.RoutePoint
 
 class RouteEntity {
-    var id: String? = null
-    var routeName: String? = null
-    var routeDescription: String? = null
-    var points: List<RoutePoint> = listOf()
-    var comments: List<Comment> = listOf()
+    var name: String? = null
+    var description: String? = null
+    var city: String? = null
+    var country: String? = null
+    var points: List<RoutePointEntity> = listOf()
+    var comments: List<CommentEntity> = listOf()
+    var tags: List<String> = listOf()
     var totalRating: Int? = null
     var ratingCount: Int? = null
     var createdAt: Timestamp? = null
+}
+
+class RoutePointEntity {
+    var lat: Double? = null
+    var lon: Double? = null
+    var name: String? = null
+    var description: String? = null
+    var imagesUrl: List<String> = listOf()
 }

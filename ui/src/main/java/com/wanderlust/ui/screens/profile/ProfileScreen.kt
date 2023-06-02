@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.wanderlust.domain.model.Route
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.ListOfRoutes
 import com.wanderlust.ui.components.common.LocationText

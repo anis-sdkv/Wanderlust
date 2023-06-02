@@ -30,7 +30,7 @@ class UserRepositoryImpl @Inject constructor(
 
         return if (doc.exists()) {
             val entity = doc.toObject(UserEntity::class.java) ?: return null
-            mapper.map(entity)
+            mapper.map(entity, id)
         } else null
     }
 

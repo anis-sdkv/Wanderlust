@@ -3,10 +3,8 @@ package com.wanderlust.ui.screens.create_place
 import android.Manifest
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -51,9 +49,12 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
+import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.common.TagsField
 import com.wanderlust.ui.custom.WanderlustTheme
+import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.permissions.RequestPermission
 import com.wanderlust.ui.screens.map.DarkMapStyle
 import com.wanderlust.ui.settings.LocalSettingsEventBus
@@ -65,7 +66,7 @@ fun CreatePlaceScreen(
     navController: NavController,
     viewModel: CreatePlaceViewModel = hiltViewModel()
 ) {
-    val createPlaceState by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val eventHandler = viewModel::event
     val action by viewModel.action.collectAsStateWithLifecycle(null)
 
@@ -79,13 +80,13 @@ fun CreatePlaceScreen(
     val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(LocalContext.current)
 
     val cameraPositionState = rememberCameraPositionState()
-    cameraPositionState.position = if(createPlaceState.isShowCurrentLocation){
+    cameraPositionState.position = if (state.isShowCurrentLocation) {
         CameraPosition.fromLatLngZoom(
             LocationUtils.getPosition(currentLocation),
             13f
         )
     } else {
-        createPlaceState.placeCameraPosition
+        state.placeCameraPosition
     }
 
     val mapUiSettings by remember {
@@ -93,21 +94,31 @@ fun CreatePlaceScreen(
             MapUiSettings(zoomControlsEnabled = false)
         )
     }
+    LaunchedEffect(Unit) {
+        eventHandler.invoke(CreatePlaceEvent.OnLaunch)
+    }
 
     LaunchedEffect(action) {
         when (action) {
-            null -> Unit
             CreatePlaceSideEffect.NavigateBack -> {
                 navController.navigateUp()
             }
+
+            CreatePlaceSideEffect.NavigateProfile -> {
+                navController.navigate(BottomNavigationItem.Profile.graph)
+            }
+
+            else -> Unit
         }
     }
 
-    if(requestLocationUpdate){
+    Dialogs(state = state, eventHandler = eventHandler)
+
+    if (requestLocationUpdate) {
         RequestPermission(
             permission = Manifest.permission.ACCESS_FINE_LOCATION,
             onNavigateBack = { navController.navigateUp() },
-            updateCurrentLocation =  {
+            updateCurrentLocation = {
                 requestLocationUpdate = false
                 LocationUtils.requestLocationResultCallback(fusedLocationProviderClient) { locationResult ->
 
@@ -169,27 +180,27 @@ fun CreatePlaceScreen(
                 state = MarkerState(
                     position =
                     if(
-                        createPlaceState.isShowCurrentLocation
+                        state.isShowCurrentLocation
                     ){
                         LocationUtils.getPosition(currentLocation)
                     } else {
-                        LatLng(createPlaceState.placeLat, createPlaceState.placeLon)
+                        LatLng(state.placeLat, state.placeLon)
                     }
                 ),
-                title = createPlaceState.placeName
+                title = state.placeName
             )
         }
 
         DefaultTextField(
             label = stringResource(id = R.string.place_name),
             modifier = Modifier.padding(top = 26.dp),
-            inputValue = createPlaceState.placeName
+            inputValue = state.placeName
         ) { placeName -> eventHandler.invoke(CreatePlaceEvent.OnPlaceNameChanged(placeName)) }
 
         DefaultDescriptionField(
             label = stringResource(id = R.string.place_description),
             modifier = Modifier.padding(top = 20.dp),
-            inputValue = createPlaceState.placeDescription
+            inputValue = state.placeDescription
         ) { placeDescription ->
             eventHandler.invoke(
                 CreatePlaceEvent.OnPlaceDescriptionChanged(
@@ -200,8 +211,9 @@ fun CreatePlaceScreen(
 
         TagsField(
             modifier = Modifier,
-            onTagClick = { tag -> eventHandler.invoke(CreatePlaceEvent.OnSelectedTagsChanged(tag))},
-            selectedTags = createPlaceState.selectedTags)
+            onTagClick = { tag -> eventHandler.invoke(CreatePlaceEvent.OnSelectedTagsChanged(tag)) },
+            selectedTags = state.selectedTags
+        )
 
         LazyRow(
             modifier = Modifier.padding(top = 16.dp)
@@ -219,9 +231,7 @@ fun CreatePlaceScreen(
         }
 
         Button(
-            onClick = {
-                // TODO
-            },
+            onClick = { eventHandler.invoke(CreatePlaceEvent.OnCreteButtonClick) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 22.dp, bottom = 80.dp)
@@ -269,4 +279,22 @@ private fun GpsTextButton(modifier: Modifier, onTextClick: () -> Unit) {
             )
         }
     }
+}
+
+
+@Composable
+private fun Dialogs(state: CreatePlaceState, eventHandler: (CreatePlaceEvent) -> Unit) {
+
+    if (state.showLoadingProgressBar)
+        LoadingDialog(
+            stringResource(id = R.string.loading_create),
+            onDismiss = { eventHandler.invoke(CreatePlaceEvent.OnDismissProgressbarDialog) }
+        )
+
+    if (state.showErrorDialog)
+        ErrorDialog(
+            title = stringResource(id = R.string.error),
+            errors = state.errors,
+            onDismiss = { eventHandler.invoke(CreatePlaceEvent.OnDismissErrorsDialog) }
+        )
 }

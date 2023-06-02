@@ -27,7 +27,7 @@
     <string name="loading_reg">Registration…</string>
     <string name="loading_login">Authorization…</string>
     <string name="loading_update">Update…</string>
-
+    <string name="loading_create">Creating…</string>
 
     <string name="try_again">Try again</string>
 
