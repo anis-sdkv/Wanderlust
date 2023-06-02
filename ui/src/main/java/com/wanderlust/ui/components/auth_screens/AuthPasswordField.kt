@@ -3,6 +3,7 @@ package com.wanderlust.ui.components.auth_screens
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -12,11 +13,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,11 +59,16 @@ fun AuthPasswordField(
                 containerColor = WanderlustTheme.colors.primaryBackground
             ),
             trailingIcon = {
-                val image = if (passwordVisible) Icons.Filled.Done else Icons.Filled.PlayArrow
+                val image = if (passwordVisible) painterResource(id = R.drawable.ic_show) else painterResource(id = R.drawable.ic_hide)
                 val description = if (passwordVisible) "Hide password" else "Show password"
 
-                IconButton(onClick = onVisibleChange) {
-                    Icon(imageVector = image, description)
+                IconButton(onClick = onVisibleChange, modifier = Modifier.padding(end = 8.dp)) {
+                    Icon(
+                        painter = image,
+                        description,
+                        tint = WanderlustTheme.colors.accent,
+                        modifier = Modifier.size(30.dp)
+                    )
                 }
             }
         )
