@@ -53,7 +53,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.wanderlust.ui.R
-import com.wanderlust.ui.components.common.CreateRouteCard
+import com.wanderlust.ui.components.common.ListOfRoutes
 import com.wanderlust.ui.components.common.LocationText
 import com.wanderlust.ui.components.common.SwitchButton
 import com.wanderlust.ui.custom.WanderlustTheme
@@ -235,7 +235,8 @@ fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit
             city = state.userCity, country = state.userCountry,
             Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 16.dp),
+            arrangement = Arrangement.Center
         )
 
         ProfileStatistic(state = state, eventHandler = eventHandler, modifier = Modifier.padding(top = 20.dp))
@@ -274,14 +275,7 @@ fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit
         )
 
         // Список маршрутов
-        Column(modifier = Modifier.padding(top = 20.dp)) {
-            // TODO
-            val items = listOf(1, 2, 3, 4, 5)
-            items.forEach { _ ->
-                CreateRouteCard()
-            }
-        }
-
+        ListOfRoutes(routes = state.userRoutes)
 
         TextButton(
             onClick = {},

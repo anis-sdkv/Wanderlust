@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,8 +23,10 @@ import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.wanderlust.ui.R
@@ -34,6 +36,7 @@ import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.Graph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.MapNavScreen
 import com.wanderlust.ui.permissions.RequestPermission
+import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.utils.LocationUtils
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -46,6 +49,10 @@ fun MapScreen(
     val mapState by viewModel.state.collectAsStateWithLifecycle()
     val eventHandler = viewModel::event
     val action by viewModel.action.collectAsStateWithLifecycle(null)
+
+    val settingsEventBus = LocalSettingsEventBus.current
+    val currentSettings = settingsEventBus.currentSettings.collectAsState().value
+    val isDarkMode = currentSettings.isDarkMode
 
     var currentLocation by remember { mutableStateOf(LocationUtils.getDefaultLocation()) }
 
@@ -74,6 +81,7 @@ fun MapScreen(
             }
         )
     }
+
     LaunchedEffect(action) {
         when (action) {
             null -> Unit
@@ -96,6 +104,7 @@ fun MapScreen(
                 .padding(bottom = 64.dp)
                 .fillMaxSize(),
             cameraPositionState = cameraPositionState,
+            properties = if(isDarkMode == true) MapProperties(mapStyleOptions = MapStyleOptions(DarkMapStyle.json)) else MapProperties()
         ) {
             Marker(
                 state = MarkerState(position = LocationUtils.getPosition(currentLocation)),

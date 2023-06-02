@@ -26,6 +26,7 @@ data class WanderlustTypography(
     val bold24: TextStyle,
     val bold20: TextStyle,
     val bold16: TextStyle,
+    val semibold20: TextStyle,
     val semibold16: TextStyle,
     val semibold14: TextStyle,
     val medium16: TextStyle,
