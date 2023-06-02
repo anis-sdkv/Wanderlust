@@ -15,7 +15,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -65,15 +64,18 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.wanderlust.domain.model.Place
+import com.wanderlust.domain.model.RoutePoint
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
+import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.common.TagsField
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextField
 import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDescription
 import com.wanderlust.ui.custom.WanderlustTheme
+import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.permissions.RequestPermission
 import com.wanderlust.ui.utils.LocationUtils
 
@@ -83,24 +85,26 @@ fun CreateRouteScreen(
     navController: NavController,
     viewModel: CreateRouteViewModel = hiltViewModel()
 ) {
-    val createRouteState by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val eventHandler = viewModel::event
     val action by viewModel.action.collectAsStateWithLifecycle(null)
-    var requestLocationUpdate by remember { mutableStateOf(true)}
+    var requestLocationUpdate by remember { mutableStateOf(true) }
 
     var currentLocation by remember { mutableStateOf(LocationUtils.getDefaultLocation()) }
     val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(LocalContext.current)
 
-    if(requestLocationUpdate){
+    LaunchedEffect(Unit) {
+        eventHandler.invoke(CreateRouteEvent.OnLaunch)
+    }
+
+    if (requestLocationUpdate) {
         RequestPermission(
             permission = Manifest.permission.ACCESS_FINE_LOCATION,
             onNavigateBack = { navController.navigateUp() },
-            updateCurrentLocation =  {
+            updateCurrentLocation = {
                 requestLocationUpdate = false
                 LocationUtils.requestLocationResultCallback(fusedLocationProviderClient) { locationResult ->
-
                     locationResult.lastLocation?.let { location ->
-
                         currentLocation = location
                     }
                 }
@@ -121,12 +125,19 @@ fun CreateRouteScreen(
 
     LaunchedEffect(action) {
         when (action) {
-            null -> Unit
             CreateRouteSideEffect.NavigateBack -> {
                 navController.navigateUp()
             }
+
+            CreateRouteSideEffect.NavigateProfile -> {
+                navController.navigate(BottomNavigationItem.Profile.graph)
+            }
+
+            else -> Unit
         }
     }
+
+    Dialogs(state = state, eventHandler = eventHandler)
 
     // content
     Column(
@@ -135,7 +146,7 @@ fun CreateRouteScreen(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(top = 48.dp, start = 20.dp, end = 20.dp),
-    ){
+    ) {
 
         ScreenHeader(screenName = stringResource(id = R.string.creating_route)) {
             eventHandler.invoke(CreateRouteEvent.OnBackBtnClick)
@@ -150,17 +161,17 @@ fun CreateRouteScreen(
             cameraPositionState = cameraPositionState,
             uiSettings = mapUiSettings,
         ) {
-            createRouteState.listOfPlaces.forEach { place ->
+            state.listOfPoints.forEach { place ->
                 Marker(
                     state = MarkerState(
                         position = LatLng(place.lat, place.lon)
                     ),
-                    title = place.placeName
+                    title = place.name
                 )
             }
             val latLonList: MutableList<LatLng> = mutableListOf()
-            createRouteState.listOfPlaces.forEach {
-                    place -> latLonList.add(LatLng(place.lat,place.lon))
+            state.listOfPoints.forEach { place ->
+                latLonList.add(LatLng(place.lat, place.lon))
             }
             Polyline(
                 points = latLonList,
@@ -170,20 +181,20 @@ fun CreateRouteScreen(
 
         DefaultTextField(
             label = stringResource(id = R.string.route_name),
-            createRouteState.routeName,
+            state.routeName,
             Modifier.padding(top = 26.dp)
         ) { routeName -> eventHandler.invoke(CreateRouteEvent.OnRouteNameChanged(routeName)) }
 
         DefaultDescriptionField(
             label = stringResource(id = R.string.route_description),
-            createRouteState.routeDescription,
+            state.routeDescription,
             Modifier.padding(top = 16.dp)
         ) { routeDescription -> eventHandler.invoke(CreateRouteEvent.OnRouteDescriptionChanged(routeDescription)) }
 
         TagsField(
             modifier = Modifier,
             onTagClick = { tag -> eventHandler.invoke(CreateRouteEvent.OnSelectedTagsChanged(tag))},
-            selectedTags = createRouteState.selectedTags
+            selectedTags = state.selectedTags
         )
 
         Text(
@@ -196,7 +207,7 @@ fun CreateRouteScreen(
             color = WanderlustTheme.colors.primaryText
         )
 
-        if(createRouteState.listOfPlaces.isEmpty()) {
+        if (state.listOfPoints.isEmpty()) {
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -208,14 +219,14 @@ fun CreateRouteScreen(
             )
         }
 
-        createRouteState.listOfPlaces.forEachIndexed { index, place ->
+        state.listOfPoints.forEachIndexed { index, routePoint ->
             Column(
                 modifier = Modifier
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if(index != 0) {
+                if (index != 0) {
                     Icon(
                         painterResource(R.drawable.ic_arrow_down),
                         contentDescription = "icon_trash",
@@ -231,40 +242,52 @@ fun CreateRouteScreen(
                 ) {
                     Column {
                         HeaderView(
-                            headerText = "${index+1}    ${place.placeName}",
+                            headerText = "${index + 1}    ${routePoint.name}",
                             onClickItem = {
                                 eventHandler.invoke(CreateRouteEvent.OnItemClicked(index))
                             },
                             onDeleteItem = {
-                                eventHandler.invoke(CreateRouteEvent.OnDeletePlaceClick(place))
+                                eventHandler.invoke(CreateRouteEvent.OnDeletePlaceClick(routePoint))
                             },
-                            isExpanded = createRouteState.itemIdsList.contains(index),
+                            isExpanded = state.expandedItemIndexes.contains(index),
                         )
                         ExpandableView(
-                            createRouteState = createRouteState,
+                            createRouteState = state,
                             navController,
-                            place = place,
-                            isExpanded = createRouteState.itemIdsList.contains(index),
+                            routePoint = routePoint,
+                            isExpanded = state.expandedItemIndexes.contains(index),
                             onMapClick = { lat, lon, placeCameraPosition ->
-                                eventHandler.invoke(CreateRouteEvent.OnMapClick(placeLon = lon, placeLat = lat, place = place, placeCameraPosition = placeCameraPosition))
+                                eventHandler.invoke(
+                                    CreateRouteEvent.OnMapClick(
+                                        pointLon = lon,
+                                        pointLat = lat,
+                                        point = routePoint,
+                                        pointCameraPosition = placeCameraPosition
+                                    )
+                                )
                             },
                             onGpsBtnClick = { lat, lon, cameraPosition ->
                                 eventHandler.invoke(
                                     CreateRouteEvent.OnShowCurrentLocationClicked(
-                                        placeLat = lat,
-                                        placeLon = lon,
-                                        place = place,
-                                        placeCameraPosition = cameraPosition
+                                        pointLat = lat,
+                                        pointLon = lon,
+                                        point = routePoint,
+                                        pointCameraPosition = cameraPosition
                                     )
                                 )
                             },
                             index = index,
                             fusedLocationProviderClient = fusedLocationProviderClient,
-                            onPlaceNameChanged = {
-                                    placeName -> eventHandler.invoke(CreateRouteEvent.OnPlaceNameChanged(placeName, place))
+                            onPlaceNameChanged = { placeName ->
+                                eventHandler.invoke(CreateRouteEvent.OnPlaceNameChanged(placeName, routePoint))
                             },
-                            onPlaceDescriptionChanged = {
-                                    placeDescription -> eventHandler.invoke(CreateRouteEvent.OnPlaceDescriptionChanged(placeDescription, place))
+                            onPlaceDescriptionChanged = { placeDescription ->
+                                eventHandler.invoke(
+                                    CreateRouteEvent.OnPlaceDescriptionChanged(
+                                        placeDescription,
+                                        routePoint
+                                    )
+                                )
                             }
                         )
                     }
@@ -278,17 +301,16 @@ fun CreateRouteScreen(
         ) {
             Button(
                 onClick = {
-//                    eventHandler.invoke(
-//                        CreateRouteEvent.OnAddPlaceClick(
-//                            Place(
-//                                "",
-//                                currentLocation.latitude,
-//                                currentLocation.longitude,
-//                                "Interesting Place",
-//                                ""
-//                            )
-//                        )
-//                    )
+                    eventHandler.invoke(
+                        CreateRouteEvent.OnAddPlaceClick(
+                            RoutePoint(
+                                currentLocation.latitude,
+                                currentLocation.longitude,
+                                "Interesting Place",
+                                ""
+                            )
+                        )
+                    )
                 },
                 modifier = Modifier
                     .padding(top = 22.dp, bottom = 16.dp)
@@ -312,9 +334,7 @@ fun CreateRouteScreen(
         }
 
         Button(
-            onClick = {
-                // TODO
-            },
+            onClick = { eventHandler.invoke(CreateRouteEvent.OnCreteButtonClick) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 80.dp, bottom = 80.dp)
@@ -403,8 +423,8 @@ fun HeaderView(
 @Composable
 fun ExpandableView(
     createRouteState: CreateRouteState,
-    navController:NavController,
-    place: Place,
+    navController: NavController,
+    routePoint: RoutePoint,
     isExpanded: Boolean,
     index: Int,
     onMapClick: (Double, Double, CameraPosition) -> Unit,
@@ -524,20 +544,20 @@ fun ExpandableView(
                 Marker(
                     state = MarkerState(
                         position =
-                        LatLng(createRouteState.listOfPlaces[index].lat, createRouteState.listOfPlaces[index].lon)
+                        LatLng(createRouteState.listOfPoints[index].lat, createRouteState.listOfPoints[index].lon)
                     ),
-                    title = createRouteState.listOfPlaces[index].placeName
+                    title = createRouteState.listOfPoints[index].name
                 )
             }
             EditProfileTextField(
                 label = stringResource(id = R.string.place_name),
-                inputValue = createRouteState.listOfPlaces[index].placeName,
+                inputValue = createRouteState.listOfPoints[index].name,
                 //modifier = Modifier.padding(top = 28.dp),
             ){ placeName -> onPlaceNameChanged(placeName) }
 
             EditProfileTextFieldDescription(
                 label = stringResource(id = R.string.place_description),
-                inputValue = createRouteState.listOfPlaces[index].placeDescription,
+                inputValue = createRouteState.listOfPoints[index].description ?: "",
                 //modifier = Modifier.padding(top = 16.dp),
             ){ placeDescription -> onPlaceDescriptionChanged(placeDescription) }
 
@@ -557,4 +577,21 @@ fun ExpandableView(
             }
         }
     }
+}
+
+@Composable
+private fun Dialogs(state: CreateRouteState, eventHandler: (CreateRouteEvent) -> Unit) {
+
+    if (state.showLoadingProgressBar)
+        LoadingDialog(
+            stringResource(id = R.string.loading_create),
+            onDismiss = { eventHandler.invoke(CreateRouteEvent.OnDismissProgressbarDialog) }
+        )
+
+    if (state.showErrorDialog)
+        ErrorDialog(
+            title = stringResource(id = R.string.error),
+            errors = state.errors,
+            onDismiss = { eventHandler.invoke(CreateRouteEvent.OnDismissErrorsDialog) }
+        )
 }

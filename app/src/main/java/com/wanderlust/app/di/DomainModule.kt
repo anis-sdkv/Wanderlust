@@ -1,10 +1,17 @@
 package com.wanderlust.app.di
 
-import com.wanderlust.data.services.UserService
+import com.wanderlust.data.services.UserServiceImpl
 import com.wanderlust.domain.repositories.CurrentUserRepository
+import com.wanderlust.domain.repositories.PlaceRepository
 import com.wanderlust.domain.repositories.RouteRepository
+import com.wanderlust.domain.repositories.SettingsRepository
 import com.wanderlust.domain.repositories.UserRepository
+import com.wanderlust.domain.services.GeocoderService
+import com.wanderlust.domain.usecases.CreatePlaceUseCase
+import com.wanderlust.domain.usecases.CreateRouteUseCase
+import com.wanderlust.domain.usecases.GetCurrentUserIdUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserUseCase
+import com.wanderlust.domain.usecases.GetLocationByCoordinatesUseCase
 import com.wanderlust.domain.usecases.GetRoutesByIdListUseCase
 import com.wanderlust.domain.usecases.GetUserByName
 import com.wanderlust.domain.usecases.LoginUseCase
@@ -26,10 +33,11 @@ class DomainModule {
         GetUserByName(userRepository)
 
     @Provides
-    fun provideRegisterUseCase(userService: UserService): RegisterUseCase =
+    fun provideRegisterUseCase(userService: UserServiceImpl): RegisterUseCase =
         RegisterUseCase(userService)
+
     @Provides
-    fun provideLoginUseCase(userService: UserService): LoginUseCase =
+    fun provideLoginUseCase(userService: UserServiceImpl): LoginUseCase =
         LoginUseCase(userService)
 
     @Provides
@@ -39,6 +47,10 @@ class DomainModule {
     @Provides
     fun provideGetCurrentUserUseCase(currentUserRepository: CurrentUserRepository): GetCurrentUserUseCase =
         GetCurrentUserUseCase(currentUserRepository)
+
+    @Provides
+    fun provideGetCurrentUserIdUseCase(currentUserRepository: CurrentUserRepository): GetCurrentUserIdUseCase =
+        GetCurrentUserIdUseCase(currentUserRepository)
 
     @Provides
     fun provideSetCurrentUserUseCase(currentUserRepository: CurrentUserRepository): SetCurrentUserUseCase =
@@ -54,4 +66,35 @@ class DomainModule {
         currentUserRepository: CurrentUserRepository
     ): UpdateUserUseCase =
         UpdateUserUseCase(userRepository, currentUserRepository)
+
+    @Provides
+    fun provideCreatePlaceUseCase(
+        placeRepository: PlaceRepository,
+        currentUserRepository: CurrentUserRepository,
+        getLocationByCoordinatesUseCase: GetLocationByCoordinatesUseCase
+    ) =
+        CreatePlaceUseCase(
+            placeRepository,
+            currentUserRepository,
+            getLocationByCoordinatesUseCase
+        )
+
+
+    @Provides
+    fun provideCreateRouteUseCase(
+        routeRepository: RouteRepository,
+        currentUserRepository: CurrentUserRepository,
+        getLocationByCoordinatesUseCase: GetLocationByCoordinatesUseCase
+    ) =
+        CreateRouteUseCase(
+            routeRepository,
+            currentUserRepository,
+            getLocationByCoordinatesUseCase
+        )
+
+    @Provides
+    fun provideGetLocationByCoordinatesUseCase(
+        geocoderService: GeocoderService,
+        settingsRepository: SettingsRepository
+    ): GetLocationByCoordinatesUseCase = GetLocationByCoordinatesUseCase(geocoderService, settingsRepository)
 }

@@ -1,5 +1,6 @@
 package com.wanderlust.data.repositoriesImpl
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.PlaceEntity
 import com.wanderlust.data.mappers.PlaceMapper
@@ -10,6 +11,18 @@ import javax.inject.Inject
 
 class PlaceRepositoryImpl @Inject constructor(private val db: FirebaseFirestore, private val mapper: PlaceMapper) :
     PlaceRepository {
+    override suspend fun create(userId: String, place: Place) {
+        val entity = mapper.map(place)
+
+        db.runTransaction { transaction ->
+            val placeDoc = db.collection(PLACES_COLLECTION).document()
+            val userDoc = db.collection(UserRepositoryImpl.USERS_COLLECTION).document(userId)
+
+            transaction.set(placeDoc, entity)
+            transaction.update(userDoc, "places", FieldValue.arrayUnion(placeDoc.id))
+        }.await()
+    }
+
     override suspend fun getByIdArray(ids: List<String>): List<Place> {
         if (ids.isEmpty()) return listOf()
 
@@ -21,7 +34,7 @@ class PlaceRepositoryImpl @Inject constructor(private val db: FirebaseFirestore,
         val result = mutableListOf<Place>()
         query.documents.forEach {
             val entity = it.toObject(PlaceEntity::class.java)
-            entity?.let { route -> result.add(mapper.map(route)) }
+            entity?.let { place -> result.add(mapper.map(place)) }
         }
         return result
     }

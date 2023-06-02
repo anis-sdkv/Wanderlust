@@ -35,6 +35,10 @@ android {
 dependencies {
     implementation project(':domain')
 
+    // geocoder
+    implementation 'com.patloew.colocation:colocation:1.1.1'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
     // firebase
     implementation platform(libs.firebase.bom)
     implementation(libs.firebase.auth)

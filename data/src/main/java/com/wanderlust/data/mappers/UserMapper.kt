@@ -6,9 +6,9 @@ import com.wanderlust.domain.model.UserProfile
 import javax.inject.Inject
 
 class UserMapper @Inject constructor() {
-    fun map(entity: UserEntity): UserProfile =
+    fun map(entity: UserEntity, id: String): UserProfile =
         UserProfile(
-            entity.id ?: throw IllegalArgumentException(),
+            id,
             entity.username ?: throw IllegalArgumentException(),
             entity.createdAt?.toDate() ?: throw IllegalArgumentException(),
             entity.city,
@@ -22,7 +22,6 @@ class UserMapper @Inject constructor() {
 
     fun map(userProfile: UserProfile): UserEntity =
         UserEntity().apply {
-            id = userProfile.id
             username = userProfile.username
             city = userProfile.city
             country = userProfile.country

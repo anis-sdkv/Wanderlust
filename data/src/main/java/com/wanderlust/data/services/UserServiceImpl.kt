@@ -11,7 +11,7 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 
-class UserService @Inject constructor(private val auth: FirebaseAuth, private val repository: UserRepository) :
+class UserServiceImpl @Inject constructor(private val auth: FirebaseAuth, private val repository: UserRepository) :
     UserService {
     val currentUser get() = auth.currentUser
 
@@ -34,12 +34,6 @@ class UserService @Inject constructor(private val auth: FirebaseAuth, private va
     }
 
     override suspend fun sendVerification(): Boolean {
-//        val user = auth.currentUser ?: throw Exception()
-//        var result = false
-//        user.sendEmailVerification()
-//            .addOnCompleteListener { task -> result = task.isSuccessful }
-//            .await()
-//        return result
         TODO()
     }
 

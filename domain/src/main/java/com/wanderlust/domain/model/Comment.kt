@@ -5,8 +5,8 @@ import java.util.Date
 data class Comment(
     val authorId: String,
     val authorNickname: String,
-    val text: String,
     val score: Int,
-    val createdAt: Date
+    val createdAt: Date,
+    val text: String? = null,
 )
 

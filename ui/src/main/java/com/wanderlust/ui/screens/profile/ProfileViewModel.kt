@@ -149,7 +149,6 @@ class ProfileViewModel @Inject constructor(
     private fun loadSelfProfile() {
         viewModelScope.launch {
             try {
-
                 val user = getCurrentUserUseCase()
                 if (user != null) {
                     _state.emit(
