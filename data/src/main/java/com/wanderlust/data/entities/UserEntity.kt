@@ -4,7 +4,6 @@ import com.google.firebase.Timestamp
 
 
 class UserEntity {
-    var id: String? = null
     var username: String? = null
     var city: String? = null
     var country: String? = null

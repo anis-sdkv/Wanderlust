@@ -2,7 +2,7 @@ package com.wanderlust.ui.screens.edit_profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wanderlust.domain.action_results.UpdateResult
+import com.wanderlust.domain.action_results.FirestoreActionResult
 import com.wanderlust.domain.model.UserProfile
 import com.wanderlust.domain.usecases.GetCurrentUserUseCase
 import com.wanderlust.domain.usecases.UpdateUserUseCase
@@ -161,8 +161,8 @@ class EditProfileViewModel @Inject constructor(
             _state.tryEmit(_state.value.copy(showLoadingProgressBar = false))
 
             when (result) {
-                is UpdateResult.SuccessResult -> _action.emit(EditProfileSideEffect.NavigateBack)
-                is UpdateResult.FailResult -> {
+                is FirestoreActionResult.SuccessResult -> _action.emit(EditProfileSideEffect.NavigateBack)
+                is FirestoreActionResult.FailResult -> {
                     _state.emit(
                         _state.value.copy(
                             errors = persistentListOf(result.message ?: "unknown"),

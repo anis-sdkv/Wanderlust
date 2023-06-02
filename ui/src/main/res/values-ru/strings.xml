@@ -28,6 +28,7 @@
     <string name="loading_reg">Регистрация…</string>
     <string name="loading_login">Авторизация…</string>
     <string name="loading_update">Обновление…</string>
+    <string name="loading_create">Создание…</string>
 
     <string name="try_again">Попробуй еще раз</string>
 
