@@ -20,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,7 +39,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.MapUiSettings
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -53,6 +56,8 @@ import com.wanderlust.ui.components.common.TagsField
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.permissions.RequestPermission
+import com.wanderlust.ui.screens.map.DarkMapStyle
+import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.utils.LocationUtils
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -64,6 +69,10 @@ fun CreatePlaceScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val eventHandler = viewModel::event
     val action by viewModel.action.collectAsStateWithLifecycle(null)
+
+    val settingsEventBus = LocalSettingsEventBus.current
+    val currentSettings = settingsEventBus.currentSettings.collectAsState().value
+    val isDarkMode = currentSettings.isDarkMode
 
     var requestLocationUpdate by remember { mutableStateOf(true)}
 
@@ -153,6 +162,9 @@ fun CreatePlaceScreen(
                 .fillMaxWidth()
                 .height(450.dp),
             cameraPositionState = cameraPositionState,
+            properties =
+                if(isDarkMode == true)
+                    MapProperties(mapStyleOptions = MapStyleOptions(DarkMapStyle.json)) else MapProperties(),
             uiSettings = mapUiSettings,
             onMapClick = {
                 eventHandler.invoke(

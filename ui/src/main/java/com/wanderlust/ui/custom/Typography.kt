@@ -42,6 +42,11 @@ internal val baseTypography = WanderlustTypography(
         fontWeight = FontWeight.Bold,
         fontSize = 16.sp,
     ),
+    semibold20 = TextStyle(
+        fontFamily = wanderlustFontFamily,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+    ),
     semibold16 = TextStyle(
         fontFamily = wanderlustFontFamily,
         fontWeight = FontWeight.SemiBold,
