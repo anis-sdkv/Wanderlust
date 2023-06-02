@@ -101,6 +101,7 @@
     <string name="photos">Фотографии</string>
     <string name="added">Добавлено:</string>
     <string name="ratings">оценок</string>
+    <string name="enter_the_comment">Введите комментарий</string>
 
     <!--    Map-->
     <string name="creating_place">Создание места</string>

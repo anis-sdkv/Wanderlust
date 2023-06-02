@@ -3,9 +3,6 @@ package com.wanderlust.ui.screens.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wanderlust.domain.model.Route
-import com.wanderlust.ui.screens.home.HomeEvent
-import com.wanderlust.ui.screens.home.HomeSideEffect
 import com.wanderlust.ui.screens.home.SortCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
