@@ -18,9 +18,11 @@ class CreatePlaceUseCase(
             repository.create(
                 user.id, place.copy(
                     city = locationAddress.city,
-                    country = locationAddress.country
+                    country = locationAddress.country,
+                    authorId = user.id,
                 )
             )
+            currentUserRepository.notifyUpdated()
             FirestoreActionResult.SuccessResult
         } catch (e: Exception) {
             FirestoreActionResult.FailResult(e.message)

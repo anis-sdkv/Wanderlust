@@ -7,15 +7,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -52,10 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.wanderlust.domain.model.Route
 import com.wanderlust.ui.R
-import com.wanderlust.ui.components.common.ListOfRoutes
 import com.wanderlust.ui.components.common.LocationText
+import com.wanderlust.ui.components.common.RouteCard
 import com.wanderlust.ui.components.common.SwitchButton
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.Graph
@@ -79,7 +79,6 @@ fun ProfileScreen(
         }
     }
 
-
     LaunchedEffect(action) {
         when (action) {
             null -> Unit
@@ -93,98 +92,145 @@ fun ProfileScreen(
         }
     }
 
-    val scrollState = rememberScrollState()
+    val columnState = rememberLazyListState()
 
     var imageHeight by remember {
         mutableStateOf(500)
     }
     val imageTranslationY by remember {
-        derivedStateOf { scrollState.value * .6f }
+        derivedStateOf { columnState.firstVisibleItemScrollOffset * .6f }
     }
 
     val imageVisibility by remember {
-        derivedStateOf { scrollState.value / imageHeight.toFloat() }
+        derivedStateOf { columnState.firstVisibleItemScrollOffset / imageHeight.toFloat() }
     }
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
-            .padding(bottom = 64.dp)
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy((-32).dp)
+            .padding(bottom = 64.dp),
+        verticalArrangement = Arrangement.spacedBy((-32).dp),
+        state = columnState
     )
     {
-        val gradientColor = WanderlustTheme.colors.secondaryText
-        Image(
-            painterResource(R.drawable.test_user_photo),
-            contentDescription = "user_photo",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .aspectRatio(1f)
-                .graphicsLayer {
-                    //анимация и изменение непрозрачности изображения при скролле:
-                    translationY = imageTranslationY
-                    alpha = 1f - imageVisibility
-                }
-                .drawWithCache {
-                    val gradient = Brush.verticalGradient(
-                        colors = listOf(Color.Transparent, gradientColor),
-                        startY = size.height / 3 * 2,
-                        endY = size.height
-                    )
-                    onDrawWithContent {
-                        drawContent()
-                        drawRect(gradient, blendMode = BlendMode.Multiply)
+        item {
+            val gradientColor = WanderlustTheme.colors.secondaryText
+            Image(
+                painterResource(R.drawable.test_user_photo),
+                contentDescription = "user_photo",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .aspectRatio(1f)
+                    .graphicsLayer {
+                        //анимация и изменение непрозрачности изображения при скролле:
+                        translationY = imageTranslationY
+                        alpha = 1f - imageVisibility
                     }
-                }
-                .onGloballyPositioned {
-                    imageHeight = it.size.height
-                }
-        )
-
-        Card(
-            shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-            colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
-        ) {
-            when (state.cardState) {
-                ProfileCardState.ERROR -> ProfileError()
-                ProfileCardState.PROGRESS_BAR -> ProfileProgressBar()
-                ProfileCardState.CONTENT -> ProfileMainContent(state, eventHandler)
-                ProfileCardState.NOT_AUTH -> UserNotAuthMessage(eventHandler)
-            }
+                    .drawWithCache {
+                        val gradient = Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, gradientColor),
+                            startY = size.height / 3 * 2,
+                            endY = size.height
+                        )
+                        onDrawWithContent {
+                            drawContent()
+                            drawRect(gradient, blendMode = BlendMode.Multiply)
+                        }
+                    }
+                    .onGloballyPositioned {
+                        imageHeight = it.size.height
+                    }
+            )
         }
+
+        when (state.cardState) {
+            ProfileCardState.ERROR -> item { ProfileError() }
+            ProfileCardState.PROGRESS_BAR -> item { ProfileProgressBar() }
+            ProfileCardState.CONTENT -> {
+                item {
+                    ProfileMainContent(state, eventHandler)
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+                items(state.userRoutes.size) {
+                    RouteCard(state.userRoutes[it], modifier = Modifier.padding(horizontal = 20.dp))
+                }
+                if (state.userRoutes.isNotEmpty())
+//                    item {
+//                        Box(
+//                            modifier = Modifier
+//                                .padding(bottom = 84.dp, top = 40.dp)
+//                                .fillMaxWidth(), contentAlignment = Alignment.Center
+//                        ) {
+//                            TextButton(
+//                                onClick = {},
+//                            ) {
+//                                Text(
+//                                    text = stringResource(id = R.string.show_all_routes),
+//                                    style = WanderlustTheme.typography.medium16,
+//                                    color = WanderlustTheme.colors.accent,
+//                                )
+//                            }
+//                        }
+//                    }
+                else
+                    item {
+                        Text(
+                            modifier = Modifier
+                                .padding(top = 32.dp)
+                                .fillMaxWidth(),
+                            text = stringResource(id = R.string.not_yet),
+                            style = WanderlustTheme.typography.medium16,
+                            color = WanderlustTheme.colors.primaryText,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+            }
+
+            ProfileCardState.NOT_AUTH -> item { UserNotAuthMessage(eventHandler) }
+        }
+
     }
 }
 
 @Composable
 private fun ProfileError() {
-    Text(
-        text = stringResource(id = R.string.error),
-        modifier = Modifier
-            .padding(top = 32.dp),
-        style = WanderlustTheme.typography.bold24,
-        color = WanderlustTheme.colors.primaryText
-    )
+    Card(
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
+    ) {
+        Text(
+            text = stringResource(id = R.string.error),
+            modifier = Modifier
+                .padding(top = 32.dp),
+            style = WanderlustTheme.typography.bold24,
+            color = WanderlustTheme.colors.primaryText
+        )
 
-    Text(
-        text = stringResource(id = R.string.try_again),
-        modifier = Modifier.padding(top = 32.dp),
-        style = WanderlustTheme.typography.semibold14,
-        color = WanderlustTheme.colors.primaryText
-    )
+        Text(
+            text = stringResource(id = R.string.try_again),
+            modifier = Modifier.padding(top = 32.dp),
+            style = WanderlustTheme.typography.semibold14,
+            color = WanderlustTheme.colors.primaryText
+        )
+    }
 }
 
 @Composable
 private fun ProfileProgressBar() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1f),
-        contentAlignment = Alignment.Center
+    Card(
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
     ) {
-        CircularProgressIndicator(color = WanderlustTheme.colors.accent)
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = WanderlustTheme.colors.accent)
+        }
     }
 }
 
@@ -192,11 +238,13 @@ private fun ProfileProgressBar() {
 fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit) {
     Column(
         Modifier
-            .background(WanderlustTheme.colors.primaryBackground)
+            .background(
+                WanderlustTheme.colors.primaryBackground,
+                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
+            )
             .padding(start = 20.dp, end = 20.dp)
             .fillMaxSize()
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -270,61 +318,50 @@ fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit
         // Популярное у автора
         Text(
             text = stringResource(id = R.string.popular_from_author),
-            modifier = Modifier.padding(top = 20.dp),
+            modifier = Modifier.padding(vertical = 36.dp),
             style = WanderlustTheme.typography.bold20,
             color = WanderlustTheme.colors.primaryText
         )
-
-        // Список маршрутов
-        ListOfRoutes(routes = state.userRoutes)
-
-        TextButton(
-            onClick = {},
-            modifier = Modifier
-                .padding(vertical = 20.dp)
-                .align(Alignment.CenterHorizontally),
-        ) {
-            Text(
-                text = stringResource(id = R.string.show_all_routes),
-                style = WanderlustTheme.typography.medium16,
-                color = WanderlustTheme.colors.accent,
-            )
-        }
     }
 }
 
 @Composable
 fun UserNotAuthMessage(eventHandler: (ProfileEvent) -> Unit) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = stringResource(id = R.string.empty_profile_title),
-            modifier = Modifier
-                .padding(top = 32.dp),
-            style = WanderlustTheme.typography.bold24,
-            color = WanderlustTheme.colors.primaryText
-        )
-
-        Text(
-            text = stringResource(id = R.string.empty_profile_description),
-            modifier = Modifier.padding(top = 32.dp),
-            style = WanderlustTheme.typography.semibold14,
-            color = WanderlustTheme.colors.primaryText
-        )
-
-        Button(
-            onClick = { eventHandler.invoke(ProfileEvent.OnButtonLoginClick) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 32.dp, start = 28.dp, end = 28.dp)
-                .height(42.dp),
-            colors = ButtonDefaults.buttonColors(WanderlustTheme.colors.accent),
-            shape = RoundedCornerShape(12.dp)
-        ) {
+    Card(
+        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+        colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = stringResource(id = R.string.sign_in),
-                style = WanderlustTheme.typography.semibold16,
-                color = WanderlustTheme.colors.onAccent
+                text = stringResource(id = R.string.empty_profile_title),
+                modifier = Modifier
+                    .padding(top = 32.dp),
+                style = WanderlustTheme.typography.bold24,
+                color = WanderlustTheme.colors.primaryText
             )
+
+            Text(
+                text = stringResource(id = R.string.empty_profile_description),
+                modifier = Modifier.padding(top = 32.dp),
+                style = WanderlustTheme.typography.semibold14,
+                color = WanderlustTheme.colors.primaryText
+            )
+
+            Button(
+                onClick = { eventHandler.invoke(ProfileEvent.OnButtonLoginClick) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 32.dp, start = 28.dp, end = 28.dp)
+                    .height(42.dp),
+                colors = ButtonDefaults.buttonColors(WanderlustTheme.colors.accent),
+                shape = RoundedCornerShape(12.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.sign_in),
+                    style = WanderlustTheme.typography.semibold16,
+                    color = WanderlustTheme.colors.onAccent
+                )
+            }
         }
     }
 }

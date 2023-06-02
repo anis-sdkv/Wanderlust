@@ -56,6 +56,9 @@
     <string name="default_distance">0 km</string>
     <string name="default_number">0</string>
 
+    <string name="not_yet">There\'s nothing here yet…</string>
+    <string name="no_ratings">No ratings</string>
+
     <!--    EditProfile-->
     <string name="edit_profile">Editing a profile</string>
     <string name="change_photo">Change photo</string>

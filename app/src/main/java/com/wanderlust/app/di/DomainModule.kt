@@ -9,6 +9,8 @@ import com.wanderlust.domain.repositories.UserRepository
 import com.wanderlust.domain.services.GeocoderService
 import com.wanderlust.domain.usecases.CreatePlaceUseCase
 import com.wanderlust.domain.usecases.CreateRouteUseCase
+import com.wanderlust.domain.usecases.GetAllPlacesUseCase
+import com.wanderlust.domain.usecases.GetAllRoutesUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserIdUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserUseCase
 import com.wanderlust.domain.usecases.GetLocationByCoordinatesUseCase
@@ -97,4 +99,12 @@ class DomainModule {
         geocoderService: GeocoderService,
         settingsRepository: SettingsRepository
     ): GetLocationByCoordinatesUseCase = GetLocationByCoordinatesUseCase(geocoderService, settingsRepository)
+
+    @Provides
+    fun provideGetAllPlacesUseCase(placesRepository: PlaceRepository): GetAllPlacesUseCase =
+        GetAllPlacesUseCase(placesRepository)
+
+    @Provides
+    fun provideGetAllRoutesUseCase(routeRepository: RouteRepository): GetAllRoutesUseCase =
+        GetAllRoutesUseCase(routeRepository)
 }

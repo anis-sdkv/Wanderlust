@@ -3,6 +3,8 @@ package com.wanderlust.domain.model
 import java.util.Date
 
 data class Place(
+    val authorId: String?,
+    val authorName: String?,
     val lat: Double,
     val lon: Double,
     val placeDescription: String,

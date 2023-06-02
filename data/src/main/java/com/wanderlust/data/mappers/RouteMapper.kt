@@ -10,6 +10,8 @@ class RouteMapper @Inject constructor(
 ) {
     fun map(entity: RouteEntity): Route =
         Route(
+            authorId = entity.authorId ?: throw IllegalArgumentException(),
+            authorName = entity.authorName ?: throw IllegalArgumentException(),
             routeName = entity.name ?: throw IllegalArgumentException(),
             routeDescription = entity.description ?: throw IllegalArgumentException(),
             createdAt = entity.createdAt?.toDate() ?: throw IllegalArgumentException(),
@@ -24,6 +26,8 @@ class RouteMapper @Inject constructor(
 
     fun map(route: Route): RouteEntity =
         RouteEntity().apply {
+            authorId = route.authorId
+            authorName = route.authorName
             name = route.routeName
             description = route.routeDescription
             city = route.city

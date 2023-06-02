@@ -1,7 +1,5 @@
 package com.wanderlust.ui.screens.create_place
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.CameraPosition
@@ -10,15 +8,11 @@ import com.wanderlust.domain.action_results.FirestoreActionResult
 import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.usecases.CreatePlaceUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserIdUseCase
-import com.wanderlust.ui.R
-import com.wanderlust.ui.components.common.ErrorDialog
-import com.wanderlust.ui.components.common.LoadingDialog
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -173,7 +167,9 @@ class CreatePlaceViewModel @Inject constructor(
                 placeDescription = state.value.placeDescription,
                 placeName = state.value.placeName,
                 createdAt = Date(),
-                tags = state.value.selectedTags
+                tags = state.value.selectedTags,
+                authorId = null,
+                authorName = null
             )
             _state.emit(_state.value.copy(showLoadingProgressBar = true))
             val result = createPlaceUseCase(place)

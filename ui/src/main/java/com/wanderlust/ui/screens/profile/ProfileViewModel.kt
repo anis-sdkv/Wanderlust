@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -75,6 +76,8 @@ class ProfileViewModel @Inject constructor(
     val action: SharedFlow<ProfileSideEffect?>
         get() = _action.asSharedFlow()
 
+    private var currentJob: Job? = null
+
     fun event(profileEvent: ProfileEvent) {
         when (profileEvent) {
             ProfileEvent.OnLaunch -> initState()
@@ -94,12 +97,19 @@ class ProfileViewModel @Inject constructor(
             _state.tryEmit(_state.value.copy(isSelfProfile = true))
             loadSelfProfile()
         } else {
-            loadProfileById(id)
+//            loadProfileById(id)
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        currentJob?.cancel()
+        currentJob = null
     }
 
     private fun onDispose() {
         _state.tryEmit(ProfileState())
+        currentJob?.cancel()
     }
 
     private fun onSubscribeBtnClick() {
@@ -147,7 +157,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     private fun loadSelfProfile() {
-        viewModelScope.launch {
+        currentJob = viewModelScope.launch {
             try {
                 val user = getCurrentUserUseCase()
                 if (user != null) {
@@ -160,7 +170,7 @@ class ProfileViewModel @Inject constructor(
                             userNumberOfRoutes = user.routes.size,
                             userNumberOfSubscribers = user.subscribers.size,
                             userNumberOfSubscriptions = user.subscriptions.size,
-                            cardState = ProfileCardState.CONTENT
+                            cardState = ProfileCardState.CONTENT,
                         )
                     )
                     loadRoutes(user.routes)

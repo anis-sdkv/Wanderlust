@@ -3,6 +3,8 @@ package com.wanderlust.domain.model
 import java.util.Date
 
 data class Route(
+    val authorId: String?,
+    val authorName: String?,
     val routeName: String,
     val routeDescription: String,
     val city: String = "undefined",
@@ -13,7 +15,6 @@ data class Route(
     val tags: List<String> = listOf(),
     val totalRating: Int = 0,
     val ratingCount: Int = 0,
-    val id: String? = null,
 )
 
 data class RoutePoint(

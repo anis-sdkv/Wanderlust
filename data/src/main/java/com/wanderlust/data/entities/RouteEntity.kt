@@ -3,6 +3,8 @@ package com.wanderlust.data.entities
 import com.google.firebase.Timestamp
 
 class RouteEntity {
+    var authorId: String? = null
+    var authorName: String? = null
     var name: String? = null
     var description: String? = null
     var city: String? = null

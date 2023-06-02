@@ -8,6 +8,9 @@ import javax.inject.Inject
 class PlaceMapper @Inject constructor() {
     fun map(entity: PlaceEntity): Place =
         Place(
+
+            entity.authorId ?: throw IllegalArgumentException(),
+            entity.authorName ?: throw IllegalArgumentException(),
             entity.lat ?: throw IllegalArgumentException(),
             entity.lon ?: throw IllegalArgumentException(),
             entity.placeName ?: throw IllegalArgumentException(),
@@ -24,6 +27,8 @@ class PlaceMapper @Inject constructor() {
 
     fun map(place: Place): PlaceEntity =
         PlaceEntity().apply {
+            authorId = place.authorId
+            authorName = place.authorName
             lat = place.lat
             lon = place.lon
             placeName = place.placeName

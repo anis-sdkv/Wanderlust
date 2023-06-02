@@ -1,5 +1,6 @@
 package com.wanderlust.data.repositoriesImpl
 
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.RouteEntity
@@ -24,6 +25,30 @@ class RouteRepositoryImpl @Inject constructor(private val db: FirebaseFirestore,
         }.await()
     }
 
+    override suspend fun getByFilters(regex: Regex, searchByName: Boolean, tags: List<String>): List<Route> {
+        val query = db.collection(ROUTES_COLLECTION)
+            .get()
+            .await()
+
+        val result = mutableListOf<Route>()
+        query.documents.forEach {
+            val entity = it.toObject(RouteEntity::class.java)
+            entity?.let { route ->
+                val model = mapper.map(route)
+                if (model.tags.containsAll(tags)) {
+                    if (searchByName)
+                        if (regex.matches(model.routeName))
+                            result.add(model)
+                        else
+                            if (regex.matches(model.authorName!!))
+                                result.add(model)
+
+                }
+            }
+        }
+        return result
+    }
+
     override suspend fun getAll(): List<Route> {
         val query = db.collection(ROUTES_COLLECTION)
             .get()
@@ -41,7 +66,7 @@ class RouteRepositoryImpl @Inject constructor(private val db: FirebaseFirestore,
         if (ids.isEmpty()) return listOf()
 
         val query = db.collection(ROUTES_COLLECTION)
-            .whereIn("id", ids)
+            .whereIn(FieldPath.documentId(), ids)
             .get()
             .await()
 

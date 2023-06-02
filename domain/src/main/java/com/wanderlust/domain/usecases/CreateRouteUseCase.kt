@@ -1,16 +1,14 @@
 package com.wanderlust.domain.usecases
 
 import com.wanderlust.domain.action_results.FirestoreActionResult
-import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.repositories.CurrentUserRepository
-import com.wanderlust.domain.repositories.PlaceRepository
 import com.wanderlust.domain.repositories.RouteRepository
 
 class CreateRouteUseCase (
     private val repository: RouteRepository,
     private val currentUserRepository: CurrentUserRepository,
-    private val getLocationByCoordinatesUseCase: GetLocationByCoordinatesUseCase
+    private val getLocationByCoordinatesUseCase: GetLocationByCoordinatesUseCase,
 ) {
     suspend operator fun invoke(route: Route): FirestoreActionResult {
         return try {
@@ -19,11 +17,15 @@ class CreateRouteUseCase (
 
             val user = currentUserRepository.get() ?: throw IllegalStateException()
             repository.create(
-                user.id, route.copy(
+                user.id,
+                route.copy(
+                    authorId = user.id,
+                    authorName = user.username,
                     city = locationAddress.city,
-                    country = locationAddress.country
+                    country = locationAddress.country,
                 )
             )
+            currentUserRepository.notifyUpdated()
             FirestoreActionResult.SuccessResult
         } catch (e: Exception) {
             FirestoreActionResult.FailResult(e.message)
