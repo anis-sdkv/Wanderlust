@@ -20,11 +20,11 @@ import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun SquareButton(
-    modifier: Modifier,
     icon: Int,
     iconColor: Color,
     backgroundColor: Color,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Card(
         elevation = CardDefaults.cardElevation(10.dp),

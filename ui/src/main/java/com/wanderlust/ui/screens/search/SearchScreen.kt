@@ -118,7 +118,7 @@ fun SearchScreen(
     ) {
         SearchTextField(
             modifier = Modifier
-                .padding(top = 48.dp, bottom = 32.dp)
+                .padding(top = 60.dp, bottom = 32.dp)
                 .fillMaxWidth(),
             searchValue = searchState.searchValue,
             onChange = { searchValue ->
