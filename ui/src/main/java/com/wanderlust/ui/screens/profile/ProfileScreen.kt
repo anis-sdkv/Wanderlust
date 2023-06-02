@@ -236,7 +236,8 @@ fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit
             city = state.userCity, country = state.userCountry,
             Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
+                .padding(top = 16.dp),
+            arrangement = Arrangement.Center
         )
 
         ProfileStatistic(state = state, eventHandler = eventHandler, modifier = Modifier.padding(top = 20.dp))
@@ -275,8 +276,7 @@ fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit
         )
 
         // Список маршрутов
-//        val items = listOf(Route())
-//        ListOfRoutes(routes = items)
+        ListOfRoutes(routes = state.userRoutes)
 
         TextButton(
             onClick = {},

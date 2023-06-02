@@ -15,12 +15,12 @@ import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
-fun LocationText(city: String?, country: String?, modifier: Modifier = Modifier) {
+fun LocationText(city: String?, country: String?, modifier: Modifier = Modifier, arrangement: Arrangement.Horizontal) {
     if (city == null && country == null) return
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = arrangement
     ) {
         Icon(
             painterResource(R.drawable.baseline_location_on_24),

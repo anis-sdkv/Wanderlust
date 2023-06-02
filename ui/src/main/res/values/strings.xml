@@ -91,6 +91,15 @@
     <string name="by_author">by author</string>
     <string name="choose_tags">Choose tags</string>
 
+    <!--    Route-->
+    <string name="author">Author</string>
+    <string name="on_map">On map</string>
+    <string name="points_of_route">Points of route</string>
+    <string name="comments">Comments</string>
+    <string name="photos">Photos</string>
+    <string name="added">Added:</string>
+    <string name="ratings">ratings</string>
+
 
 
 
