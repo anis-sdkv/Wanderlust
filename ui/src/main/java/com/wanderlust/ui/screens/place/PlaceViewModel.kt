@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wanderlust.domain.model.Comment
+import com.wanderlust.ui.screens.route.RouteEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -47,12 +48,17 @@ data class PlaceState(
     val placeTags: PersistentList<String> = persistentListOf("Day", "Long distance", "In the city", "dsldffmlkefmwkedl"),
     val placeCity: String = "Kazan",
     val placeCountry: String = "Russia",
-    val authorName: String = "Author"
+    val authorName: String = "Author",
+    val inputCommentText: String = "",
+    val userPlaceRating: Int? = null
 )
 
 sealed interface PlaceEvent {
     object OnAuthorClick: PlaceEvent
     object OnBackBtnClick: PlaceEvent
+    data class OnInputCommentTextChange(val inputCommentText: String) : PlaceEvent
+    data class OnUserPlaceRatingChange(val rating: Int) : PlaceEvent
+    object OnCreateComment : PlaceEvent
 }
 
 sealed interface PlaceSideEffect {
@@ -78,7 +84,34 @@ class PlaceViewModel @Inject constructor(
         when(placeEvent){
             PlaceEvent.OnAuthorClick -> onAuthorClick()
             PlaceEvent.OnBackBtnClick -> onBackBtnClick()
+            PlaceEvent.OnCreateComment -> onCreateComment()
+            is PlaceEvent.OnInputCommentTextChange -> onInputCommentTextChange(placeEvent)
+            is PlaceEvent.OnUserPlaceRatingChange -> onUserPlaceRatingChange(placeEvent)
         }
+    }
+
+    private fun onUserPlaceRatingChange(event: PlaceEvent.OnUserPlaceRatingChange){
+        _state.tryEmit(
+            _state.value.copy(
+                userPlaceRating = event.rating,
+                //а вот как эти значения поменять, если этот метод срабатывает при каждом нажатии на звездочку
+                //где-нибудь в другом месте наверное, при выходе с экрана может...
+                //totalRating =
+                //ratingCount =
+            )
+        )
+    }
+
+    private fun onCreateComment(){
+        // TODO
+    }
+
+    private fun onInputCommentTextChange(event: PlaceEvent.OnInputCommentTextChange){
+        _state.tryEmit(
+            _state.value.copy(
+                inputCommentText = event.inputCommentText
+            )
+        )
     }
 
     private fun onBackBtnClick(){

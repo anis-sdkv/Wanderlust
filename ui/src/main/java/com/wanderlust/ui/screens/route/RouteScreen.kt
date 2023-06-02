@@ -2,6 +2,7 @@ package com.wanderlust.ui.screens.route
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -75,7 +76,9 @@ import com.wanderlust.domain.model.RoutePoint
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.AuthorCard
 import com.wanderlust.ui.components.common.CommentField
+import com.wanderlust.ui.components.common.CommentTextField
 import com.wanderlust.ui.components.common.LocationText
+import com.wanderlust.ui.components.common.RatingRow
 import com.wanderlust.ui.components.common.TagsRow
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
@@ -162,7 +165,9 @@ fun RouteScreen(
                     }
             )
             IconButton(
-                modifier = Modifier.align(Alignment.TopStart).padding(top = 20.dp, start = 10.dp),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 20.dp, start = 10.dp),
                 onClick = {  }
             ) {
                 Image(
@@ -208,43 +213,17 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
             color = WanderlustTheme.colors.primaryText
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 28.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = state.ratingCount.toString() + " " + stringResource(id = R.string.ratings),
-                textAlign = TextAlign.Start,
-                modifier = Modifier.weight(0.9f),
-                style = WanderlustTheme.typography.semibold20,
-                color = WanderlustTheme.colors.secondaryText
-            )
-
-            Row(
-                modifier = Modifier.weight(0.1f),
-                verticalAlignment = Alignment.CenterVertically,
-                //horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    text = (state.totalRating/state.ratingCount).toString(),
-                    textAlign = TextAlign.End,
-                    modifier = Modifier,
-                    style = WanderlustTheme.typography.semibold20,
-                    color = WanderlustTheme.colors.primaryText
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Icon(
-                    painterResource(R.drawable.ic_star),
-                    modifier = Modifier.size(20.dp),
-                    contentDescription = "icon_dropdown_menu",
-                    tint = WanderlustTheme.colors.primaryText
-                )
+        RatingRow(
+            modifier = Modifier,
+            rating = state.totalRating/state.ratingCount,
+            ratingCount = state.ratingCount,
+            userRouteRating = state.userRouteRating,
+            onStarClick = {
+                    starNumber -> eventHandler.invoke(RouteEvent.OnUserRouteRatingChange(starNumber))
             }
-        }
+        )
 
-        TagsRow(modifier = Modifier.padding(top = 12.dp), tags = state.routeTags)
+        TagsRow(modifier = Modifier.padding(top = 16.dp), tags = state.routeTags)
 
         LocationText(
             city = state.routeCity, country = state.routeCountry,
@@ -343,6 +322,13 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
             modifier = Modifier.padding(top = 28.dp),
             style = WanderlustTheme.typography.bold20,
             color = WanderlustTheme.colors.primaryText
+        )
+
+        CommentTextField(
+            modifier = Modifier.padding(top = 16.dp),
+            inputValue = state.inputCommentText,
+            onChange = { inputCommentText -> eventHandler.invoke(RouteEvent.OnInputCommentTextChange(inputCommentText)) },
+            onSendBtnClick = {eventHandler.invoke(RouteEvent.OnCreateComment)}
         )
 
         state.comments.forEach { comment ->

@@ -61,12 +61,17 @@ data class RouteState(
     val routeTags: PersistentList<String> = persistentListOf("Day", "Long distance", "In the city", "dsldffmlkefmwkedl"),
     val routeCity: String = "Kazan",
     val routeCountry: String = "Russia",
-    val authorName: String = "Author"
+    val authorName: String = "Author",
+    val inputCommentText: String = "",
+    val userRouteRating: Int? = null
 )
 
 sealed interface RouteEvent {
     object OnAuthorClick: RouteEvent
     object OnBackBtnClick: RouteEvent
+    data class OnInputCommentTextChange(val inputCommentText: String) : RouteEvent
+    data class OnUserRouteRatingChange(val rating: Int) : RouteEvent
+    object OnCreateComment : RouteEvent
 }
 
 sealed interface RouteSideEffect {
@@ -92,7 +97,34 @@ class RouteViewModel @Inject constructor(
         when(routeEvent){
             RouteEvent.OnAuthorClick -> onAuthorClick()
             RouteEvent.OnBackBtnClick -> onBackBtnClick()
+            RouteEvent.OnCreateComment -> onCreateComment()
+            is RouteEvent.OnInputCommentTextChange -> onInputCommentTextChange(routeEvent)
+            is RouteEvent.OnUserRouteRatingChange -> onUserRouteRatingChange(routeEvent)
         }
+    }
+
+    private fun onUserRouteRatingChange(event: RouteEvent.OnUserRouteRatingChange){
+        _state.tryEmit(
+            _state.value.copy(
+                userRouteRating = event.rating
+                //а вот как эти значения поменять, если этот метод срабатывает при каждом нажатии на звездочку
+                //где-нибудь в другом месте наверное, при выходе с экрана может...
+                //totalRating =
+                //ratingCount =
+            )
+        )
+    }
+
+    private fun onCreateComment(){
+        // TODO
+    }
+
+    private fun onInputCommentTextChange(event: RouteEvent.OnInputCommentTextChange){
+        _state.tryEmit(
+            _state.value.copy(
+                inputCommentText = event.inputCommentText
+            )
+        )
     }
 
     private fun onBackBtnClick(){
