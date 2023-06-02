@@ -17,7 +17,7 @@ import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
-fun SearchTextField(modifier: Modifier, searchValue: String, onChange: (String) -> Unit) {
+fun SearchTextField(searchValue: String, onChange: (String) -> Unit, modifier: Modifier = Modifier) {
 
     val maxChar = 25
 

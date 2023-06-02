@@ -1,18 +1,27 @@
 package com.wanderlust.ui.screens.home
 
+//import com.wanderlust.ui.navigation.graphs.SearchNavScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -22,7 +31,6 @@ import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.SearchTextField
 import com.wanderlust.ui.components.common.SquareButton
 import com.wanderlust.ui.custom.WanderlustTheme
-//import com.wanderlust.ui.navigation.graphs.SearchNavScreen
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.HomeNavScreen
 
 @Composable
@@ -56,70 +64,81 @@ fun HomeScreen(
         modifier = Modifier
             .background(WanderlustTheme.colors.primaryBackground)
             .fillMaxSize()
-            .padding(start = 20.dp, end = 20.dp, top = 48.dp, bottom = 64.dp)
+            .padding(start = 20.dp, end = 20.dp, top = 60.dp, bottom = 64.dp)
     ) {
 
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             SearchTextField(
-                modifier = Modifier.weight(0.8f),
+                modifier = Modifier.weight(1f),
                 searchValue = homeState.searchValue,
                 onChange = { searchValue -> eventHandler.invoke(HomeEvent.OnSearchValueChanged(searchValue)) }
             )
             SquareButton(
-                modifier = Modifier
-                    .weight(0.2f),
                 icon = R.drawable.ic_filter,
                 iconColor = WanderlustTheme.colors.secondaryText,
-                backgroundColor = WanderlustTheme.colors.solid
-            ) {
-                eventHandler.invoke(HomeEvent.OnFilterBtnClick)
-            }
+                backgroundColor = WanderlustTheme.colors.solid,
+                onClick = { eventHandler.invoke(HomeEvent.OnFilterBtnClick) }
+            )
             SquareButton(
-                modifier = Modifier.weight(0.2f),
                 icon = R.drawable.ic_search,
                 iconColor = WanderlustTheme.colors.onAccent,
-                backgroundColor = WanderlustTheme.colors.accent
-            ) {
-                eventHandler.invoke(HomeEvent.OnSearchBtnClick)
-            }
+                backgroundColor = WanderlustTheme.colors.accent,
+                onClick = { eventHandler.invoke(HomeEvent.OnSearchBtnClick) }
+            )
         }
 
-        LazyRow(
-            modifier = Modifier.padding(top = 22.dp),
-            content = {
-                item {
-                    Text(
-                        modifier = Modifier
-                            .clickable { eventHandler.invoke(HomeEvent.OnCategoryClick(SortCategory.ALL_ROUTES)) },
-                        text = stringResource(id = R.string.all_routes),
-                        style = WanderlustTheme.typography.bold20,
-                        color = if(homeState.selectedCategory == SortCategory.ALL_ROUTES) WanderlustTheme.colors.primaryText else WanderlustTheme.colors.secondaryText
-                    )
-                }
-                item {
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 24.dp)
-                            .clickable { eventHandler.invoke(HomeEvent.OnCategoryClick(SortCategory.ALL_PLACES)) },
-                        text = stringResource(id = R.string.all_places),
-                        style = WanderlustTheme.typography.bold20,
-                        color = if(homeState.selectedCategory == SortCategory.ALL_PLACES) WanderlustTheme.colors.primaryText else WanderlustTheme.colors.secondaryText
-                    )
-                }
-                item{
-                    Text(
-                        modifier = Modifier
-                            .clickable { eventHandler.invoke(HomeEvent.OnCategoryClick(SortCategory.FAVOURITES)) },
-                        text = stringResource(id = R.string.favourites),
-                        style = WanderlustTheme.typography.bold20,
-                        color = if(homeState.selectedCategory == SortCategory.FAVOURITES) WanderlustTheme.colors.primaryText else WanderlustTheme.colors.secondaryText
-                    )
-                }
+        Box(
+            modifier = Modifier
+                .padding(top = 24.dp)
+                .height(40.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .horizontalScroll(rememberScrollState()),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier
+                        .clickable { eventHandler.invoke(HomeEvent.OnCategoryClick(SortCategory.ALL_ROUTES)) },
+                    text = stringResource(id = R.string.all_routes),
+                    style = WanderlustTheme.typography.bold20,
+                    color = if (homeState.selectedCategory == SortCategory.ALL_ROUTES) WanderlustTheme.colors.primaryText else WanderlustTheme.colors.secondaryText
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .clickable { eventHandler.invoke(HomeEvent.OnCategoryClick(SortCategory.ALL_PLACES)) },
+                    text = stringResource(id = R.string.all_places),
+                    style = WanderlustTheme.typography.bold20,
+                    color = if (homeState.selectedCategory == SortCategory.ALL_PLACES) WanderlustTheme.colors.primaryText else WanderlustTheme.colors.secondaryText
+                )
+
+                Text(
+                    modifier = Modifier
+                        .clickable { eventHandler.invoke(HomeEvent.OnCategoryClick(SortCategory.FAVOURITES)) },
+                    text = stringResource(id = R.string.favourites),
+                    style = WanderlustTheme.typography.bold20,
+                    color = if (homeState.selectedCategory == SortCategory.FAVOURITES) WanderlustTheme.colors.primaryText else WanderlustTheme.colors.secondaryText
+                )
+
+                Spacer(modifier = Modifier.width(120.dp))
             }
-        )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .width(160.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                WanderlustTheme.colors.primaryBackground
+                            )
+                        )
+                    )
+            )
+        }
         //ListOfRoutes(routes = )
     }
 }

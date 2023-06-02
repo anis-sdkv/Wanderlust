@@ -4,7 +4,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.RouteEntity
 import com.wanderlust.data.mappers.RouteMapper
-import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.repositories.RouteRepository
 import kotlinx.coroutines.tasks.await
@@ -24,6 +23,20 @@ class RouteRepositoryImpl @Inject constructor(private val db: FirebaseFirestore,
             transaction.update(userDoc, "routes", FieldValue.arrayUnion(routeDoc.id))
         }.await()
     }
+
+    override suspend fun getAll(): List<Route> {
+        val query = db.collection(ROUTES_COLLECTION)
+            .get()
+            .await()
+
+        val result = mutableListOf<Route>()
+        query.documents.forEach {
+            val entity = it.toObject(RouteEntity::class.java)
+            entity?.let { route -> result.add(mapper.map(route)) }
+        }
+        return result
+    }
+
     override suspend fun getByIdArray(ids: List<String>): List<Route> {
         if (ids.isEmpty()) return listOf()
 

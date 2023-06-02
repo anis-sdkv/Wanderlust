@@ -47,7 +47,7 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
             Box(modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(WanderlustTheme.colors.outline)
+                .background(WanderlustTheme.colors.secondaryBackground)
             )
             NavigationBar(
                 modifier = Modifier
@@ -228,7 +228,7 @@ fun SetBottomNavigationBar() {
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
-        content = { value ->
+        content = {
             RootNavGraph(navController = navController, isBottomBarVisible)
         }
     )
