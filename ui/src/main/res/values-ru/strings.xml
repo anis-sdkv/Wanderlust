@@ -58,6 +58,9 @@
     <string name="default_distance">0 км</string>
     <string name="default_number">0</string>
 
+    <string name="not_yet">Здесь пока ничего нет…</string>
+
+    <string name="no_ratings">Нет оценок</string>
     <!--    EditProfile-->
     <string name="edit_profile">Редактирование профиля</string>
     <string name="change_photo">Изменить фото</string>

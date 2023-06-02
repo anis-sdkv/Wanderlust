@@ -1,13 +1,16 @@
 package com.wanderlust.ui.screens.home
 
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
-import com.wanderlust.ui.R
-import com.wanderlust.ui.screens.edit_profile.EditProfileEvent
+import com.wanderlust.domain.usecases.GetAllPlacesUseCase
+import com.wanderlust.domain.usecases.GetAllRoutesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,90 +21,131 @@ import javax.inject.Inject
 
 
 data class HomeState(
-    val routes: List<Route>,
-    val searchValue: String,
-    val selectedCategory: SortCategory,
-    val selectedTags: List<String>,
-    val searchType: Boolean
+    val routes: PersistentList<Route> = persistentListOf(),
+    val places: PersistentList<Place> = persistentListOf(),
+    val searchValue: String = "",
+    val selectedCategory: SortCategory = SortCategory.ALL_ROUTES,
+    val selectedTags: PersistentList<String> = persistentListOf(),
+    val searchByName: Boolean = true
 )
 
-sealed interface HomeEvent{
+sealed interface HomeEvent {
+    object OnLaunch : HomeEvent
+    object OnDispose : HomeEvent
     object OnRouteClick : HomeEvent
-    object OnFilterBtnClick: HomeEvent
-    object OnSearchBtnClick: HomeEvent
-    data class OnSearchValueChanged(val searchValue: String): HomeEvent
+    object OnFilterBtnClick : HomeEvent
+    object OnSearchBtnClick : HomeEvent
+    data class OnSearchValueChanged(val searchValue: String) : HomeEvent
     data class OnCategoryClick(val selectedCategory: SortCategory) : HomeEvent
 }
 
 sealed interface HomeSideEffect {
-    object NavigateToSearchScreen: HomeSideEffect
-    object NavigateToRouteScreen: HomeSideEffect
+    object NavigateToSearchScreen : HomeSideEffect
+    object NavigateToRouteScreen : HomeSideEffect
+    object NavigateToProfileScreen : HomeSideEffect
 }
 
 @HiltViewModel
-class HomeViewModel @Inject constructor (
+class HomeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val getAllPlacesUseCase: GetAllPlacesUseCase,
+    private val getAllRoutesUseCase: GetAllRoutesUseCase
 ) : ViewModel() {
 
     private val searchValue: String = savedStateHandle["searchValue"] ?: ""
-    private val searchType: Boolean = savedStateHandle["searchType"] ?: true
+    private val searchByName: Boolean = savedStateHandle["searchType"] ?: true
 
     //private val selectedTags: TagsList = savedStateHandle["searchTags"] ?: TagsList(emptyList())
 
-    private val internalState: MutableStateFlow<HomeState> = MutableStateFlow(
-        HomeState(
-            emptyList(),
-            if (searchValue == "empty") "" else searchValue,
-            SortCategory.ALL_ROUTES,
-            emptyList(),// selectedTags.tags
-            searchType
-        )
-    )
-    val state: StateFlow<HomeState> = internalState
+    private val _state: MutableStateFlow<HomeState> =
+        MutableStateFlow(HomeState(searchValue = searchValue, searchByName = searchByName))
+    val state: StateFlow<HomeState> = _state
 
     private val _action = MutableSharedFlow<HomeSideEffect?>()
     val action: SharedFlow<HomeSideEffect?>
         get() = _action.asSharedFlow()
 
-    fun event(homeEvent: HomeEvent){
-        when(homeEvent){
+    private var allRoutes: List<Route> = listOf()
+    private var allPlaces: List<Place> = listOf()
+
+    fun event(homeEvent: HomeEvent) {
+        when (homeEvent) {
             HomeEvent.OnFilterBtnClick -> onFilterBtnClick()
             HomeEvent.OnRouteClick -> onRouteClick()
-            HomeEvent.OnSearchBtnClick -> onSearchBtnClick()
+            HomeEvent.OnSearchBtnClick -> filter()
             is HomeEvent.OnSearchValueChanged -> onSearchValueChanged(homeEvent)
             is HomeEvent.OnCategoryClick -> onCategoryClick(homeEvent)
+            HomeEvent.OnLaunch -> onLaunch()
+            HomeEvent.OnDispose -> onDispose()
         }
     }
 
-    private fun onCategoryClick(event: HomeEvent.OnCategoryClick){
-        internalState.tryEmit(
-            internalState.value.copy(
+    private fun onLaunch() {
+        viewModelScope.launch {
+            allRoutes = getAllRoutesUseCase()
+            allPlaces = getAllPlacesUseCase()
+            _state.emit(
+                _state.value.copy(
+                    places = allPlaces.toPersistentList(),
+                    routes = allRoutes.toPersistentList()
+                )
+            )
+            filter()
+        }
+    }
+
+    private fun onDispose() {
+        allPlaces = listOf()
+        allRoutes = listOf()
+    }
+
+    private fun onCategoryClick(event: HomeEvent.OnCategoryClick) {
+        _state.tryEmit(
+            _state.value.copy(
                 selectedCategory = event.selectedCategory
             )
         )
     }
 
-    private fun onSearchValueChanged(event: HomeEvent.OnSearchValueChanged){
-        internalState.tryEmit(
-            internalState.value.copy(
-                searchValue = event.searchValue
-            )
-        )
+    private fun onSearchValueChanged(event: HomeEvent.OnSearchValueChanged) {
+        _state.tryEmit(_state.value.copy(searchValue = event.searchValue))
     }
 
-    private fun onSearchBtnClick(){
+    private fun filter() {
         viewModelScope.launch {
-            // TODO
+            val pattern = Regex(".*${state.value.searchValue}.*")
+            when (state.value.selectedCategory) {
+                SortCategory.ALL_ROUTES -> {
+                    val result = allRoutes.filter {
+                        it.tags.containsAll(state.value.selectedTags) &&
+                                if (state.value.searchByName) pattern.matches(it.routeName)
+                                else pattern.matches(it.authorName!!)
+                    }
+                    _state.emit(_state.value.copy(routes = result.toPersistentList()))
+                }
+
+                SortCategory.ALL_PLACES -> {
+                    val result = allPlaces.filter {
+                        it.tags.containsAll(state.value.selectedTags) &&
+                                if (state.value.searchByName) pattern.matches(it.placeName)
+                                else pattern.matches(it.authorName!!)
+                    }
+                    _state.emit(_state.value.copy(places = result.toPersistentList()))
+                }
+
+                else -> {}
+            }
+
         }
     }
 
-    private fun onRouteClick(){
+    private fun onRouteClick() {
         viewModelScope.launch {
             _action.emit(HomeSideEffect.NavigateToSearchScreen)
         }
     }
 
-    private fun onFilterBtnClick(){
+    private fun onFilterBtnClick() {
         viewModelScope.launch {
             _action.emit(HomeSideEffect.NavigateToSearchScreen)
         }

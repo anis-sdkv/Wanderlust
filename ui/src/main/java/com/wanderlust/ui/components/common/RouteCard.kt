@@ -5,8 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,34 +16,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.wanderlust.domain.model.Route
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
-
 @Composable
-fun ListOfRoutes(routes: List<Route>) {
-    LazyColumn(
-        content = {
-            items(routes) {
-                CreateRouteCard(it)
-            }
-        }
-    )
-}
-
-@Composable
-private fun CreateRouteCard(
-    route: Route
-){
-    Card(modifier = Modifier
-        .padding(top = 12.dp, bottom = 12.dp),
+fun RouteCard(
+    route: Route, modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .padding(top = 12.dp, bottom = 12.dp),
         elevation = CardDefaults.cardElevation(10.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.solid),
-    ){
+    ) {
         ConstraintLayout(
             Modifier
                 .clickable {
@@ -88,27 +76,26 @@ private fun CreateRouteCard(
                         bottom.linkTo(parent.bottom)
                         start.linkTo(routeImage.end, margin = 16.dp)
                     }) {
-                Icon(
-                    painterResource(R.drawable.ic_star),
-                    contentDescription = "icon_star",
-                    modifier = Modifier,
-                    tint = WanderlustTheme.colors.primaryText
-                )
-                Text(
-                    text = (route.totalRating/route.ratingCount).toString(),
-                    modifier = Modifier.padding(start = 8.dp),
-                    style = WanderlustTheme.typography.semibold14,
-                    color = WanderlustTheme.colors.primaryText
-                )
-                /*Text(
-                    text = //route.distance
-                    stringResource(id = R.string.default_distance),
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                        //.alpha(0.5f),
-                    style = WanderlustTheme.typography.semibold14,
-                    color = WanderlustTheme.colors.secondaryText
-                )*/
+                if (route.ratingCount != 0) {
+                    Icon(
+                        painterResource(R.drawable.ic_star),
+                        contentDescription = "icon_star",
+                        modifier = Modifier,
+                        tint = WanderlustTheme.colors.starColor
+                    )
+                    Text(
+                        text = (route.totalRating / route.ratingCount).toString(),
+                        modifier = Modifier.padding(start = 8.dp),
+                        style = WanderlustTheme.typography.semibold14,
+                        color = WanderlustTheme.colors.secondaryText
+                    )
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.no_ratings),
+                        style = WanderlustTheme.typography.semibold14,
+                        color = WanderlustTheme.colors.secondaryText
+                    )
+                }
             }
 
             Image(

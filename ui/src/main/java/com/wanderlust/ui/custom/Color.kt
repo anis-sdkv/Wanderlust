@@ -13,8 +13,8 @@ internal val baseLightPalette = WanderlustColors(
     surface = Color(0xFFF2F2F2),
     solid = Color(0xFFFFFFFF),
     outline = Color(0xEEEEEEEE),
-    error = Color(0xFFFF0048)
-
+    error = Color(0xFFFF0048),
+    starColor = Color(0xFFFFC700)
 )
 
 internal val baseDarkPalette = WanderlustColors(
@@ -28,7 +28,8 @@ internal val baseDarkPalette = WanderlustColors(
     solid = Color(0xFF333333),
     surface = Color(0xFFFF0000),
     outline = Color(0xFF3C3C3C),
-    error = Color(0xFFD33838)
+    error = Color(0xFFD33838),
+    starColor = Color(0xFFFFC700)
 )
 
 

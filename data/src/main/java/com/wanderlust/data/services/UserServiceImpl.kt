@@ -46,6 +46,8 @@ class UserServiceImpl @Inject constructor(private val auth: FirebaseAuth, privat
             LoginResult.SuccessLogin(id)
         } catch (e: FirebaseAuthException) {
             LoginResult.FailLogin(e.message)
+        } catch (e: java.lang.Exception) {
+            LoginResult.FailLogin(e.message)
         }
     }
 

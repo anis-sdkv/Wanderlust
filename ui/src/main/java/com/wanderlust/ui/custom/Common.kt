@@ -18,7 +18,8 @@ data class WanderlustColors(
     val surface: Color, // Для кнопки Отписаться/Редактировать Профиль
     val solid: Color, // Для заполнения полей
     val outline: Color,
-    val error: Color
+    val error: Color,
+    val starColor: Color
 )
 
 data class WanderlustTypography(

@@ -132,6 +132,8 @@ class CreateRouteViewModel @Inject constructor (
                 routeName = state.value.routeName,
                 routeDescription = state.value.routeDescription,
                 points = state.value.listOfPoints,
+                authorId = null,
+                authorName = null
             )
             _state.emit(_state.value.copy(showLoadingProgressBar = true))
             val result = createRouteUseCase(route)

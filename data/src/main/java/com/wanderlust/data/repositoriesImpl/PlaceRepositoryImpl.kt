@@ -3,8 +3,10 @@ package com.wanderlust.data.repositoriesImpl
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.PlaceEntity
+import com.wanderlust.data.entities.RouteEntity
 import com.wanderlust.data.mappers.PlaceMapper
 import com.wanderlust.domain.model.Place
+import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.repositories.PlaceRepository
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -21,6 +23,19 @@ class PlaceRepositoryImpl @Inject constructor(private val db: FirebaseFirestore,
             transaction.set(placeDoc, entity)
             transaction.update(userDoc, "places", FieldValue.arrayUnion(placeDoc.id))
         }.await()
+    }
+
+    override suspend fun getAll(): List<Place> {
+        val query = db.collection(PLACES_COLLECTION)
+            .get()
+            .await()
+
+        val result = mutableListOf<Place>()
+        query.documents.forEach {
+            val entity = it.toObject(PlaceEntity::class.java)
+            entity?.let { place -> result.add(mapper.map(place)) }
+        }
+        return result
     }
 
     override suspend fun getByIdArray(ids: List<String>): List<Place> {

@@ -1,9 +1,10 @@
 package com.wanderlust.data.entities
 
 import com.google.firebase.Timestamp
-import com.wanderlust.domain.model.Comment
 
 class PlaceEntity {
+    var authorId: String? = null
+    var authorName: String? = null
     var lat: Double? = null
     var lon: Double? = null
     var placeName: String? = null
