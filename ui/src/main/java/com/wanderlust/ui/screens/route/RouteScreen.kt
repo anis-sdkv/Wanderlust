@@ -301,7 +301,7 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
                     state = MarkerState(
                         position = LatLng(point.lat, point.lon)
                     ),
-                    title = point.placeName
+                    title = point.name
                 )
             }
             val latLonList: MutableList<LatLng> = mutableListOf()
@@ -459,7 +459,7 @@ fun PlaceCard(modifier: Modifier, place: RoutePoint){
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.secondaryBackground),
     ){
         Text(
-            text = place.placeName,
+            text = place.name,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -468,9 +468,9 @@ fun PlaceCard(modifier: Modifier, place: RoutePoint){
             textAlign = TextAlign.Start
         )
 
-        if (place.placeDescription != null){
+        if (place.description != null){
             Text(
-                text = place.placeDescription ?: "",
+                text = place.description ?: "",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, start = 16.dp, end = 16.dp),

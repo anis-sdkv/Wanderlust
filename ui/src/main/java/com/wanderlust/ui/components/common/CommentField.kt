@@ -72,7 +72,7 @@ fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
         }
         Text(
             modifier = Modifier.padding(16.dp),
-            text = comment.text,
+            text = comment.text ?: "",
             style = WanderlustTheme.typography.medium16,
             color = WanderlustTheme.colors.primaryText
         )

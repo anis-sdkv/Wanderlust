@@ -28,16 +28,16 @@ data class PlaceState(
         Comment(
             "777",
             "Name1",
-            "text1",
             1,
-            Date()
+            Date(),
+            "text1",
         ),
         Comment(
             "0000",
             "Name2",
-            "text2",
             1,
-            Date()
+            Date(),
+            "text2",
         )
     ),
     val createdAt: Date = Date(),

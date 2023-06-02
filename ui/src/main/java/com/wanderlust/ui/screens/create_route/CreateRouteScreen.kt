@@ -293,8 +293,13 @@ fun CreateRouteScreen(
                             onPlaceNameChanged = { placeName ->
                                 eventHandler.invoke(CreateRouteEvent.OnPlaceNameChanged(placeName, routePoint))
                             },
-                            onPlaceDescriptionChanged = {
-                                    placeDescription -> eventHandler.invoke(CreateRouteEvent.OnPlaceDescriptionChanged(placeDescription, place))
+                            onPlaceDescriptionChanged = { placeDescription ->
+                                eventHandler.invoke(
+                                    CreateRouteEvent.OnPlaceDescriptionChanged(
+                                        placeDescription,
+                                        routePoint
+                                    )
+                                )
                             },
                             isDarkMode = isDarkMode
 
