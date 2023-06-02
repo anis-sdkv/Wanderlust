@@ -151,10 +151,9 @@ fun ProfileScreen(
             ProfileCardState.CONTENT -> {
                 item {
                     ProfileMainContent(state, eventHandler)
-                    Spacer(modifier = Modifier.height(20.dp))
                 }
                 items(state.userRoutes.size) {
-                    RouteCard(state.userRoutes[it], modifier = Modifier.padding(horizontal = 20.dp))
+                    RouteCard(state.userRoutes[it], modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp))
                 }
                 if (state.userRoutes.isNotEmpty())
 //                    item {
