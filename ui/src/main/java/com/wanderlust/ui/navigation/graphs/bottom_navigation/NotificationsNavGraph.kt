@@ -20,7 +20,7 @@ fun NavGraphBuilder.notificationsNavGraph(navController: NavHostController, isBo
     ) {
         composable(route = NotificationsNavScreen.Notifications.route) {
             isBottomBarVisible.value = true
-            SettingsScreen(onNavigateBack = { navController.navigate(Graph.BOTTOM) })
+            SettingsScreen(navController = navController)
         }
         composable(route = NotificationsNavScreen.Route.route) {
             isBottomBarVisible.value = true

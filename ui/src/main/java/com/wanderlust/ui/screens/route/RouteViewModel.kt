@@ -106,7 +106,7 @@ class RouteViewModel @Inject constructor(
     private fun onUserRouteRatingChange(event: RouteEvent.OnUserRouteRatingChange){
         _state.tryEmit(
             _state.value.copy(
-                userRouteRating = event.rating
+                userRouteRating = if (event.rating == _state.value.userRouteRating) null else event.rating
                 //а вот как эти значения поменять, если этот метод срабатывает при каждом нажатии на звездочку
                 //где-нибудь в другом месте наверное, при выходе с экрана может...
                 //totalRating =

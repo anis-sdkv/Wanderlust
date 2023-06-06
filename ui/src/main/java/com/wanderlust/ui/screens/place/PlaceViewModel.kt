@@ -44,6 +44,8 @@ data class PlaceState(
     val createdAt: Date = Date(),
     val totalRating: Int = 25,
     val ratingCount: Int = 6,
+    val initialTotalRating: Int = 25,
+    val initialRatingCount: Int = 6,
     val imagesUrl: PersistentList<String> = persistentListOf(),
     val placeTags: PersistentList<String> = persistentListOf("Day", "Long distance", "In the city", "dsldffmlkefmwkedl"),
     val placeCity: String = "Kazan",
@@ -93,11 +95,11 @@ class PlaceViewModel @Inject constructor(
     private fun onUserPlaceRatingChange(event: PlaceEvent.OnUserPlaceRatingChange){
         _state.tryEmit(
             _state.value.copy(
-                userPlaceRating = event.rating,
+                userPlaceRating = if (event.rating == _state.value.userPlaceRating) null else event.rating,
                 //а вот как эти значения поменять, если этот метод срабатывает при каждом нажатии на звездочку
                 //где-нибудь в другом месте наверное, при выходе с экрана может...
-                //totalRating =
-                //ratingCount =
+//                totalRating =
+//                ratingCount =
             )
         )
     }

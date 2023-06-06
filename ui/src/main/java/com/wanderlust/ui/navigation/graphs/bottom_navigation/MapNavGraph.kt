@@ -1,7 +1,5 @@
 package com.wanderlust.ui.navigation.graphs.bottom_navigation
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.MutableState
 import androidx.navigation.NavGraphBuilder
@@ -29,9 +27,9 @@ fun NavGraphBuilder.mapNavGraph(navController: NavHostController, isBottomBarVis
                 navArgument("searchType") {
                     type = NavType.BoolType
                 },
-                /*navArgument("searchTags") {
-                    type = TagsType()
-                }*/
+                navArgument("searchTags") {
+                    type = NavType.StringType
+                }
             )
         ) {
             isBottomBarVisible.value = true
@@ -60,16 +58,11 @@ fun NavGraphBuilder.mapNavGraph(navController: NavHostController, isBottomBarVis
 
 sealed class MapNavScreen(val route: String) {
 
-    object Map : MapNavScreen(route = "map_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_TYPE_KEY}"){
-        fun passValues(searchValue: String, searchType: Boolean): String {
-            return "map_screen/$searchValue/$searchType"
-        }
-    }
-    /*object Map : MapNavScreen(route = "map_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_TYPE_KEY}/{$SEARCH_TAGS_KEY}"){
+    object Map : MapNavScreen(route = "map_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_BY_NAME_KEY}/{$SEARCH_TAGS_KEY}"){
         fun passValues(searchValue: String, searchType: Boolean, searchTags: String): String {
             return "map_screen/$searchValue/$searchType/$searchTags"
         }
-    }*/
+    }
 
     object Search : MapNavScreen(route = "map_search_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_SCREEN_KEY}"){
         fun passSearchValue(searchValue: String, screenName: String): String {

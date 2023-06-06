@@ -1,12 +1,15 @@
 package com.wanderlust.ui.screens.home
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.usecases.GetAllPlacesUseCase
 import com.wanderlust.domain.usecases.GetAllRoutesUseCase
+import com.wanderlust.ui.screens.search.TagsList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -17,9 +20,11 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
 
+@Immutable
 data class HomeState(
     val routes: PersistentList<Route> = persistentListOf(),
     val places: PersistentList<Place> = persistentListOf(),
@@ -55,10 +60,12 @@ class HomeViewModel @Inject constructor(
     private val searchValue: String = savedStateHandle["searchValue"] ?: ""
     private val searchByName: Boolean = savedStateHandle["searchType"] ?: true
 
-    //private val selectedTags: TagsList = savedStateHandle["searchTags"] ?: TagsList(emptyList())
+    private val selectedTags: TagsList = Gson().fromJson(
+        Uri.decode(savedStateHandle["searchTags"]), TagsList::class.java
+    ) ?: TagsList(emptyList())
 
     private val _state: MutableStateFlow<HomeState> =
-        MutableStateFlow(HomeState(searchValue = searchValue, searchByName = searchByName))
+        MutableStateFlow(HomeState(searchValue = if (searchValue == "empty") "" else searchValue, searchByName = searchByName, selectedTags = selectedTags.tags.toPersistentList()))
     val state: StateFlow<HomeState> = _state
 
     private val _action = MutableSharedFlow<HomeSideEffect?>()

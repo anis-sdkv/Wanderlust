@@ -27,6 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.ErrorDialog
 import com.wanderlust.ui.components.common.LoadingDialog
@@ -38,7 +39,7 @@ import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun EditProfileScreen(
-    onNavigateBack: () -> Unit,
+    navController: NavController,
     viewModel: EditProfileViewModel = hiltViewModel()
 ) {
 
@@ -50,7 +51,7 @@ fun EditProfileScreen(
         when (action) {
             null -> Unit
             EditProfileSideEffect.NavigateBack -> {
-                onNavigateBack()
+                navController.navigateUp()
             }
         }
     }

@@ -5,12 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.wanderlust.domain.action_results.FirestoreActionResult
-import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.model.RoutePoint
 import com.wanderlust.domain.usecases.CreateRouteUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserIdUseCase
-import com.wanderlust.ui.screens.create_place.CreatePlaceSideEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf

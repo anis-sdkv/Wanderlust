@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.common.SelectableItem
@@ -18,9 +19,10 @@ import com.wanderlust.ui.components.common.Selector
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.domain.model.WanderlustLanguage
+import com.wanderlust.ui.navigation.graphs.Graph
 
 @Composable
-fun SettingsScreen(onNavigateBack: () -> Unit) {
+fun SettingsScreen(navController: NavController) {
     val settingsEventBus = LocalSettingsEventBus.current
     val currentSettings = settingsEventBus.currentSettings.collectAsState().value
 
@@ -44,7 +46,7 @@ fun SettingsScreen(onNavigateBack: () -> Unit) {
 
     ) {
 
-        ScreenHeader(screenName = stringResource(id = R.string.settings)) { onNavigateBack() }
+        ScreenHeader(screenName = stringResource(id = R.string.settings)) { navController.navigate(Graph.BOTTOM) }
 
         Spacer(modifier = Modifier.height(32.dp))
         Selector(
