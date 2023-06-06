@@ -15,19 +15,17 @@ import com.wanderlust.ui.screens.sign_up.SignUpScreen
 fun NavGraphBuilder.authNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = Graph.AUTHENTICATION,
-        startDestination = com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route
+        startDestination = AuthScreen.SignIn.route
     ) {
-        composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.SignIn.route) {
+        composable(route = AuthScreen.SignIn.route) {
             isBottomBarVisible.value = false
             SignInScreen(navController)
         }
         composable(route = AuthScreen.SignUp.route) {
             isBottomBarVisible.value = false
-            SignUpScreen(
-                navController
-            )
+            SignUpScreen(navController)
         }
-        composable(route = com.wanderlust.ui.navigation.graphs.AuthScreen.Forgot.route) {
+        composable(route = AuthScreen.Forgot.route) {
             //TODO
         }
     }

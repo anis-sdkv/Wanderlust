@@ -34,7 +34,6 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
-import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.SearchTextField
 import com.wanderlust.ui.components.common.SquareButton
@@ -49,7 +48,6 @@ import com.wanderlust.ui.utils.LocationUtils
 @Composable
 fun MapScreen(
     navController: NavController,
-
     viewModel: MapViewModel = hiltViewModel()
 ) {
     val mapState by viewModel.state.collectAsStateWithLifecycle()

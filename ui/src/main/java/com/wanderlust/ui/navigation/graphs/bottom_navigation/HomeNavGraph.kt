@@ -30,9 +30,9 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController, isBottomBarVi
                 navArgument("searchType") {
                     type = NavType.BoolType
                 },
-                /*navArgument("searchTags") {
-                    type = TagsType()
-                }*/
+                navArgument("searchTags") {
+                    type = NavType.StringType
+                }
             )
         ) {
             isBottomBarVisible.value = true
@@ -62,22 +62,16 @@ fun NavGraphBuilder.homeNavGraph(navController: NavHostController, isBottomBarVi
 }
 
 const val SEARCH_VALUE_KEY = "searchValue"
-const val SEARCH_TYPE_KEY = "searchType"
+const val SEARCH_BY_NAME_KEY = "searchType"
 const val SEARCH_TAGS_KEY = "searchTags"
 const val SEARCH_SCREEN_KEY = "screenName"
 sealed class HomeNavScreen(val route: String) {
 
-    object Home : HomeNavScreen(route = "home_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_TYPE_KEY}"){
-        fun passValues(searchValue: String, searchType: Boolean): String {
-            return "home_screen/$searchValue/$searchType"
-        }
-    }
-
-    /*object Home : HomeNavScreen(route = "home_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_TYPE_KEY}/{$SEARCH_TAGS_KEY}"){
+    object Home : HomeNavScreen(route = "home_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_BY_NAME_KEY}/{$SEARCH_TAGS_KEY}"){
         fun passValues(searchValue: String, searchType: Boolean, searchTags: String): String {
             return "home_screen/$searchValue/$searchType/$searchTags"
         }
-    }*/
+    }
 
     object Search : HomeNavScreen(route = "home_search_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_SCREEN_KEY}"){
         fun passSearchValue(searchValue: String, screenName: String): String {

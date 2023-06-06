@@ -38,10 +38,10 @@ import com.wanderlust.ui.navigation.graphs.bottom_navigation.MapNavScreen
 import kotlinx.parcelize.Parcelize
 
 
-/*@Parcelize
+@Parcelize
 data class TagsList(val tags: List<String>) : Parcelable
 
-class TagsType : NavType<TagsList>(isNullableAllowed = false) {
+/*class TagsType : NavType<TagsList>(isNullableAllowed = false) {
     override fun get(bundle: Bundle, key: String): TagsList? {
         return bundle.getParcelable(key)
     }
@@ -73,34 +73,19 @@ fun SearchScreen(
                     navController.navigate(
                         HomeNavScreen.Home.passValues(
                             searchValue = if (searchState.searchValue == "") "empty" else searchState.searchValue,
-                            searchType = searchState.typeOfSearch
+                            searchType = searchState.typeOfSearch,
+                            searchTags = Uri.encode(Gson().toJson(TagsList(searchState.selectedTags)))
                         )
                     )
                 } else if (screenName == "map"){
                     navController.navigate(
                         MapNavScreen.Map.passValues(
                             searchValue = if (searchState.searchValue == "") "empty" else searchState.searchValue,
-                            searchType = searchState.typeOfSearch
+                            searchType = searchState.typeOfSearch,
+                            searchTags = Uri.encode(Gson().toJson(TagsList(searchState.selectedTags)))
                         )
                     )
                 }
-                /*if(screenName == "home") {
-                    navController.navigate(
-                        HomeNavScreen.Home.passValues(
-                            searchValue = if (searchState.searchValue == "") "empty" else searchState.searchValue,
-                            searchType = searchState.typeOfSearch,
-                            searchTags = Uri.encode(Gson().toJson(TagsList(searchState.selectedTags)))
-                        )
-                    )
-                } else if (screenName == "map"){
-                    navController.navigate(
-                        MapNavScreen.Map.passValues(
-                            searchValue = if (searchState.searchValue == "") "empty" else searchState.searchValue,
-                            searchType = searchState.typeOfSearch,
-                            searchTags = Uri.encode(Gson().toJson(TagsList(searchState.selectedTags)))
-                        )
-                    )
-                }*/
             }
         }
     }

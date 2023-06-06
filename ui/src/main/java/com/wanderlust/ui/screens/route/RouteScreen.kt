@@ -3,6 +3,7 @@ package com.wanderlust.ui.screens.route
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -359,7 +360,8 @@ fun RouteDescriptionField(modifier: Modifier, routeDescription: String){
 }
 
 
-// Это пунктирная линия:
+// Это пунктирная линия,
+// но пока не работает так, как надо, потом разберусь:
 private data class DottedShape(
     val step: Dp,
 ) : Shape {
@@ -478,6 +480,7 @@ fun PlaceCard(modifier: Modifier, place: RoutePoint){
                 color = WanderlustTheme.colors.primaryText,
                 textAlign = TextAlign.Start
             )
+
             LazyRow(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)
             ){

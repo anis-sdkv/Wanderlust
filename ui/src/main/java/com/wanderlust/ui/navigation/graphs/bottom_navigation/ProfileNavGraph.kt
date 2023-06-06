@@ -44,7 +44,7 @@ fun NavGraphBuilder.profileNavGraph(navController: NavHostController, isBottomBa
             )
         ) {
             isBottomBarVisible.value = true
-            EditProfileScreen(onNavigateBack = {navController.navigateUp()})
+            EditProfileScreen(navController = navController)
         }
         authNavGraph(navController = navController, isBottomBarVisible)
     }

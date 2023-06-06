@@ -1,24 +1,31 @@
 package com.wanderlust.ui.screens.map
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
+import com.wanderlust.ui.screens.search.TagsList
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
-
+@Immutable
 data class MapState(
-    val lon: Double,
-    val lat: Double,
-    val searchValue: String,
-    val selectedTags: List<String>,
-    val typeOfSearch: Boolean
+    val lon: Double = 49.13472200000001,
+    val lat: Double = 55.790278,
+    val searchValue: String = "",
+    val selectedTags: PersistentList<String> = persistentListOf(),
+    val searchByName: Boolean = true
 )
 
 sealed interface MapEvent{
@@ -37,16 +44,16 @@ class MapViewModel @Inject constructor (
 ) : ViewModel() {
 
     private val searchValue: String = savedStateHandle["searchValue"] ?: ""
-    private val searchType: Boolean = savedStateHandle["searchType"] ?: true
-    //private val selectedTags: TagsList = savedStateHandle["searchTags"] ?: TagsList(emptyList())
+    private val searchByName: Boolean = savedStateHandle["searchType"] ?: true
+    private val selectedTags: TagsList = Gson().fromJson(
+        Uri.decode(savedStateHandle["searchTags"]), TagsList::class.java
+    ) ?: TagsList(emptyList())
 
     private val internalState: MutableStateFlow<MapState> = MutableStateFlow(
         MapState(
-            lon = 49.13472200000001,
-            lat = 55.790278,
-            if (searchValue == "empty") "" else searchValue,
-            emptyList(), // selectedTags.tags
-            searchType
+            searchValue = if (searchValue == "empty") "" else searchValue,
+            selectedTags = selectedTags.tags.toPersistentList(),
+            searchByName = searchByName
         )
     )
     val state: StateFlow<MapState> = internalState
