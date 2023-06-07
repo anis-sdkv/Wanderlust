@@ -32,14 +32,14 @@ import com.wanderlust.ui.custom.WanderlustTheme
 fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
     Card(
         modifier = modifier
-            .fillMaxWidth(),
+            .padding(top = 12.dp, bottom = 12.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.secondaryBackground),
     ) {
         Row(
-            modifier
+            Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
+                .padding(start = 16.dp, top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {

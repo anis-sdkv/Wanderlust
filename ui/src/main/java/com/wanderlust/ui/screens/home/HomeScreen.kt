@@ -29,15 +29,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.wanderlust.ui.R
-import com.wanderlust.ui.components.common.RouteCard
+import com.wanderlust.ui.components.common.MapEntityCard
 import com.wanderlust.ui.components.common.SearchTextField
 import com.wanderlust.ui.components.common.SquareButton
 import com.wanderlust.ui.custom.WanderlustTheme
-import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.HomeNavScreen
 import com.wanderlust.ui.screens.home.SortCategory.ALL_PLACES
 import com.wanderlust.ui.screens.home.SortCategory.ALL_ROUTES
 import com.wanderlust.ui.screens.home.SortCategory.FAVOURITE_ROUTES
+import com.wanderlust.ui.utils.calculateRating
 
 @Composable
 fun HomeScreen(
@@ -60,7 +60,6 @@ fun HomeScreen(
 
     LaunchedEffect(action) {
         when (action) {
-            null -> Unit
             HomeSideEffect.NavigateToSearchScreen -> {
                 navController.navigate(
                     HomeNavScreen.Search.passSearchValue(
@@ -70,11 +69,15 @@ fun HomeScreen(
                 )
             }
 
-            HomeSideEffect.NavigateToRouteScreen -> {
-                // TODO
+            is HomeSideEffect.NavigateToRouteScreen -> {
+                navController.navigate(HomeNavScreen.Route.passRouteId((action as HomeSideEffect.NavigateToRouteScreen).id))
             }
 
-            HomeSideEffect.NavigateToProfileScreen -> navController.navigate(BottomNavigationItem.Profile.graph)
+            is HomeSideEffect.NavigateToPlaceScreen -> {
+                navController.navigate(HomeNavScreen.Place.passPlaceId((action as HomeSideEffect.NavigateToPlaceScreen).id))
+            }
+
+            null -> Unit
         }
     }
     
@@ -161,7 +164,17 @@ fun HomeScreen(
             ALL_ROUTES -> {
                 LazyColumn(Modifier.fillMaxSize()) {
                     items(state.routes.size) {
-                        RouteCard(route = state.routes[it])
+                        MapEntityCard(
+                            name = state.routes[it].routeName,
+                            rating = state.routes[it].calculateRating(),
+                            onClick = {
+                                eventHandler.invoke(
+                                    HomeEvent.OnRouteCardClick(
+                                        state.routes[it].id ?: throw IllegalArgumentException()
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }
@@ -169,7 +182,17 @@ fun HomeScreen(
             ALL_PLACES -> {
                 LazyColumn(Modifier.fillMaxSize()) {
                     items(state.places.size) {
-                        Text(state.places[it].placeName)
+                        MapEntityCard(
+                            name = state.places[it].placeName,
+                            rating = state.places[it].calculateRating(),
+                            onClick = {
+                                eventHandler.invoke(
+                                    HomeEvent.OnPlaceCardClick(
+                                        state.places[it].id ?: throw IllegalArgumentException()
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }

@@ -36,7 +36,7 @@
     <string name="add_place">Add an interesting place</string>
 
     <!--    Profile-->
-    <string name="empty_profile_title">Empty(</string>
+    <string name="empty">Empty(</string>
     <string name="empty_profile_description">Sign in to add information:</string>
 
     <string name="subscribe">Subscribe</string>
@@ -105,7 +105,10 @@
     <string name="enter_the_comment">Enter the comment</string>
     <string name="send">Send</string>
 
+    <string name="not_found">Publication not found</string>
 
+    <string name="sign_in_to_comment">Sign in to leave comments</string>
+    <string name="leave_review">Leave a review</string>
 
 
     <!--    Map-->

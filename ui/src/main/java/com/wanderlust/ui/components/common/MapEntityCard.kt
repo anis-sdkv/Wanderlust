@@ -1,13 +1,13 @@
 package com.wanderlust.ui.components.common
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,13 +19,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.wanderlust.domain.model.Route
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RouteCard(
-    route: Route, modifier: Modifier = Modifier
+fun MapEntityCard(
+    name: String,
+    rating: Float,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
@@ -33,12 +36,10 @@ fun RouteCard(
         elevation = CardDefaults.cardElevation(10.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.solid),
+        onClick = onClick
     ) {
         ConstraintLayout(
             Modifier
-                .clickable {
-                    // TODO
-                }
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
@@ -59,7 +60,7 @@ fun RouteCard(
                     }
             )
             Text(
-                text = route.routeName,
+                text = name,
                 modifier = Modifier
                     .constrainAs(routeName) {
                         top.linkTo(parent.top)
@@ -76,7 +77,7 @@ fun RouteCard(
                         bottom.linkTo(parent.bottom)
                         start.linkTo(routeImage.end, margin = 16.dp)
                     }) {
-                if (route.ratingCount != 0) {
+                if (rating.isNaN()) {
                     Icon(
                         painterResource(R.drawable.ic_star),
                         contentDescription = "icon_star",
@@ -84,7 +85,7 @@ fun RouteCard(
                         tint = WanderlustTheme.colors.starColor
                     )
                     Text(
-                        text = (route.totalRating / route.ratingCount).toString(),
+                        text = rating.toString(),
                         modifier = Modifier.padding(start = 8.dp),
                         style = WanderlustTheme.typography.semibold14,
                         color = WanderlustTheme.colors.secondaryText

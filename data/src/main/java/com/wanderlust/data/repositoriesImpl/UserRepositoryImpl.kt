@@ -2,47 +2,44 @@ package com.wanderlust.data.repositoriesImpl
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.UserEntity
-import com.wanderlust.data.mappers.UserMapper
+import com.wanderlust.data.mappers.toDomain
+import com.wanderlust.data.mappers.toEntity
 import com.wanderlust.domain.model.UserProfile
 import com.wanderlust.domain.repositories.UserRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.util.Date
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
-    private val db: FirebaseFirestore,
-    private val mapper: UserMapper
+    private val db: FirebaseFirestore
 ) : UserRepository {
 
-    override suspend fun createUser(id: String, username: String) {
-        val user = mapper.map(UserProfile(id, username, Date()))
+    override suspend fun createUser(id: String, username: String): Unit = withContext(Dispatchers.IO) {
+        val user = UserProfile(id, username, Date()).toEntity()
         db.collection(USERS_COLLECTION)
             .document(id)
             .set(user)
             .await()
     }
 
-    override suspend fun getById(id: String): UserProfile? {
+    override suspend fun getById(id: String): UserProfile? = withContext(Dispatchers.IO) {
         val doc = db.collection(USERS_COLLECTION)
             .document(id)
             .get()
             .await()
 
-        return if (doc.exists()) {
-            val entity = doc.toObject(UserEntity::class.java) ?: return null
-            mapper.map(entity, id)
-        } else null
+        return@withContext if (doc.exists()) doc.toObject(UserEntity::class.java)?.toDomain(doc.id)
+        else null
     }
 
-    override suspend fun update(userProfile: UserProfile) {
-        val entity = mapper.map(userProfile)
+    override suspend fun update(userProfile: UserProfile): Unit = withContext(Dispatchers.IO) {
+        val entity = userProfile.toEntity()
         db.collection(USERS_COLLECTION)
             .document(userProfile.id)
             .set(entity)
-    }
-
-    override fun getUserByUserName(name: String): UserProfile {
-        TODO()
+            .await()
     }
 
     companion object {

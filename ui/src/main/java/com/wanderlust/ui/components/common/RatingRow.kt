@@ -18,11 +18,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
-import com.wanderlust.ui.screens.route.RouteEvent
 
 
 @Composable
-fun RatingRow(modifier: Modifier, rating: Int, ratingCount: Int, userRouteRating: Int?, onStarClick: (Int) -> Unit) {
+fun RatingRow(modifier: Modifier, rating: Float, ratingCount: Int, userRouteRating: Int?, onStarClick: (Int) -> Unit) {
 
     Row(
         modifier = modifier
@@ -38,21 +37,23 @@ fun RatingRow(modifier: Modifier, rating: Int, ratingCount: Int, userRouteRating
                 modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = rating.toString(),
-                    textAlign = TextAlign.Start,
-                    modifier = Modifier,
-                    style = WanderlustTheme.typography.semibold20,
-                    color = WanderlustTheme.colors.primaryText
-                )
-                Icon(
-                    painterResource(R.drawable.ic_star),
-                    modifier = Modifier
-                        .padding(start = 4.dp)
-                        .size(14.dp),
-                    contentDescription = "icon_dropdown_menu",
-                    tint = WanderlustTheme.colors.accent
-                )
+                if (!rating.isNaN()) {
+                    Text(
+                        text = rating.toString(),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier,
+                        style = WanderlustTheme.typography.semibold20,
+                        color = WanderlustTheme.colors.primaryText
+                    )
+                    Icon(
+                        painterResource(R.drawable.ic_star),
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(14.dp),
+                        contentDescription = "icon_dropdown_menu",
+                        tint = WanderlustTheme.colors.accent
+                    )
+                }
             }
             Text(
                 text = ratingCount.toString() + " " + stringResource(id = R.string.ratings),

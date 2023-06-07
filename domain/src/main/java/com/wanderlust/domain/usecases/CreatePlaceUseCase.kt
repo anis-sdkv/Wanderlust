@@ -20,6 +20,7 @@ class CreatePlaceUseCase(
                     city = locationAddress.city,
                     country = locationAddress.country,
                     authorId = user.id,
+                    authorName = user.username
                 )
             )
             currentUserRepository.notifyUpdated()

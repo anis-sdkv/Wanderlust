@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import javax.annotation.concurrent.Immutable
 import javax.inject.Inject
 
-public enum class ProfileCardState {
+enum class ProfileCardState {
     PROGRESS_BAR, CONTENT, NOT_AUTH, ERROR
 }
 

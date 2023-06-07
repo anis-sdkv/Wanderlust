@@ -35,38 +35,40 @@ fun NavGraphBuilder.mapNavGraph(navController: NavHostController, isBottomBarVis
             isBottomBarVisible.value = true
             MapScreen(navController = navController)
         }
-        composable(
-            route = MapNavScreen.Search.route,
-            arguments = listOf(
-                navArgument("searchValue") {
-                    type = NavType.StringType
-                },
-                navArgument("screenName") {
-                    type = NavType.StringType
-                }
-            )
-        ) {
-            isBottomBarVisible.value = true
-            SearchScreen(
-                navController = navController,
-                it.arguments?.getString("screenName")
-            )
-        }
+//        composable(
+//            route = MapNavScreen.Search.route,
+//            arguments = listOf(
+//                navArgument("searchValue") {
+//                    type = NavType.StringType
+//                },
+//                navArgument("screenName") {
+//                    type = NavType.StringType
+//                }
+//            )
+//        ) {
+//            isBottomBarVisible.value = true
+//            SearchScreen(
+//                navController = navController,
+//                it.arguments?.getString("screenName")
+//            )
+//        }
     }
 
 }
 
 sealed class MapNavScreen(val route: String) {
 
-    object Map : MapNavScreen(route = "map_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_BY_NAME_KEY}/{$SEARCH_TAGS_KEY}"){
-        fun passValues(searchValue: String, searchType: Boolean, searchTags: String): String {
-            return "map_screen/$searchValue/$searchType/$searchTags"
-        }
-    }
+    object Map : MapNavScreen(route = "map_screen")
 
-    object Search : MapNavScreen(route = "map_search_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_SCREEN_KEY}"){
-        fun passSearchValue(searchValue: String, screenName: String): String {
-            return "map_search_screen/$searchValue/$screenName"
-        }
-    }
+// TODO
+//    object Map : MapNavScreen(route = "map_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_BY_NAME_KEY}/{$SEARCH_TAGS_KEY}"){
+//        fun passValues(searchValue: String, searchType: Boolean, searchTags: String): String {
+//            return "map_screen/$searchValue/$searchType/$searchTags"
+//        }
+//    }
+//    object Search : MapNavScreen(route = "map_search_screen/{$SEARCH_VALUE_KEY}/{$SEARCH_SCREEN_KEY}"){
+//        fun passSearchValue(searchValue: String, screenName: String): String {
+//            return "map_search_screen/$searchValue/$screenName"
+//        }
+//    }
 }

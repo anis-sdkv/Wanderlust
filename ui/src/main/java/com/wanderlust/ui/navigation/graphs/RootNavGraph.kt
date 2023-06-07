@@ -43,7 +43,7 @@ fun RootNavGraph(navController: NavHostController, isBottomBarVisible: MutableSt
 fun NavGraphBuilder.bottomNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = Graph.BOTTOM,
-        startDestination = BottomNavigationItem.Notifications.graph
+        startDestination = BottomNavigationItem.Home.graph
     ) {
 
         //Графы к каждой вкладке Bottom Navigation:

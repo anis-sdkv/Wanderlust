@@ -1,14 +1,11 @@
 package com.wanderlust.ui.screens.profile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,31 +18,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,12 +38,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.AnimatedBackgroundImage
+import com.wanderlust.ui.components.common.LoadingCard
 import com.wanderlust.ui.components.common.LocationText
-import com.wanderlust.ui.components.common.RouteCard
+import com.wanderlust.ui.components.common.MapEntityCard
 import com.wanderlust.ui.components.common.SwitchButton
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.Graph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
+import com.wanderlust.ui.utils.calculateRating
 
 @Composable
 fun ProfileScreen(
@@ -94,17 +81,6 @@ fun ProfileScreen(
 
     val columnState = rememberLazyListState()
 
-    var imageHeight by remember {
-        mutableStateOf(500)
-    }
-    val imageTranslationY by remember {
-        derivedStateOf { columnState.firstVisibleItemScrollOffset * .6f }
-    }
-
-    val imageVisibility by remember {
-        derivedStateOf { columnState.firstVisibleItemScrollOffset / imageHeight.toFloat() }
-    }
-
     LazyColumn(
         modifier = Modifier
             .background(WanderlustTheme.colors.primaryBackground)
@@ -115,45 +91,22 @@ fun ProfileScreen(
     )
     {
         item {
-            val gradientColor = WanderlustTheme.colors.secondaryText
-            Image(
-                painterResource(R.drawable.test_user_photo),
-                contentDescription = "user_photo",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .aspectRatio(1f)
-                    .graphicsLayer {
-                        //анимация и изменение непрозрачности изображения при скролле:
-                        translationY = imageTranslationY
-                        alpha = 1f - imageVisibility
-                    }
-                    .drawWithCache {
-                        val gradient = Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, gradientColor),
-                            startY = size.height / 3 * 2,
-                            endY = size.height
-                        )
-                        onDrawWithContent {
-                            drawContent()
-                            drawRect(gradient, blendMode = BlendMode.Multiply)
-                        }
-                    }
-                    .onGloballyPositioned {
-                        imageHeight = it.size.height
-                    }
-            )
+            AnimatedBackgroundImage(columnState = columnState)
         }
-
         when (state.cardState) {
             ProfileCardState.ERROR -> item { ProfileError() }
-            ProfileCardState.PROGRESS_BAR -> item { ProfileProgressBar() }
+            ProfileCardState.PROGRESS_BAR -> item { LoadingCard() }
             ProfileCardState.CONTENT -> {
                 item {
                     ProfileMainContent(state, eventHandler)
                 }
                 items(state.userRoutes.size) {
-                    RouteCard(state.userRoutes[it], modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp))
+                    MapEntityCard(
+                        name = state.userRoutes[it].routeName,
+                        rating = state.userRoutes[it].calculateRating(),
+                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp),
+                        onClick = { throw Exception() }
+                    )
                 }
                 if (state.userRoutes.isNotEmpty())
 //                    item {
@@ -176,13 +129,9 @@ fun ProfileScreen(
                 else
                     item {
                         Text(
-                            modifier = Modifier
-                                .padding(top = 32.dp)
-                                .fillMaxWidth(),
                             text = stringResource(id = R.string.not_yet),
                             style = WanderlustTheme.typography.medium16,
-                            color = WanderlustTheme.colors.primaryText,
-                            textAlign = TextAlign.Center
+                            color = WanderlustTheme.colors.primaryText
                         )
                     }
             }
@@ -213,23 +162,6 @@ private fun ProfileError() {
             style = WanderlustTheme.typography.semibold14,
             color = WanderlustTheme.colors.primaryText
         )
-    }
-}
-
-@Composable
-private fun ProfileProgressBar() {
-    Card(
-        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-        colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator(color = WanderlustTheme.colors.accent)
-        }
     }
 }
 
@@ -332,7 +264,7 @@ fun UserNotAuthMessage(eventHandler: (ProfileEvent) -> Unit) {
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = stringResource(id = R.string.empty_profile_title),
+                text = stringResource(id = R.string.empty),
                 modifier = Modifier
                     .padding(top = 32.dp),
                 style = WanderlustTheme.typography.bold24,

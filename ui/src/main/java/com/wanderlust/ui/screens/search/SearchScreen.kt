@@ -53,7 +53,6 @@ data class TagsList(val tags: List<String>) : Parcelable
     }
 }*/
 
-@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun SearchScreen(
     navController: NavController,
@@ -78,13 +77,14 @@ fun SearchScreen(
                         )
                     )
                 } else if (screenName == "map"){
-                    navController.navigate(
-                        MapNavScreen.Map.passValues(
-                            searchValue = if (searchState.searchValue == "") "empty" else searchState.searchValue,
-                            searchType = searchState.typeOfSearch,
-                            searchTags = Uri.encode(Gson().toJson(TagsList(searchState.selectedTags)))
-                        )
-                    )
+                    // TODO
+//                    navController.navigate(
+//                        MapNavScreen.Map.passValues(
+//                            searchValue = if (searchState.searchValue == "") "empty" else searchState.searchValue,
+//                            searchType = searchState.typeOfSearch,
+//                            searchTags = Uri.encode(Gson().toJson(TagsList(searchState.selectedTags)))
+//                        )
+//                    )
                 }
             }
         }

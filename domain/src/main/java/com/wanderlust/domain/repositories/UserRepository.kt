@@ -5,7 +5,5 @@ import com.wanderlust.domain.model.UserProfile
 interface UserRepository {
     suspend fun createUser(id: String, username: String)
     suspend fun getById(id: String): UserProfile?
-    fun getUserByUserName(name: String): UserProfile
-
     suspend fun update(userProfile: UserProfile)
 }

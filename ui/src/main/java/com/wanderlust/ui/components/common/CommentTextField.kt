@@ -10,14 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -31,20 +26,35 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.wanderlust.domain.model.RoutePoint
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
-import com.wanderlust.ui.screens.create_route.CreateRouteEvent
 
 
 @Composable
-fun CommentTextField (modifier: Modifier, inputValue: String, onChange: (String) -> Unit, onSendBtnClick: () -> Unit) {
+fun CommentTextField(
+    isUserAuth: Boolean,
+    inputValue: String,
+    onChange: (String) -> Unit,
+    onSendBtnClick: () -> Unit,
+    modifier: Modifier
+) {
+    if (!isUserAuth) {
+        Text(
+            text = stringResource(id = R.string.sign_in_to_comment),
+            modifier = Modifier.padding(top = 16.dp),
+            style = WanderlustTheme.typography.medium16,
+            color = WanderlustTheme.colors.primaryText,
+        )
+        return
+    }
+
     val maxChar = 300
     val maxLines = 15
     TextField(
         value = inputValue,
-        onValueChange = { if (it.length <= maxChar)
-            onChange(it)
+        onValueChange = {
+            if (it.length <= maxChar)
+                onChange(it)
         },
         maxLines = maxLines,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
@@ -92,9 +102,7 @@ fun CommentTextField (modifier: Modifier, inputValue: String, onChange: (String)
         horizontalAlignment = Alignment.End
     ) {
         Button(
-            onClick = {
-                      onSendBtnClick()
-            },
+            onClick = onSendBtnClick,
             modifier = Modifier
                 .padding(top = 8.dp)
                 .height(34.dp),
@@ -111,7 +119,9 @@ fun CommentTextField (modifier: Modifier, inputValue: String, onChange: (String)
             Icon(
                 painterResource(id = R.drawable.ic_more),
                 contentDescription = "icon_send",
-                modifier = Modifier.padding(start = 6.dp).size(12.dp),
+                modifier = Modifier
+                    .padding(start = 6.dp)
+                    .size(12.dp),
                 WanderlustTheme.colors.onAccent
             )
         }
