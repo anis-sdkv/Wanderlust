@@ -2,6 +2,7 @@ package com.wanderlust.ui.components.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -29,7 +32,7 @@ import com.wanderlust.ui.custom.WanderlustTheme
 
 
 @Composable
-fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
+fun CommentField(modifier: Modifier, comment: Comment, images: List<String>, onClick: () -> Unit) {
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -37,9 +40,9 @@ fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.secondaryBackground),
     ) {
         Row(
-            modifier
+            Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -76,5 +79,14 @@ fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
             style = WanderlustTheme.typography.medium16,
             color = WanderlustTheme.colors.primaryText
         )
+
+        if (images.isNotEmpty()){
+            ImagesRow(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                gradientColor = WanderlustTheme.colors.secondaryBackground,
+                isAddingEnable = false,
+                imagesUrl = images
+            ) {  }
+        }
     }
 }

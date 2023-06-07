@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -21,12 +20,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -69,9 +65,11 @@ import com.google.maps.android.compose.Polyline
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.domain.model.RoutePoint
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.DefaultButton
 import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
 import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.ImagesRow
 import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.common.TagsField
@@ -80,6 +78,7 @@ import com.wanderlust.ui.components.edit_profile_screen.EditProfileTextFieldDesc
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.permissions.RequestPermission
+import com.wanderlust.ui.screens.create_place.CreatePlaceEvent
 import com.wanderlust.ui.screens.map.DarkMapStyle
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.utils.LocationUtils
@@ -333,7 +332,7 @@ fun CreateRouteScreen(
                 shape = RoundedCornerShape(16.dp)
             ) {
                 Icon(
-                    Icons.Rounded.Add,
+                    painterResource(id = R.drawable.ic_add),
                     contentDescription = "icon_add",
                     modifier = Modifier,
                     WanderlustTheme.colors.onAccent
@@ -344,23 +343,15 @@ fun CreateRouteScreen(
                     color = WanderlustTheme.colors.onAccent
                 )
             }
-
         }
 
-        Button(
-            onClick = { eventHandler.invoke(CreateRouteEvent.OnCreteButtonClick) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 80.dp, bottom = 80.dp)
-                .height(42.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
-            shape = RoundedCornerShape(12.dp)
+        DefaultButton(
+            modifier = Modifier.padding(top = 80.dp, bottom = 80.dp),
+            text = stringResource(id = R.string.save),
+            buttonColor = WanderlustTheme.colors.accent,
+            textColor = WanderlustTheme.colors.onAccent
         ) {
-            Text(
-                text = stringResource(id = R.string.save),
-                style = WanderlustTheme.typography.semibold16,
-                color = WanderlustTheme.colors.primaryBackground
-            )
+            eventHandler.invoke(CreateRouteEvent.OnCreteButtonClick)
         }
     }
 }
@@ -579,20 +570,13 @@ fun ExpandableView(
                 //modifier = Modifier.padding(top = 16.dp),
             ){ placeDescription -> onPlaceDescriptionChanged(placeDescription) }
 
-            LazyRow(
-                modifier = Modifier.padding(top = 16.dp)
-            ){
-                items(3){
-                    Image(
-                        modifier = Modifier
-                            .padding(start = 4.dp, end = 4.dp)
-                            .size(120.dp)
-                            .clip(shape = RoundedCornerShape(16.dp)),
-                        painter = painterResource(id = R.drawable.test_user_photo),
-                        contentDescription = "Place Image"
-                    )
-                }
-            }
+            val images = listOf("url1", "url2", "url3", "url4")
+            ImagesRow(
+                modifier = Modifier.padding(top = 16.dp),
+                gradientColor = WanderlustTheme.colors.primaryBackground,
+                isAddingEnable = true,
+                imagesUrl = images //routePoint.imagesUrl
+            ) {  }
         }
     }
 }

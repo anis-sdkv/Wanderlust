@@ -2,7 +2,6 @@ package com.wanderlust.ui.screens.route
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -76,14 +76,16 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.domain.model.RoutePoint
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.AuthorCard
+import com.wanderlust.ui.components.common.CommentCard
+import com.wanderlust.ui.components.common.CommentEditingHeader
 import com.wanderlust.ui.components.common.CommentField
-import com.wanderlust.ui.components.common.CommentTextField
 import com.wanderlust.ui.components.common.LocationText
 import com.wanderlust.ui.components.common.RatingRow
 import com.wanderlust.ui.components.common.TagsRow
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
 import com.wanderlust.ui.screens.map.DarkMapStyle
+import com.wanderlust.ui.screens.place.PlaceEvent
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import kotlin.math.roundToInt
 
@@ -218,13 +220,9 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
             modifier = Modifier,
             rating = state.totalRating/state.ratingCount,
             ratingCount = state.ratingCount,
-            userRouteRating = state.userRouteRating,
-            onStarClick = {
-                    starNumber -> eventHandler.invoke(RouteEvent.OnUserRouteRatingChange(starNumber))
-            }
         )
 
-        TagsRow(modifier = Modifier.padding(top = 16.dp), tags = state.routeTags)
+        TagsRow(modifier = Modifier.padding(top = 8.dp), tags = state.routeTags)
 
         LocationText(
             city = state.routeCity, country = state.routeCountry,
@@ -325,16 +323,71 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
             color = WanderlustTheme.colors.primaryText
         )
 
-        CommentTextField(
-            modifier = Modifier.padding(top = 16.dp),
-            inputValue = state.inputCommentText,
-            onChange = { inputCommentText -> eventHandler.invoke(RouteEvent.OnInputCommentTextChange(inputCommentText)) },
-            onSendBtnClick = {eventHandler.invoke(RouteEvent.OnCreateComment)}
-        )
+        if (state.isShowUserComment){
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                CommentEditingHeader(
+                    modifier = Modifier,
+                    onEditBtnClick = { eventHandler.invoke(RouteEvent.OnEditCommentIconClick) },
+                    onDeleteBtnClick = { eventHandler.invoke(RouteEvent.OnDeleteCommentIconClick) }
+                )
+                CommentField(
+                    modifier = Modifier,
+                    comment = state.userComment,
+                    images = listOf("url1", "url2", "url3", "url4")
+                    //state.userComment.images
+                ) {
+                    eventHandler.invoke(RouteEvent.OnAuthorClick)
+                }
+                Divider(
+                    modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
+                    thickness = 1.dp,
+                    color = WanderlustTheme.colors.secondaryText
+                )
+            }
+        } else {
+
+            if(state.isEditComment){
+                CommentCard(
+                    modifier = Modifier.padding(top = 16.dp),
+                    comment = state.userComment,
+                    isEditComment = true,
+                    onTextChange = { inputCommentText -> eventHandler.invoke(RouteEvent.OnInputCommentTextChange(inputCommentText)) },
+                    onBtnClick = { eventHandler.invoke(RouteEvent.OnEditComment) },
+                    onStarClick = {
+                            starNumber -> eventHandler.invoke(RouteEvent.OnUserRouteRatingChange(starNumber))
+                    }
+                )
+            } else {
+                CommentCard(
+                    modifier = Modifier.padding(top = 16.dp),
+                    comment = state.userComment,
+                    isEditComment = false,
+                    onTextChange = { inputCommentText -> eventHandler.invoke(RouteEvent.OnInputCommentTextChange(inputCommentText)) },
+                    onBtnClick = { eventHandler.invoke(RouteEvent.OnCreateComment) },
+                    onStarClick = {
+                            starNumber -> eventHandler.invoke(RouteEvent.OnUserRouteRatingChange(starNumber))
+                    }
+                )
+            }
+        }
+
+//        Штирлиц шёл по лесу. Видит машина горит.
+//        "Медведь" — подумал Штирлиц.
 
         state.comments.forEach { comment ->
-            CommentField(modifier = Modifier.padding(top = 16.dp), comment = comment){
-                eventHandler.invoke(RouteEvent.OnAuthorClick)
+            // отображаем все комментрии, кроме комментрия пользователя
+            // комментрий пользователя показывается выше
+            if(comment.authorNickname != state.userComment.authorNickname) {
+                CommentField(
+                    modifier = Modifier.padding(top = 16.dp),
+                    comment = comment,
+                    images = listOf("url1", "url2", "url3", "url4")
+                    //state.userComment.imagesUrl
+                ){
+                    eventHandler.invoke(RouteEvent.OnAuthorClick)
+                }
             }
         }
 
@@ -388,7 +441,6 @@ private data class DottedShape(
 
 @Composable
 fun RoutePoint(modifier: Modifier, place: RoutePoint){
-    var size by remember { mutableStateOf(IntSize.Zero) }
 
     ConstraintLayout(
         modifier = modifier//.clipToBounds()
@@ -429,10 +481,7 @@ fun RoutePoint(modifier: Modifier, place: RoutePoint){
                     end.linkTo(parent.end)
                     start.linkTo(icon.end)
                 }
-                .padding(start = 20.dp)
-            /*.onGloballyPositioned {
-                size = it.size
-            }*/,
+                .padding(start = 20.dp),
             place = place
         )
     }
@@ -480,7 +529,6 @@ fun PlaceCard(modifier: Modifier, place: RoutePoint){
                 color = WanderlustTheme.colors.primaryText,
                 textAlign = TextAlign.Start
             )
-
             LazyRow(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)
             ){

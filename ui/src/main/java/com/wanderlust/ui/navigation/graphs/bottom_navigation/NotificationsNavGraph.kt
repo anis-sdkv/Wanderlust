@@ -16,7 +16,7 @@ import com.wanderlust.ui.screens.settings.SettingsScreen
 fun NavGraphBuilder.notificationsNavGraph(navController: NavHostController, isBottomBarVisible: MutableState<Boolean>) {
     navigation(
         route = BottomNavigationItem.Notifications.graph,
-        startDestination = NotificationsNavScreen.Place.route
+        startDestination = NotificationsNavScreen.Route.route
     ) {
         composable(route = NotificationsNavScreen.Notifications.route) {
             isBottomBarVisible.value = true

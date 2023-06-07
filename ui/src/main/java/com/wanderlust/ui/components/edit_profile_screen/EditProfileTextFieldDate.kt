@@ -75,7 +75,7 @@ fun EditProfileTextFieldDate(label: String, inputValue: String) {
     }
 }
 
-class MaskVisualTransformation(private val mask: String) : VisualTransformation {
+private class MaskVisualTransformation(private val mask: String) : VisualTransformation {
 
     private val specialSymbolsIndices = mask.indices.filter { mask[it] != '#' }
 
