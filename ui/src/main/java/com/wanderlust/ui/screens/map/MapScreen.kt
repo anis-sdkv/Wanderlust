@@ -29,17 +29,16 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.MapStyleOptions
-import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.MapProperties
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.SearchTextField
 import com.wanderlust.ui.components.common.SquareButton
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.Graph
-import com.wanderlust.ui.navigation.graphs.bottom_navigation.MapNavScreen
 import com.wanderlust.ui.permissions.RequestPermission
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.utils.LocationUtils
@@ -90,12 +89,13 @@ fun MapScreen(
         when (action) {
             null -> Unit
             MapSideEffect.NavigateToSearchScreen -> {
-                navController.navigate(
-                    MapNavScreen.Search.passSearchValue(
-                        if (mapState.searchValue == "") "empty" else mapState.searchValue,
-                        "map"
-                    )
-                )
+                // TODO
+//                navController.navigate(
+//                    MapNavScreen.Search.passSearchValue(
+//                        if (mapState.searchValue == "") "empty" else mapState.searchValue,
+//                        "map"
+//                    )
+//                )
             }
         }
     }

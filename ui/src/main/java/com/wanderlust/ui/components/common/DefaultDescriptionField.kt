@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.custom.WanderlustTheme
 
-
 @Composable
 fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifier, onChanged: (String) -> Unit){
     Column(

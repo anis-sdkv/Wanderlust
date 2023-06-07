@@ -3,43 +3,40 @@ package com.wanderlust.data.mappers
 import com.google.firebase.Timestamp
 import com.wanderlust.data.entities.PlaceEntity
 import com.wanderlust.domain.model.Place
-import javax.inject.Inject
 
-class PlaceMapper @Inject constructor() {
-    fun map(entity: PlaceEntity): Place =
-        Place(
+fun PlaceEntity.toDomain(id: String): Place =
+    Place(
+        this.authorId ?: throw IllegalArgumentException(),
+        this.authorName ?: throw IllegalArgumentException(),
+        this.lat ?: throw IllegalArgumentException(),
+        this.lon ?: throw IllegalArgumentException(),
+        this.placeName ?: throw IllegalArgumentException(),
+        this.placeDescription ?: throw IllegalArgumentException(),
+        this.city ?: throw IllegalArgumentException(),
+        this.country ?: throw IllegalArgumentException(),
+        this.comments.map { it.toComment() },
+        this.createdAt?.toDate() ?: throw IllegalArgumentException(),
+        this.totalRating ?: throw IllegalArgumentException(),
+        this.ratingCount ?: throw IllegalArgumentException(),
+        this.imagesUrl,
+        this.tags,
+        id
+    )
 
-            entity.authorId ?: throw IllegalArgumentException(),
-            entity.authorName ?: throw IllegalArgumentException(),
-            entity.lat ?: throw IllegalArgumentException(),
-            entity.lon ?: throw IllegalArgumentException(),
-            entity.placeName ?: throw IllegalArgumentException(),
-            entity.placeDescription ?: throw IllegalArgumentException(),
-            entity.city ?: throw IllegalArgumentException(),
-            entity.country ?: throw IllegalArgumentException(),
-            entity.comments.map { it.toComment() },
-            entity.createdAt?.toDate() ?: throw IllegalArgumentException(),
-            entity.totalRating ?: throw IllegalArgumentException(),
-            entity.ratingCount ?: throw IllegalArgumentException(),
-            entity.imagesUrl,
-            entity.tags
-        )
-
-    fun map(place: Place): PlaceEntity =
-        PlaceEntity().apply {
-            authorId = place.authorId
-            authorName = place.authorName
-            lat = place.lat
-            lon = place.lon
-            placeName = place.placeName
-            placeDescription = place.placeDescription
-            city = place.city
-            country = place.country
-            comments = place.comments.map { it.toEntity() }
-            createdAt = Timestamp(place.createdAt)
-            totalRating = place.totalRating
-            ratingCount = place.ratingCount
-            imagesUrl = place.imagesUrl
-            tags = place.tags
-        }
-}
+fun Place.toEntity(): PlaceEntity =
+    PlaceEntity().apply {
+        authorId = this@toEntity.authorId
+        authorName = this@toEntity.authorName
+        lat = this@toEntity.lat
+        lon = this@toEntity.lon
+        placeName = this@toEntity.placeName
+        placeDescription = this@toEntity.placeDescription
+        city = this@toEntity.city
+        country = this@toEntity.country
+        comments = this@toEntity.comments.map { it.toEntity() }
+        createdAt = Timestamp(this@toEntity.createdAt)
+        totalRating = this@toEntity.totalRating
+        ratingCount = this@toEntity.ratingCount
+        imagesUrl = this@toEntity.imagesUrl
+        tags = this@toEntity.tags
+    }

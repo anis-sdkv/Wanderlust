@@ -3,6 +3,7 @@ package com.wanderlust.ui.screens.home
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.wanderlust.domain.model.Place
@@ -37,17 +38,18 @@ data class HomeState(
 sealed interface HomeEvent {
     object OnLaunch : HomeEvent
     object OnDispose : HomeEvent
-    object OnRouteClick : HomeEvent
     object OnFilterBtnClick : HomeEvent
     object OnSearchBtnClick : HomeEvent
     data class OnSearchValueChanged(val searchValue: String) : HomeEvent
     data class OnCategoryClick(val selectedCategory: SortCategory) : HomeEvent
+    data class OnRouteCardClick(val id: String) : HomeEvent
+    data class OnPlaceCardClick(val id: String) : HomeEvent
 }
 
 sealed interface HomeSideEffect {
     object NavigateToSearchScreen : HomeSideEffect
-    object NavigateToRouteScreen : HomeSideEffect
-    object NavigateToProfileScreen : HomeSideEffect
+    data class NavigateToRouteScreen(val id: String) : HomeSideEffect
+    data class NavigateToPlaceScreen(val id: String) : HomeSideEffect
 }
 
 @HiltViewModel
@@ -56,6 +58,7 @@ class HomeViewModel @Inject constructor(
     private val getAllPlacesUseCase: GetAllPlacesUseCase,
     private val getAllRoutesUseCase: GetAllRoutesUseCase
 ) : ViewModel() {
+
 
     private val searchValue: String = savedStateHandle["searchValue"] ?: ""
     private val searchByName: Boolean = savedStateHandle["searchType"] ?: true
@@ -76,14 +79,16 @@ class HomeViewModel @Inject constructor(
     private var allPlaces: List<Place> = listOf()
 
     fun event(homeEvent: HomeEvent) {
+        ViewModelProvider.NewInstanceFactory
         when (homeEvent) {
+            HomeEvent.OnLaunch -> onLaunch()
+            HomeEvent.OnDispose -> onDispose()
             HomeEvent.OnFilterBtnClick -> onFilterBtnClick()
-            HomeEvent.OnRouteClick -> onRouteClick()
             HomeEvent.OnSearchBtnClick -> filter()
             is HomeEvent.OnSearchValueChanged -> onSearchValueChanged(homeEvent)
             is HomeEvent.OnCategoryClick -> onCategoryClick(homeEvent)
-            HomeEvent.OnLaunch -> onLaunch()
-            HomeEvent.OnDispose -> onDispose()
+            is HomeEvent.OnRouteCardClick -> onRouteClick(homeEvent.id)
+            is HomeEvent.OnPlaceCardClick -> onPlaceClick(homeEvent.id)
         }
     }
 
@@ -146,9 +151,15 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun onRouteClick() {
+    private fun onRouteClick(id: String) {
         viewModelScope.launch {
-            _action.emit(HomeSideEffect.NavigateToSearchScreen)
+            _action.emit(HomeSideEffect.NavigateToRouteScreen(id))
+        }
+    }
+
+    private fun onPlaceClick(id: String) {
+        viewModelScope.launch {
+            _action.emit(HomeSideEffect.NavigateToPlaceScreen(id))
         }
     }
 

@@ -38,7 +38,7 @@
     <string name="add_place">Добавить интересное место</string>
 
     <!--    Profile-->
-    <string name="empty_profile_title">Пусто(</string>
+    <string name="empty">Пусто(</string>
     <string name="empty_profile_description">Войдите, чтобы добавить информацию:</string>
 
     <string name="subscribe">Подписаться</string>
@@ -109,6 +109,13 @@
     <string name="it_is_your_comment">Это ваш комментарий:</string>
     <string name="creating_a_comment">Создание комментария</string>
     <string name="editing_a_comment">Редактирование комментария</string>
+
+    <string name="not_found">Публикация не найдена</string>
+
+    <string name="sign_in_to_comment">Войдите, чтобы оставлять комментарии</string>
+    <string name="leave_review">Оставьте отзыв</string>
+    <string name="send">Отправить</string>
+
 
     <!--    Map-->
     <string name="creating_place">Создание места</string>

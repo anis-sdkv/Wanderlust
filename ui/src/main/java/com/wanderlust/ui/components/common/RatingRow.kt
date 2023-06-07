@@ -1,9 +1,6 @@
 package com.wanderlust.ui.components.common
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,12 +16,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
-import com.wanderlust.ui.screens.route.RouteEvent
 
 
 @Composable
-fun RatingRow(modifier: Modifier, rating: Int, ratingCount: Int) {
-
+fun RatingRow(modifier: Modifier, rating: Float, ratingCount: Int, userRouteRating: Int?, onStarClick: (Int) -> Unit) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -41,21 +36,28 @@ fun RatingRow(modifier: Modifier, rating: Int, ratingCount: Int) {
             modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = rating.toString(),
-                textAlign = TextAlign.Start,
+            Row(
                 modifier = Modifier,
-                style = WanderlustTheme.typography.semibold20,
-                color = WanderlustTheme.colors.primaryText
-            )
-            Icon(
-                painterResource(R.drawable.ic_star),
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .size(14.dp),
-                contentDescription = "icon_dropdown_menu",
-                tint = WanderlustTheme.colors.accent
-            )
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (!rating.isNaN()) {
+                    Text(
+                        text = rating.toString(),
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier,
+                        style = WanderlustTheme.typography.semibold20,
+                        color = WanderlustTheme.colors.primaryText
+                    )
+                    Icon(
+                        painterResource(R.drawable.ic_star),
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .size(14.dp),
+                        contentDescription = "icon_dropdown_menu",
+                        tint = WanderlustTheme.colors.accent
+                    )
+                }
+            }
         }
     }
 }

@@ -5,6 +5,8 @@ import com.wanderlust.data.sources.local.sharedpref.AppPreferences
 import com.wanderlust.domain.model.UserProfile
 import com.wanderlust.domain.repositories.CurrentUserRepository
 import com.wanderlust.domain.repositories.UserRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CurrentUserRepositoryImpl @Inject constructor(
@@ -14,12 +16,9 @@ class CurrentUserRepositoryImpl @Inject constructor(
 ) : CurrentUserRepository {
     private var savedUser: UserProfile? = null
 
-    override suspend fun get(): UserProfile? {
-        return if (savedUser != null) return savedUser
-        else {
-            val id = preferences.getUserId()
-            id?.let { userRepository.getById(it) }
-        }
+    override suspend fun get(): UserProfile? = withContext(Dispatchers.IO) {
+        if (savedUser != null) savedUser
+        else preferences.getUserId()?.let { userRepository.getById(it) }
     }
 
     override fun getId(): String? =
