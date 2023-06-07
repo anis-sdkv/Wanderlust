@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +38,6 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.AnimatedBackgroundImage
 import com.wanderlust.ui.components.common.AuthorCard
-import com.wanderlust.ui.components.common.CommentEditingHeader
 import com.wanderlust.ui.components.common.CommentField
 import com.wanderlust.ui.components.common.CommentTextField
 import com.wanderlust.ui.components.common.ErrorDialog
@@ -72,8 +70,8 @@ fun PlaceScreen(
     LaunchedEffect(action) {
         when (action) {
             null -> Unit
-            PlaceSideEffect.NavigateToUserProfileScreen -> {
-                navController.navigate(ProfileNavScreen.Profile.route)
+            is PlaceSideEffect.NavigateToUserProfileScreen -> {
+                navController.navigate(ProfileNavScreen.Profile.passUserId((action as PlaceSideEffect.NavigateToUserProfileScreen).id))
             }
 
             PlaceSideEffect.NavigateBack -> {
@@ -118,7 +116,7 @@ fun PlaceScreen(
                 }
 
                 items(state.comments.size) {
-                    if (state.comments[it].authorNickname != state.currentUser?.username) {
+                    if (state.comments[it].authorNickname != state.currentUser?.username && state.comments[it].text?.isNotEmpty() == true) {
                         CommentField(
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                             comment = state.comments[it],
@@ -210,30 +208,6 @@ fun PlaceMainContent(state: PlaceState, eventHandler: (PlaceEvent) -> Unit, isDa
             ) {
                 eventHandler.invoke(PlaceEvent.OnAuthorClick)
             }
-//
-//            Column(
-//                modifier = Modifier.fillMaxWidth()
-//            ) {
-//                CommentEditingHeader(
-//                    modifier = Modifier,
-//                    onEditBtnClick = { eventHandler.invoke(PlaceEvent.OnEditCommentIconClick) },
-//                    onDeleteBtnClick = { eventHandler.invoke(PlaceEvent.OnDeleteCommentIconClick) }
-//                )
-//                CommentField(
-//                    modifier = Modifier,
-//                    comment = state.userComment,
-//                    images = listOf("url1", "url2", "url3", "url4")
-//                    //state.userComment.images
-//                ) {
-//                    eventHandler.invoke(PlaceEvent.OnAuthorClick)
-//                }
-//                Divider(
-//                    modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
-//                    thickness = 1.dp,
-//                    color = WanderlustTheme.colors.secondaryText
-//                )
-//            }
-
 
             // На карте
             Text(
@@ -276,25 +250,19 @@ fun PlaceMainContent(state: PlaceState, eventHandler: (PlaceEvent) -> Unit, isDa
             )
 
             // Комментарии
-            Text(
-                text = stringResource(id = R.string.leave_review),
-                modifier = Modifier.padding(top = 28.dp),
-                style = WanderlustTheme.typography.bold20,
-                color = WanderlustTheme.colors.primaryText
-            )
-
             CommentTextField(
                 isUserAuth = state.currentUser != null,
+                comment = if (state.isEditMode) null else state.comments.find { it.authorId == state.currentUser?.id },
                 inputValue = state.inputCommentText,
                 onChange = { inputCommentText ->
-                    eventHandler.invoke(
-                        PlaceEvent.OnInputCommentTextChange(
-                            inputCommentText
-                        )
-                    )
+                    eventHandler.invoke(PlaceEvent.OnInputCommentTextChange(inputCommentText))
                 },
+                ratingValue = state.userPlaceRating ?: 0,
+                onRatingChange = { i -> eventHandler.invoke(PlaceEvent.OnUserPlaceRatingChange(i)) },
                 onSendBtnClick = { eventHandler.invoke(PlaceEvent.OnCreateComment) },
                 modifier = Modifier.padding(top = 16.dp),
+                onDeleteCommentClick = { eventHandler.invoke(PlaceEvent.OnDeleteCommentIconClick) },
+                onEditCommentClick = { eventHandler.invoke(PlaceEvent.OnEditComment) },
             )
 
             Text(

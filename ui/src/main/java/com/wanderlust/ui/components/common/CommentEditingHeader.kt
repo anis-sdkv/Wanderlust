@@ -22,7 +22,7 @@ import com.wanderlust.ui.custom.WanderlustTheme
 fun CommentEditingHeader(modifier: Modifier, onEditBtnClick: () -> Unit, onDeleteBtnClick: () -> Unit) {
     Box(modifier = modifier.fillMaxWidth()){
         Text(
-            text = stringResource(id = R.string.it_is_your_comment),
+            text = stringResource(id = R.string.your_comment),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp, top = 16.dp)

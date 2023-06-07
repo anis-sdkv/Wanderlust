@@ -31,7 +31,7 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
     val items = listOf(
         BottomNavigationItem.Home,
         BottomNavigationItem.Map,
-        BottomNavigationItem.Notifications,
+        BottomNavigationItem.Settins,
         BottomNavigationItem.Profile
     )
 
@@ -58,8 +58,8 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
                     NavigationBarItem(
                         modifier = Modifier.offset(
                             when (item.title) {
-                                "Notifications" -> 20.dp
-                                "Map" -> (-20).dp
+                                BottomNavigationItem.Settins.title -> 20.dp
+                                BottomNavigationItem.Map.title -> (-20).dp
                                 else -> 0.dp
                             }
                         ),
@@ -78,7 +78,7 @@ fun BottomNavigationBar(navController: NavController, isBottomBarVisible: Mutabl
                         alwaysShowLabel = false,
                         selected = currentDestination?.hierarchy?.any { it.route == item.graph } == true,
                         onClick = {
-
+                            if (currentDestination?.hierarchy?.any{it.route == item.graph} == true) return@NavigationBarItem
                             navController.navigate(item.graph) {
                                 navController.graph.startDestinationRoute?.let { route ->
                                     popUpTo(route) {

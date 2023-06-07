@@ -16,7 +16,7 @@ import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.homeNavGraph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.mapNavGraph
-import com.wanderlust.ui.navigation.graphs.bottom_navigation.notificationsNavGraph
+import com.wanderlust.ui.navigation.graphs.bottom_navigation.settingsNavGraph
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.profileNavGraph
 import com.wanderlust.ui.screens.create_place.CreatePlaceScreen
 import com.wanderlust.ui.screens.create_route.CreateRouteScreen
@@ -49,7 +49,7 @@ fun NavGraphBuilder.bottomNavGraph(navController: NavHostController, isBottomBar
         //Графы к каждой вкладке Bottom Navigation:
         homeNavGraph(navController = navController, isBottomBarVisible)
         mapNavGraph(navController = navController, isBottomBarVisible)
-        notificationsNavGraph(navController = navController, isBottomBarVisible)
+        settingsNavGraph(navController = navController, isBottomBarVisible)
         profileNavGraph(navController = navController, isBottomBarVisible)
 
 

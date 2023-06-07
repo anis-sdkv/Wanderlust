@@ -17,10 +17,10 @@ sealed class BottomNavigationItem(var graph: String, var icon: Int, var title: S
         "Map"
     )
 
-    object Notifications : BottomNavigationItem(
-        "notifications_graph",
-        R.drawable.baseline_notifications_none_24,
-        "Notifications"
+    object Settins : BottomNavigationItem(
+        "settings_graph",
+        R.drawable.baseline_settings_24,
+        "Settings"
     )
 
     object Profile : BottomNavigationItem(

@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -74,7 +73,6 @@ import com.wanderlust.ui.screens.map.DarkMapStyle
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun RouteScreen(
     navController: NavController,
@@ -91,8 +89,8 @@ fun RouteScreen(
     LaunchedEffect(action) {
         when (action) {
             null -> Unit
-            RouteSideEffect.NavigateToUserProfileScreen -> {
-                navController.navigate(ProfileNavScreen.Profile.route)
+            is RouteSideEffect.NavigateToUserProfileScreen -> {
+                navController.navigate(ProfileNavScreen.Profile.passUserId((action as RouteSideEffect.NavigateToUserProfileScreen).id))
             }
 
             RouteSideEffect.NavigateBack -> {
@@ -137,7 +135,7 @@ fun RouteScreen(
                 }
 
                 items(state.comments.size) {
-                    if (state.comments[it].authorNickname != state.currentUser?.username) {
+                    if (state.comments[it].authorNickname != state.currentUser?.username && state.comments[it].text?.isNotEmpty() == true) {
                         CommentField(
                             modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
                             comment = state.comments[it],
@@ -294,19 +292,17 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
 
             CommentTextField(
                 isUserAuth = state.currentUser != null,
+                comment = if (state.inEditMode) null else state.comments.find { it.authorId == state.currentUser?.id },
                 inputValue = state.inputCommentText,
                 onChange = { inputCommentText ->
-                    eventHandler.invoke(
-                        RouteEvent.OnInputCommentTextChange(
-                            inputCommentText
-                        )
-                    )
+                    eventHandler.invoke(RouteEvent.OnInputCommentTextChange(inputCommentText))
                 },
-                onSendBtnClick = {
-                    eventHandler.invoke(RouteEvent.OnCreateComment)
-                },
-                modifier = Modifier
-                    .padding(top = 16.dp),
+                ratingValue = state.userRouteRating ?: 0,
+                onRatingChange = { i -> eventHandler.invoke(RouteEvent.OnUserRouteRatingChange(i)) },
+                onSendBtnClick = { eventHandler.invoke(RouteEvent.OnCreateComment) },
+                modifier = Modifier.padding(top = 16.dp),
+                onDeleteCommentClick = { eventHandler.invoke(RouteEvent.OnDeleteCommentIconClick) },
+                onEditCommentClick = { eventHandler.invoke(RouteEvent.OnEditComment) },
             )
 
             // Комментарии

@@ -46,6 +46,7 @@ dependencies {
 
     // hilt
     implementation(libs.dagger.hilt)
+    implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
     kapt(libs.dagger.hilt.compiler)
 
     // Default

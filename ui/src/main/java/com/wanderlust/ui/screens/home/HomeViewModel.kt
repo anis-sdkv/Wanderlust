@@ -32,7 +32,8 @@ data class HomeState(
     val searchValue: String = "",
     val selectedCategory: SortCategory = SortCategory.ALL_ROUTES,
     val selectedTags: PersistentList<String> = persistentListOf(),
-    val searchByName: Boolean = true
+    val searchByName: Boolean = true,
+    val isLoading: Boolean = true
 )
 
 sealed interface HomeEvent {
@@ -98,6 +99,7 @@ class HomeViewModel @Inject constructor(
             allPlaces = getAllPlacesUseCase()
             _state.emit(
                 _state.value.copy(
+                    isLoading = false,
                     places = allPlaces.toPersistentList(),
                     routes = allRoutes.toPersistentList()
                 )

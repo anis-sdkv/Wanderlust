@@ -104,7 +104,7 @@
     <string name="ratings">ratings</string>
     <string name="enter_the_comment">Enter the comment</string>
     <string name="post">Post</string>
-    <string name="it_is_your_comment">It\'s your comment:</string>
+    <string name="your_comment">Your comment</string>
     <string name="creating_a_comment">Creating a comment</string>
     <string name="editing_a_comment">Editing a comment</string>
 
@@ -113,8 +113,9 @@
     <string name="sign_in_to_comment">Sign in to leave comments</string>
     <string name="leave_review">Leave a review</string>
     <string name="send">Send</string>
+    <string name="delete">Delete</string>
 
-
+    <string name="publications">Publications</string>
     <!--    Map-->
     <string name="creating_place">Creating a place</string>
     <string name="creating_route">Creating a route</string>

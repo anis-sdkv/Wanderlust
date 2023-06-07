@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -110,7 +111,7 @@ fun HomeScreen(
 
         Box(
             modifier = Modifier
-                .padding(top = 24.dp)
+                .padding(top = 24.dp, bottom = 20.dp)
                 .height(40.dp)
         ) {
             Row(
@@ -160,6 +161,18 @@ fun HomeScreen(
                     )
             )
         }
+
+        if (state.isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = WanderlustTheme.colors.accent)
+            }
+            return
+        }
+
         when (state.selectedCategory) {
             ALL_ROUTES -> {
                 LazyColumn(Modifier.fillMaxSize()) {
