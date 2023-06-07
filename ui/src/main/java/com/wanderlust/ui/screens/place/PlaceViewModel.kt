@@ -72,7 +72,7 @@ sealed interface PlaceEvent {
 }
 
 sealed interface PlaceSideEffect {
-    object NavigateToUserProfileScreen : PlaceSideEffect
+    data class NavigateToUserProfileScreen(val id: String) : PlaceSideEffect
     object NavigateBack : PlaceSideEffect
 }
 
@@ -82,7 +82,7 @@ class PlaceViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getPlace: GetPlaceUseCase,
     private val currentUserUseCase: GetCurrentUserUseCase,
-    private val addPlaceCommentUseCase: AddPlaceCommentUseCase
+    private val addPlaceCommentUseCase: AddPlaceCommentUseCase,
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<PlaceState> = MutableStateFlow(PlaceState())
@@ -114,7 +114,7 @@ class PlaceViewModel @Inject constructor(
             PlaceEvent.OnAuthorClick -> onAuthorClick()
             PlaceEvent.OnBackBtnClick -> onBackBtnClick()
 
-            PlaceEvent.OnEditComment -> TODO()
+            PlaceEvent.OnEditComment -> onEditCommentIconClick()
             PlaceEvent.OnCreateComment -> onCreateComment()
 
             PlaceEvent.OnEditCommentIconClick -> onEditCommentIconClick()
@@ -122,13 +122,19 @@ class PlaceViewModel @Inject constructor(
 
             is PlaceEvent.OnInputCommentTextChange -> onInputCommentTextChange(placeEvent)
             is PlaceEvent.OnUserPlaceRatingChange -> onUserPlaceRatingChange(placeEvent)
+
             PlaceEvent.OnDismissErrorsDialog -> dismissErrorsDialog()
             PlaceEvent.OnDismissProgressbarDialog -> dismissProgressbarDialog()
         }
     }
 
     private fun onDeleteCommentIconClick() {
-        TODO("Not yet implemented")
+        _state.tryEmit(
+            _state.value.copy(
+                showErrorsDialog = true,
+                errors = persistentListOf("TODO")
+            )
+        )
     }
 
 
@@ -145,24 +151,11 @@ class PlaceViewModel @Inject constructor(
     private fun onEditCommentIconClick() {
         _state.tryEmit(
             _state.value.copy(
-                isEditMode = true,
+                showErrorsDialog = true,
+                errors = persistentListOf("TODO")
             )
         )
     }
-
-//    private fun onEditComment() {
-//        // TODO сохранить в бд userComment
-//        // плюс вот это:
-//        _state.tryEmit(
-//            _state.value.copy(
-//                isShowUserComment = true,
-//
-//                // обновить в бд рейтинг у места:
-//                // вычитаем рейтинг изначального комментрия и добавляем новый рейтинг, хз
-//                totalRating = _state.value.totalRating - comment.score + _state.value.userComment.score,
-//            )
-//        )
-//    }
 
     private fun onCreateComment() {
         if (state.value.userPlaceRating == null)
@@ -204,11 +197,7 @@ class PlaceViewModel @Inject constructor(
     }
 
     private fun onUserPlaceRatingChange(event: PlaceEvent.OnUserPlaceRatingChange) {
-        _state.tryEmit(
-            _state.value.copy(
-                userPlaceRating = event.rating
-            )
-        )
+        _state.tryEmit(_state.value.copy(userPlaceRating = event.rating))
     }
 
     private fun onInputCommentTextChange(event: PlaceEvent.OnInputCommentTextChange) {
@@ -227,7 +216,7 @@ class PlaceViewModel @Inject constructor(
 
     private fun onAuthorClick() {
         viewModelScope.launch {
-            _action.emit(PlaceSideEffect.NavigateToUserProfileScreen)
+            _action.emit(PlaceSideEffect.NavigateToUserProfileScreen(state.value.authorId))
         }
     }
 

@@ -6,20 +6,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -38,15 +38,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.wanderlust.ui.R
-
 import com.wanderlust.ui.components.common.AnimatedBackgroundImage
-import com.wanderlust.ui.components.common.LoadingCard
+import com.wanderlust.ui.components.common.CustomDropDownItem
 import com.wanderlust.ui.components.common.DefaultButton
+import com.wanderlust.ui.components.common.LoadingCard
 import com.wanderlust.ui.components.common.LocationText
 import com.wanderlust.ui.components.common.MapEntityCard
 import com.wanderlust.ui.components.common.SwitchButton
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.Graph
+import com.wanderlust.ui.navigation.graphs.bottom_navigation.HomeNavScreen
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
 import com.wanderlust.ui.utils.calculateRating
 
@@ -78,6 +79,14 @@ fun ProfileScreen(
             ProfileSideEffect.NavigateToLoginScreen -> {
                 navController.navigate(Graph.AUTHENTICATION)
             }
+
+            is ProfileSideEffect.NavigateToPlaceScreen -> {
+                navController.navigate(HomeNavScreen.Place.passPlaceId((action as ProfileSideEffect.NavigateToPlaceScreen).id))
+            }
+
+            is ProfileSideEffect.NavigateToRouteScreen -> {
+                navController.navigate(HomeNavScreen.Route.passRouteId((action as ProfileSideEffect.NavigateToRouteScreen).id))
+            }
         }
     }
 
@@ -98,49 +107,101 @@ fun ProfileScreen(
         when (state.cardState) {
             ProfileCardState.ERROR -> item { ProfileError() }
             ProfileCardState.PROGRESS_BAR -> item { LoadingCard() }
-            ProfileCardState.CONTENT -> {
-                item {
-                    ProfileMainContent(state, eventHandler)
-                }
-                items(state.userRoutes.size) {
-                    MapEntityCard(
-                        name = state.userRoutes[it].routeName,
-                        rating = state.userRoutes[it].calculateRating(),
-                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp),
-                        onClick = { throw Exception() }
-                    )
-                }
-                if (state.userRoutes.isNotEmpty())
-//                    item {
-//                        Box(
-//                            modifier = Modifier
-//                                .padding(bottom = 84.dp, top = 40.dp)
-//                                .fillMaxWidth(), contentAlignment = Alignment.Center
-//                        ) {
-//                            TextButton(
-//                                onClick = {},
-//                            ) {
-//                                Text(
-//                                    text = stringResource(id = R.string.show_all_routes),
-//                                    style = WanderlustTheme.typography.medium16,
-//                                    color = WanderlustTheme.colors.accent,
-//                                )
-//                            }
-//                        }
-//                    }
-                else
-                    item {
-                        Text(
-                            text = stringResource(id = R.string.not_yet),
-                            style = WanderlustTheme.typography.medium16,
-                            color = WanderlustTheme.colors.primaryText
-                        )
-                    }
-            }
+            ProfileCardState.CONTENT -> Publications(state, eventHandler)
 
             ProfileCardState.NOT_AUTH -> item { UserNotAuthMessage(eventHandler) }
         }
+    }
+}
 
+private fun LazyListScope.Publications(state: ProfileState, eventHandler: (ProfileEvent) -> Unit) {
+    item {
+        ProfileMainContent(state, eventHandler)
+
+        Text(
+            text = stringResource(id = R.string.all_routes),
+            modifier = Modifier.padding(vertical = 36.dp, horizontal = 20.dp),
+            style = WanderlustTheme.typography.bold20,
+            color = WanderlustTheme.colors.primaryText
+        )
+    }
+    when (state.routesListState) {
+        ListState.PROGRESS_BAR -> progressBar()
+        ListState.ERROR -> message(R.string.error)
+        ListState.CONTENT ->
+            items(state.userRoutes.size) {
+                MapEntityCard(
+                    name = state.userRoutes[it].routeName,
+                    rating = state.userRoutes[it].calculateRating(),
+                    modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp),
+                    onClick = {
+                        eventHandler.invoke(
+                            ProfileEvent.OnRouteClick(
+                                state.userRoutes[it].id ?: throw IllegalArgumentException()
+                            )
+                        )
+                    }
+                )
+            }
+
+    }
+    if (state.userRoutes.isEmpty()) message(R.string.not_yet)
+
+
+    item {
+        Text(
+            text = stringResource(id = R.string.all_places),
+            modifier = Modifier.padding(vertical = 36.dp, horizontal = 20.dp),
+            style = WanderlustTheme.typography.bold20,
+            color = WanderlustTheme.colors.primaryText
+        )
+    }
+    when (state.placesState) {
+        ListState.PROGRESS_BAR -> progressBar()
+        ListState.ERROR -> message(R.string.error)
+        ListState.CONTENT -> items(state.userPlaces.size) {
+            MapEntityCard(
+                name = state.userPlaces[it].placeName,
+                rating = state.userPlaces[it].calculateRating(),
+                modifier = Modifier.padding(vertical = 16.dp, horizontal = 20.dp),
+                onClick = {
+                    eventHandler.invoke(
+                        ProfileEvent.OnRouteClick(
+                            state.userPlaces[it].id ?: throw IllegalArgumentException()
+                        )
+                    )
+                }
+            )
+        }
+    }
+    if (state.userPlaces.isEmpty()) message(R.string.not_yet)
+
+    item {
+        Spacer(modifier = Modifier.height(80.dp))
+    }
+}
+
+private fun LazyListScope.message(stringId: Int) {
+    item {
+        Text(
+            text = stringResource(id = stringId),
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+            style = WanderlustTheme.typography.medium16,
+            color = WanderlustTheme.colors.primaryText
+        )
+    }
+}
+
+private fun LazyListScope.progressBar() {
+    item {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = WanderlustTheme.colors.accent)
+        }
     }
 }
 
@@ -150,20 +211,22 @@ private fun ProfileError() {
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
     ) {
-        Text(
-            text = stringResource(id = R.string.error),
-            modifier = Modifier
-                .padding(top = 32.dp),
-            style = WanderlustTheme.typography.bold24,
-            color = WanderlustTheme.colors.primaryText
-        )
+        Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = stringResource(id = R.string.error),
+                modifier = Modifier
+                    .padding(top = 32.dp),
+                style = WanderlustTheme.typography.bold24,
+                color = WanderlustTheme.colors.primaryText
+            )
 
-        Text(
-            text = stringResource(id = R.string.try_again),
-            modifier = Modifier.padding(top = 32.dp),
-            style = WanderlustTheme.typography.semibold14,
-            color = WanderlustTheme.colors.primaryText
-        )
+            Text(
+                text = stringResource(id = R.string.try_again),
+                modifier = Modifier.padding(top = 32.dp),
+                style = WanderlustTheme.typography.semibold14,
+                color = WanderlustTheme.colors.primaryText
+            )
+        }
     }
 }
 
@@ -247,14 +310,6 @@ fun ProfileMainContent(state: ProfileState, eventHandler: (ProfileEvent) -> Unit
                 modifier = Modifier.padding(top = 20.dp),
                 style = WanderlustTheme.typography.medium16,
             )
-
-        // Популярное у автора
-        Text(
-            text = stringResource(id = R.string.popular_from_author),
-            modifier = Modifier.padding(vertical = 36.dp),
-            style = WanderlustTheme.typography.bold20,
-            color = WanderlustTheme.colors.primaryText
-        )
     }
 }
 
@@ -307,12 +362,12 @@ private fun ProfileStatistic(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = state.userRoutes.size.toString(),
+                text = (state.userRoutes.size + state.userPlaces.size).toString(),
                 style = WanderlustTheme.typography.extraBold26,
                 color = WanderlustTheme.colors.primaryText
             )
             Text(
-                text = stringResource(id = R.string.routes),
+                text = stringResource(id = R.string.publications),
                 style = WanderlustTheme.typography.medium13,
                 color = WanderlustTheme.colors.accent
             )
@@ -373,24 +428,8 @@ private fun ProfileDropDownMenu(
                 eventHandler.invoke(ProfileEvent.OnCloseDropdownMenu)
             },
         ) {
-            ProfileDropDownItem(text = stringResource(id = R.string.sign_out)) { eventHandler.invoke(ProfileEvent.OnSignOutButtonClick) }
+            CustomDropDownItem(text = stringResource(id = R.string.sign_out)) { eventHandler.invoke(ProfileEvent.OnSignOutButtonClick) }
         }
     }
-}
-
-@Composable
-private fun ProfileDropDownItem(text: String, onClick: () -> Unit) {
-    DropdownMenuItem(
-        text = {
-            Text(
-                text = text,
-                modifier = Modifier.fillMaxWidth(),
-                style = WanderlustTheme.typography.semibold14,
-                color = WanderlustTheme.colors.secondaryText,
-                textAlign = TextAlign.Center
-            )
-        },
-        onClick = onClick
-    )
 }
 

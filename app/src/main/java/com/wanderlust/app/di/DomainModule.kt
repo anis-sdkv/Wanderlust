@@ -17,8 +17,10 @@ import com.wanderlust.domain.usecases.GetCurrentUserIdUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserUseCase
 import com.wanderlust.domain.usecases.GetLocationByCoordinatesUseCase
 import com.wanderlust.domain.usecases.GetPlaceUseCase
+import com.wanderlust.domain.usecases.GetPlacesByIdListUseCase
 import com.wanderlust.domain.usecases.GetRouteUseCase
 import com.wanderlust.domain.usecases.GetRoutesByIdListUseCase
+import com.wanderlust.domain.usecases.GetUserUseCase
 import com.wanderlust.domain.usecases.LoginUseCase
 import com.wanderlust.domain.usecases.RegisterUseCase
 import com.wanderlust.domain.usecases.SetCurrentUserUseCase
@@ -120,4 +122,10 @@ class DomainModule {
     @Provides
     fun provideAddPlaceCommentUseCase(placeRepository: PlaceRepository): AddPlaceCommentUseCase =
         AddPlaceCommentUseCase(placeRepository)
+
+    @Provides
+    fun provideGetUserUseCase(userRepository: UserRepository): GetUserUseCase = GetUserUseCase(userRepository)
+
+    @Provides
+    fun provideGetPlacesByIdListUseCase(placesRepository: PlaceRepository) : GetPlacesByIdListUseCase = GetPlacesByIdListUseCase(placesRepository)
 }

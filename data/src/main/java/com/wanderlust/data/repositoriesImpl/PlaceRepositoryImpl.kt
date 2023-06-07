@@ -1,5 +1,6 @@
 package com.wanderlust.data.repositoriesImpl
 
+import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.wanderlust.data.entities.PlaceEntity

@@ -77,7 +77,7 @@ fun MapEntityCard(
                         bottom.linkTo(parent.bottom)
                         start.linkTo(routeImage.end, margin = 16.dp)
                     }) {
-                if (rating.isNaN()) {
+                if (!rating.isNaN()) {
                     Icon(
                         painterResource(R.drawable.ic_star),
                         contentDescription = "icon_star",

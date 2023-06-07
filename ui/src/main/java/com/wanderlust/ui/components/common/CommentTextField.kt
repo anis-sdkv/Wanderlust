@@ -2,8 +2,11 @@ package com.wanderlust.ui.components.common
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.wanderlust.domain.model.Comment
 import com.wanderlust.ui.R
 import com.wanderlust.ui.custom.WanderlustTheme
 
@@ -35,9 +39,21 @@ fun CommentTextField(
     isUserAuth: Boolean,
     inputValue: String,
     onChange: (String) -> Unit,
+    ratingValue: Int,
+    onRatingChange: (Int) -> Unit,
     onSendBtnClick: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier = Modifier,
+    comment: Comment? = null,
+    onEditCommentClick: (() -> Unit)? = null,
+    onDeleteCommentClick: (() -> Unit)? = null,
 ) {
+    Text(
+        text = if (isUserAuth && comment == null) stringResource(id = R.string.leave_review) else stringResource(id = R.string.your_comment),
+        modifier = Modifier.padding(top = 28.dp),
+        style = WanderlustTheme.typography.bold20,
+        color = WanderlustTheme.colors.primaryText
+    )
+
     if (!isUserAuth) {
         Text(
             text = stringResource(id = R.string.sign_in_to_comment),
@@ -47,6 +63,38 @@ fun CommentTextField(
         )
         return
     }
+
+    if (comment != null) {
+        CommentField(
+            modifier = Modifier,
+            comment = comment,
+            images = listOf(),
+            onDeleteCommentClick,
+            onEditCommentClick,
+        )
+        return
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
+        val stars = listOf(1, 2, 3, 4, 5)
+        stars.forEach {
+            Icon(
+                painterResource(R.drawable.ic_star),
+                modifier = Modifier
+                    .padding(start = 8.dp, end = 8.dp, top = 16.dp)
+                    .size(24.dp)
+                    .clickable { onRatingChange(it) },
+                contentDescription = "icon_dropdown_menu",
+                tint = if (ratingValue >= it)
+                    WanderlustTheme.colors.accent else WanderlustTheme.colors.secondaryText
+            )
+        }
+    }
+
 
     val maxChar = 300
     val maxLines = 15

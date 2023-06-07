@@ -38,12 +38,11 @@ data class RouteState(
     val inputCommentText: String = "",
     val userRouteRating: Int? = null,
     val currentUser: UserProfile? = null,
+    val inEditMode: Boolean = false,
     val showLoadingDialog: Boolean = false,
     val showErrorsDialog: Boolean = false,
     val errors: PersistentList<String> = persistentListOf(),
 
-    val isShowUserComment: Boolean = false,
-    val isEditComment: Boolean = false,
 
     val routeId: String = "",
     val routeName: String = "",
@@ -57,7 +56,7 @@ data class RouteState(
     val routeCity: String = "",
     val routeCountry: String = "",
     val authorName: String = "",
-
+    val authorId: String = "",
 )
 
 sealed interface RouteEvent {
@@ -75,7 +74,7 @@ sealed interface RouteEvent {
 
 
 sealed interface RouteSideEffect {
-    object NavigateToUserProfileScreen : RouteSideEffect
+    data class NavigateToUserProfileScreen(val id: String) : RouteSideEffect
     object NavigateBack : RouteSideEffect
 }
 
@@ -120,7 +119,7 @@ class RouteViewModel @Inject constructor(
             RouteEvent.OnBackBtnClick -> onBackBtnClick()
 
             RouteEvent.OnCreateComment -> onCreateComment()
-            RouteEvent.OnEditComment -> onEditComment()
+            RouteEvent.OnEditComment -> onEditCommentIconClick()
 
             RouteEvent.OnEditCommentIconClick -> onEditCommentIconClick()
             RouteEvent.OnDeleteCommentIconClick -> onDeleteCommentIconClick()
@@ -142,23 +141,23 @@ class RouteViewModel @Inject constructor(
     }
 
     private fun onDeleteCommentIconClick() {
-        TODO()
+        _state.tryEmit(
+            _state.value.copy(
+                showErrorsDialog = true,
+                errors = persistentListOf("TODO")
+            )
+        )
     }
 
     //    Шёл медведь по лесу, видит — машина стоит посреди опушки. Поджёг её, сел и сгорел.
     private fun onEditCommentIconClick() {
         _state.tryEmit(
             _state.value.copy(
-                isShowUserComment = false,
-                isEditComment = true,
+                showErrorsDialog = true,
+                errors = persistentListOf("TODO")
             )
         )
     }
-
-    private fun onEditComment() {
-        TODO()
-    }
-
     private fun onCreateComment() {
         if (state.value.userRouteRating == null)
             _state.tryEmit(_state.value.copy(showErrorsDialog = true, errors = persistentListOf("Поставьте оценку.")))
@@ -208,7 +207,7 @@ class RouteViewModel @Inject constructor(
     }
 
     private fun onAuthorClick() {
-        viewModelScope.launch { _action.emit(RouteSideEffect.NavigateToUserProfileScreen) }
+        viewModelScope.launch { _action.emit(RouteSideEffect.NavigateToUserProfileScreen(state.value.authorId)) }
     }
 
     private suspend fun loadRoute(id: String) {
@@ -236,7 +235,8 @@ class RouteViewModel @Inject constructor(
                     routeCountry = result.country,
                     routeCity = result.city,
                     authorName = result.authorName ?: throw IllegalArgumentException(),
-                    routeId = result.id ?: throw IllegalArgumentException()
+                    routeId = result.id ?: throw IllegalArgumentException(),
+                    authorId = result.authorId ?: throw IllegalArgumentException()
                 )
         )
     }

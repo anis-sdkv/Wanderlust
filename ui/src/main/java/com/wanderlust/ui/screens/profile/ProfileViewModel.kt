@@ -3,9 +3,12 @@ package com.wanderlust.ui.screens.profile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.wanderlust.domain.model.Place
 import com.wanderlust.domain.model.Route
 import com.wanderlust.domain.usecases.GetCurrentUserUseCase
+import com.wanderlust.domain.usecases.GetPlacesByIdListUseCase
 import com.wanderlust.domain.usecases.GetRoutesByIdListUseCase
+import com.wanderlust.domain.usecases.GetUserUseCase
 import com.wanderlust.domain.usecases.SignOutUseCase
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,6 +29,10 @@ enum class ProfileCardState {
     PROGRESS_BAR, CONTENT, NOT_AUTH, ERROR
 }
 
+enum class ListState {
+    PROGRESS_BAR, CONTENT, ERROR
+}
+
 @Immutable
 data class ProfileState(
     val isSelfProfile: Boolean = false,
@@ -35,18 +42,21 @@ data class ProfileState(
     val userCountry: String? = null,
     val userDescription: String = "",
     val userRoutes: PersistentList<Route> = persistentListOf(),
+    val userPlaces: PersistentList<Place> = persistentListOf(),
     val userNumberOfSubscribers: Int = 0,
     val userNumberOfSubscriptions: Int = 0,
     val userNumberOfRoutes: Int = 0,
     val isDropdownMenuExpanded: Boolean = false,
-    val showRoutesProgressBar: Boolean = false,
-    val showRoutesLoadError: Boolean = false,
+    val routesListState: ListState = ListState.PROGRESS_BAR,
+    val placesState: ListState = ListState.PROGRESS_BAR,
     val cardState: ProfileCardState = ProfileCardState.PROGRESS_BAR
 )
 
 sealed interface ProfileSideEffect {
     object NavigateToEditProfileScreen : ProfileSideEffect
     object NavigateToLoginScreen : ProfileSideEffect
+    data class NavigateToRouteScreen(val id: String) : ProfileSideEffect
+    data class NavigateToPlaceScreen(val id: String) : ProfileSideEffect
 }
 
 sealed interface ProfileEvent {
@@ -58,6 +68,8 @@ sealed interface ProfileEvent {
     object OnEditProfileBtnClick : ProfileEvent
     object OnButtonLoginClick : ProfileEvent
     object OnSignOutButtonClick : ProfileEvent
+    data class OnRouteClick(val id: String) : ProfileEvent
+    data class OnPlaceClick(val id: String) : ProfileEvent
 }
 
 @HiltViewModel
@@ -65,7 +77,9 @@ class ProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val getCurrentUserUseCase: GetCurrentUserUseCase,
     private val getRoutesByIdListUseCase: GetRoutesByIdListUseCase,
-    private val signOut: SignOutUseCase
+    private val getUserUseCase: GetUserUseCase,
+    private val signOut: SignOutUseCase,
+    private val getPlacesByIdListUseCase: GetPlacesByIdListUseCase
 ) : ViewModel() {
 
 
@@ -88,17 +102,14 @@ class ProfileViewModel @Inject constructor(
             ProfileEvent.OnEditProfileBtnClick -> onEditProfileBtnClick()
             ProfileEvent.OnButtonLoginClick -> onButtonLoginClick()
             ProfileEvent.OnSignOutButtonClick -> onSignOutButtonClick()
+            is ProfileEvent.OnPlaceClick -> onPlaceClick(profileEvent.id)
+            is ProfileEvent.OnRouteClick -> onRouteClick(profileEvent.id)
         }
     }
 
     private fun initState() {
         val id = savedStateHandle[ProfileNavScreen.USER_ID_KEY] ?: ProfileNavScreen.SELF_PROFILE
-        if (id == ProfileNavScreen.SELF_PROFILE) {
-            _state.tryEmit(_state.value.copy(isSelfProfile = true))
-            loadSelfProfile()
-        } else {
-//            loadProfileById(id)
-        }
+        loadProfile(id)
     }
 
     override fun onCleared() {
@@ -110,6 +121,14 @@ class ProfileViewModel @Inject constructor(
     private fun onDispose() {
         _state.tryEmit(ProfileState())
         currentJob?.cancel()
+    }
+
+    private fun onRouteClick(id: String) {
+        viewModelScope.launch { _action.emit(ProfileSideEffect.NavigateToRouteScreen(id)) }
+    }
+
+    private fun onPlaceClick(id: String) {
+        viewModelScope.launch { _action.emit(ProfileSideEffect.NavigateToPlaceScreen(id)) }
     }
 
     private fun onSubscribeBtnClick() {
@@ -156,10 +175,15 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private fun loadSelfProfile() {
+    private fun loadProfile(id: String) {
         currentJob = viewModelScope.launch {
             try {
-                val user = getCurrentUserUseCase()
+                val user = if (id == ProfileNavScreen.SELF_PROFILE) {
+                    _state.tryEmit(_state.value.copy(isSelfProfile = true))
+                    getCurrentUserUseCase()
+                } else
+                    getUserUseCase(id)
+
                 if (user != null) {
                     _state.emit(
                         _state.value.copy(
@@ -173,9 +197,12 @@ class ProfileViewModel @Inject constructor(
                             cardState = ProfileCardState.CONTENT,
                         )
                     )
-                    loadRoutes(user.routes)
+                    launch {
+                        loadRoutes(user.routes)
+                        loadPlaces(user.places)
+                    }
                 } else {
-                    _state.emit(_state.value.copy(cardState = ProfileCardState.NOT_AUTH))
+                    _state.emit(_state.value.copy(cardState = if (state.value.isSelfProfile) ProfileCardState.NOT_AUTH else ProfileCardState.ERROR))
                 }
             } catch (_: Exception) {
                 _state.emit(_state.value.copy(cardState = ProfileCardState.ERROR))
@@ -185,19 +212,19 @@ class ProfileViewModel @Inject constructor(
 
     private suspend fun loadRoutes(routesId: List<String>) {
         try {
-            _state.emit(_state.value.copy(showRoutesLoadError = true))
             val routes = getRoutesByIdListUseCase(routesId)
-            _state.emit(_state.value.copy(userRoutes = routes.toPersistentList()))
+            _state.emit(_state.value.copy(userRoutes = routes.toPersistentList(), routesListState = ListState.CONTENT))
         } catch (e: Exception) {
-            _state.emit(_state.value.copy(showRoutesLoadError = true))
-        } finally {
-            _state.emit(_state.value.copy(showRoutesProgressBar = false))
+            _state.emit(_state.value.copy(routesListState = ListState.ERROR))
         }
     }
 
-    private fun loadProfileById(id: String) {
-        viewModelScope.launch {
-
+    private suspend fun loadPlaces(placesId: List<String>) {
+        try {
+            val places = getPlacesByIdListUseCase(placesId)
+            _state.emit(_state.value.copy(userPlaces = places.toPersistentList(), placesState = ListState.CONTENT))
+        } catch (e: Exception) {
+            _state.emit(_state.value.copy(placesState = ListState.ERROR))
         }
     }
 }
