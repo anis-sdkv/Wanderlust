@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +39,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.AnimatedBackgroundImage
 import com.wanderlust.ui.components.common.AuthorCard
+import com.wanderlust.ui.components.common.CommentEditingHeader
 import com.wanderlust.ui.components.common.CommentField
 import com.wanderlust.ui.components.common.CommentTextField
 import com.wanderlust.ui.components.common.ErrorDialog
@@ -116,11 +118,14 @@ fun PlaceScreen(
                 }
 
                 items(state.comments.size) {
-                    CommentField(
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-                        comment = state.comments[it]
-                    ) {
-                        eventHandler.invoke(PlaceEvent.OnAuthorClick)
+                    if (state.comments[it].authorNickname != state.currentUser?.username) {
+                        CommentField(
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                            comment = state.comments[it],
+                            images = listOf()
+                        ) {
+                            eventHandler.invoke(PlaceEvent.OnAuthorClick)
+                        }
                     }
                 }
 
@@ -145,6 +150,7 @@ fun PlaceMainContent(state: PlaceState, eventHandler: (PlaceEvent) -> Unit, isDa
         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
         colors = CardDefaults.cardColors(containerColor = WanderlustTheme.colors.primaryBackground),
     ) {
+
         Column(
             Modifier
                 .background(WanderlustTheme.colors.primaryBackground)
@@ -204,6 +210,30 @@ fun PlaceMainContent(state: PlaceState, eventHandler: (PlaceEvent) -> Unit, isDa
             ) {
                 eventHandler.invoke(PlaceEvent.OnAuthorClick)
             }
+//
+//            Column(
+//                modifier = Modifier.fillMaxWidth()
+//            ) {
+//                CommentEditingHeader(
+//                    modifier = Modifier,
+//                    onEditBtnClick = { eventHandler.invoke(PlaceEvent.OnEditCommentIconClick) },
+//                    onDeleteBtnClick = { eventHandler.invoke(PlaceEvent.OnDeleteCommentIconClick) }
+//                )
+//                CommentField(
+//                    modifier = Modifier,
+//                    comment = state.userComment,
+//                    images = listOf("url1", "url2", "url3", "url4")
+//                    //state.userComment.images
+//                ) {
+//                    eventHandler.invoke(PlaceEvent.OnAuthorClick)
+//                }
+//                Divider(
+//                    modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
+//                    thickness = 1.dp,
+//                    color = WanderlustTheme.colors.secondaryText
+//                )
+//            }
+
 
             // На карте
             Text(

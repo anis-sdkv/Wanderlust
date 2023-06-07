@@ -35,6 +35,7 @@ data class PlaceState(
     val cardState: PlaceCardState = PlaceCardState.PROGRESS_BAR,
     val inputCommentText: String = "",
     val userPlaceRating: Int? = null,
+    val isEditMode: Boolean = false,
     val currentUser: UserProfile? = null,
     val showLoadingDialog: Boolean = false,
     val showErrorsDialog: Boolean = false,
@@ -62,6 +63,9 @@ sealed interface PlaceEvent {
     object OnBackBtnClick : PlaceEvent
     data class OnInputCommentTextChange(val inputCommentText: String) : PlaceEvent
     data class OnUserPlaceRatingChange(val rating: Int) : PlaceEvent
+    object OnEditComment : PlaceEvent
+    object OnEditCommentIconClick : PlaceEvent
+    object OnDeleteCommentIconClick : PlaceEvent
     object OnCreateComment : PlaceEvent
     object OnDismissProgressbarDialog : PlaceEvent
     object OnDismissErrorsDialog : PlaceEvent
@@ -109,13 +113,24 @@ class PlaceViewModel @Inject constructor(
         when (placeEvent) {
             PlaceEvent.OnAuthorClick -> onAuthorClick()
             PlaceEvent.OnBackBtnClick -> onBackBtnClick()
+
+            PlaceEvent.OnEditComment -> TODO()
             PlaceEvent.OnCreateComment -> onCreateComment()
+
+            PlaceEvent.OnEditCommentIconClick -> onEditCommentIconClick()
+            PlaceEvent.OnDeleteCommentIconClick -> onDeleteCommentIconClick()
+
             is PlaceEvent.OnInputCommentTextChange -> onInputCommentTextChange(placeEvent)
             is PlaceEvent.OnUserPlaceRatingChange -> onUserPlaceRatingChange(placeEvent)
             PlaceEvent.OnDismissErrorsDialog -> dismissErrorsDialog()
             PlaceEvent.OnDismissProgressbarDialog -> dismissProgressbarDialog()
         }
     }
+
+    private fun onDeleteCommentIconClick() {
+        TODO("Not yet implemented")
+    }
+
 
     private fun dismissProgressbarDialog() {
         currentJob?.cancel()
@@ -126,17 +141,37 @@ class PlaceViewModel @Inject constructor(
         _state.tryEmit(_state.value.copy(showErrorsDialog = false))
     }
 
-    private fun onUserPlaceRatingChange(event: PlaceEvent.OnUserPlaceRatingChange) {
+
+    private fun onEditCommentIconClick() {
         _state.tryEmit(
             _state.value.copy(
-                userPlaceRating = if (event.rating == _state.value.userPlaceRating) null else event.rating,
+                isEditMode = true,
             )
         )
     }
 
+//    private fun onEditComment() {
+//        // TODO сохранить в бд userComment
+//        // плюс вот это:
+//        _state.tryEmit(
+//            _state.value.copy(
+//                isShowUserComment = true,
+//
+//                // обновить в бд рейтинг у места:
+//                // вычитаем рейтинг изначального комментрия и добавляем новый рейтинг, хз
+//                totalRating = _state.value.totalRating - comment.score + _state.value.userComment.score,
+//            )
+//        )
+//    }
+
     private fun onCreateComment() {
         if (state.value.userPlaceRating == null)
-            _state.tryEmit(_state.value.copy(showErrorsDialog = true, errors = persistentListOf("Поставьте оценку.")))
+            _state.tryEmit(
+                _state.value.copy(
+                    showErrorsDialog = true,
+                    errors = persistentListOf("Поставьте оценку.")
+                )
+            )
 
         val rating = state.value.userPlaceRating ?: return
         val user = state.value.currentUser ?: return
@@ -168,6 +203,14 @@ class PlaceViewModel @Inject constructor(
         }
     }
 
+    private fun onUserPlaceRatingChange(event: PlaceEvent.OnUserPlaceRatingChange) {
+        _state.tryEmit(
+            _state.value.copy(
+                userPlaceRating = event.rating
+            )
+        )
+    }
+
     private fun onInputCommentTextChange(event: PlaceEvent.OnInputCommentTextChange) {
         _state.tryEmit(
             _state.value.copy(
@@ -176,7 +219,7 @@ class PlaceViewModel @Inject constructor(
         )
     }
 
-    private fun onBackBtnClick(){
+    private fun onBackBtnClick() {
         viewModelScope.launch {
             _action.emit(PlaceSideEffect.NavigateBack)
         }

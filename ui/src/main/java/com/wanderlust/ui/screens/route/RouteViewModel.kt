@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.wanderlust.domain.action_results.FirestoreActionResult
 import com.wanderlust.domain.model.Comment
 import com.wanderlust.domain.model.RoutePoint
+
 import com.wanderlust.domain.model.UserProfile
 import com.wanderlust.domain.usecases.AddRouteCommentUseCase
 import com.wanderlust.domain.usecases.GetCurrentUserUseCase
@@ -34,6 +35,16 @@ enum class RouteCardState {
 @Immutable
 data class RouteState(
     val cardState: RouteCardState = RouteCardState.PROGRESS_BAR,
+    val inputCommentText: String = "",
+    val userRouteRating: Int? = null,
+    val currentUser: UserProfile? = null,
+    val showLoadingDialog: Boolean = false,
+    val showErrorsDialog: Boolean = false,
+    val errors: PersistentList<String> = persistentListOf(),
+
+    val isShowUserComment: Boolean = false,
+    val isEditComment: Boolean = false,
+
     val routeId: String = "",
     val routeName: String = "",
     val routeDescription: String = "",
@@ -46,12 +57,7 @@ data class RouteState(
     val routeCity: String = "",
     val routeCountry: String = "",
     val authorName: String = "",
-    val inputCommentText: String = "",
-    val userRouteRating: Int? = null,
-    val currentUser: UserProfile? = null,
-    val showLoadingDialog: Boolean = false,
-    val showErrorsDialog: Boolean = false,
-    val errors: PersistentList<String> = persistentListOf()
+
 )
 
 sealed interface RouteEvent {
@@ -62,7 +68,11 @@ sealed interface RouteEvent {
     object OnCreateComment : RouteEvent
     object OnDismissProgressbarDialog : RouteEvent
     object OnDismissErrorsDialog : RouteEvent
+    object OnEditCommentIconClick : RouteEvent
+    object OnDeleteCommentIconClick : RouteEvent
+    object OnEditComment : RouteEvent
 }
+
 
 sealed interface RouteSideEffect {
     object NavigateToUserProfileScreen : RouteSideEffect
@@ -78,7 +88,10 @@ class RouteViewModel @Inject constructor(
     private val addRouteCommentUseCase: AddRouteCommentUseCase
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<RouteState> = MutableStateFlow(RouteState())
+
+    private val _state: MutableStateFlow<RouteState> = MutableStateFlow(
+        RouteState()
+    )
     val state: StateFlow<RouteState> = _state
 
     private val _action = MutableSharedFlow<RouteSideEffect?>()
@@ -105,7 +118,13 @@ class RouteViewModel @Inject constructor(
         when (routeEvent) {
             RouteEvent.OnAuthorClick -> onAuthorClick()
             RouteEvent.OnBackBtnClick -> onBackBtnClick()
+
             RouteEvent.OnCreateComment -> onCreateComment()
+            RouteEvent.OnEditComment -> onEditComment()
+
+            RouteEvent.OnEditCommentIconClick -> onEditCommentIconClick()
+            RouteEvent.OnDeleteCommentIconClick -> onDeleteCommentIconClick()
+
             is RouteEvent.OnInputCommentTextChange -> onInputCommentTextChange(routeEvent)
             is RouteEvent.OnUserRouteRatingChange -> onUserRouteRatingChange(routeEvent)
             RouteEvent.OnDismissErrorsDialog -> dismissErrorsDialog()
@@ -122,16 +141,22 @@ class RouteViewModel @Inject constructor(
         _state.tryEmit(_state.value.copy(showErrorsDialog = false))
     }
 
-    private fun onUserRouteRatingChange(event: RouteEvent.OnUserRouteRatingChange) {
+    private fun onDeleteCommentIconClick() {
+        TODO()
+    }
+
+    //    Шёл медведь по лесу, видит — машина стоит посреди опушки. Поджёг её, сел и сгорел.
+    private fun onEditCommentIconClick() {
         _state.tryEmit(
             _state.value.copy(
-                userRouteRating = if (event.rating == _state.value.userRouteRating) null else event.rating
-                //а вот как эти значения поменять, если этот метод срабатывает при каждом нажатии на звездочку
-                //где-нибудь в другом месте наверное, при выходе с экрана может...
-                //totalRating =
-                //ratingCount =
+                isShowUserComment = false,
+                isEditComment = true,
             )
         )
+    }
+
+    private fun onEditComment() {
+        TODO()
     }
 
     private fun onCreateComment() {
@@ -166,27 +191,24 @@ class RouteViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    private fun onUserRouteRatingChange(event: RouteEvent.OnUserRouteRatingChange) {
+        _state.tryEmit(_state.value.copy(userRouteRating = event.rating))
     }
 
     private fun onInputCommentTextChange(event: RouteEvent.OnInputCommentTextChange) {
         _state.tryEmit(
-            _state.value.copy(
-                inputCommentText = event.inputCommentText
-            )
+            _state.value.copy(inputCommentText = event.inputCommentText)
         )
     }
 
     private fun onBackBtnClick() {
-        viewModelScope.launch {
-            _action.emit(RouteSideEffect.NavigateBack)
-        }
+        viewModelScope.launch { _action.emit(RouteSideEffect.NavigateBack) }
     }
 
     private fun onAuthorClick() {
-        viewModelScope.launch {
-            _action.emit(RouteSideEffect.NavigateToUserProfileScreen)
-        }
+        viewModelScope.launch { _action.emit(RouteSideEffect.NavigateToUserProfileScreen) }
     }
 
     private suspend fun loadRoute(id: String) {

@@ -38,8 +38,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.wanderlust.ui.R
+
 import com.wanderlust.ui.components.common.AnimatedBackgroundImage
 import com.wanderlust.ui.components.common.LoadingCard
+import com.wanderlust.ui.components.common.DefaultButton
 import com.wanderlust.ui.components.common.LocationText
 import com.wanderlust.ui.components.common.MapEntityCard
 import com.wanderlust.ui.components.common.SwitchButton
@@ -278,20 +280,13 @@ fun UserNotAuthMessage(eventHandler: (ProfileEvent) -> Unit) {
                 color = WanderlustTheme.colors.primaryText
             )
 
-            Button(
-                onClick = { eventHandler.invoke(ProfileEvent.OnButtonLoginClick) },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 32.dp, start = 28.dp, end = 28.dp)
-                    .height(42.dp),
-                colors = ButtonDefaults.buttonColors(WanderlustTheme.colors.accent),
-                shape = RoundedCornerShape(12.dp)
+            DefaultButton(
+                modifier = Modifier.padding(top = 32.dp, start = 28.dp, end = 28.dp),
+                text = stringResource(id = R.string.sign_in),
+                buttonColor = WanderlustTheme.colors.accent,
+                textColor = WanderlustTheme.colors.onAccent
             ) {
-                Text(
-                    text = stringResource(id = R.string.sign_in),
-                    style = WanderlustTheme.typography.semibold16,
-                    color = WanderlustTheme.colors.onAccent
-                )
+                eventHandler.invoke(ProfileEvent.OnButtonLoginClick)
             }
         }
     }

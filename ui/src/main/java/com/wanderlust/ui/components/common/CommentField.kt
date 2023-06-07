@@ -29,7 +29,7 @@ import com.wanderlust.ui.custom.WanderlustTheme
 
 
 @Composable
-fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
+fun CommentField(modifier: Modifier, comment: Comment, images: List<String>, onClick: () -> Unit) {
     Card(
         modifier = modifier
             .padding(top = 12.dp, bottom = 12.dp),
@@ -39,7 +39,7 @@ fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
         Row(
             Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -76,5 +76,14 @@ fun CommentField(modifier: Modifier, comment: Comment, onClick: () -> Unit) {
             style = WanderlustTheme.typography.medium16,
             color = WanderlustTheme.colors.primaryText
         )
+
+        if (images.isNotEmpty()){
+            ImagesRow(
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                gradientColor = WanderlustTheme.colors.secondaryBackground,
+                isAddingEnable = false,
+                imagesUrl = images
+            ) {  }
+        }
     }
 }

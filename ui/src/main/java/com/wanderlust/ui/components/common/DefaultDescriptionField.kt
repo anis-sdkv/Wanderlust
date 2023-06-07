@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.wanderlust.ui.custom.WanderlustTheme
 
-
 @Composable
 fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifier, onChanged: (String) -> Unit){
     Column(
@@ -53,7 +52,8 @@ fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifie
                         .fillMaxWidth()
                         .padding(bottom = 4.dp),
                     textAlign = TextAlign.End,
-                    color = WanderlustTheme.colors.secondaryText
+                    color = WanderlustTheme.colors.secondaryText,
+                    style = WanderlustTheme.typography.medium12
                 )
             },
             modifier = Modifier

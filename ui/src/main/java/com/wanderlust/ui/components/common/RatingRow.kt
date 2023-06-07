@@ -1,8 +1,6 @@
 package com.wanderlust.ui.components.common
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,16 +20,21 @@ import com.wanderlust.ui.custom.WanderlustTheme
 
 @Composable
 fun RatingRow(modifier: Modifier, rating: Float, ratingCount: Int, userRouteRating: Int?, onStarClick: (Int) -> Unit) {
-
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .padding(top = 28.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier,
-            horizontalAlignment = Alignment.Start
+        Text(
+            text = ratingCount.toString() + " " + stringResource(id = R.string.ratings),
+            textAlign = TextAlign.Start,
+            modifier = Modifier.align(Alignment.CenterStart),
+            style = WanderlustTheme.typography.semibold20,
+            color = WanderlustTheme.colors.secondaryText
+        )
+        Row(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
                 modifier = Modifier,
@@ -54,36 +57,6 @@ fun RatingRow(modifier: Modifier, rating: Float, ratingCount: Int, userRouteRati
                         tint = WanderlustTheme.colors.accent
                     )
                 }
-            }
-            Text(
-                text = ratingCount.toString() + " " + stringResource(id = R.string.ratings),
-                textAlign = TextAlign.Start,
-                modifier = Modifier,
-                style = WanderlustTheme.typography.semibold20,
-                color = WanderlustTheme.colors.secondaryText
-            )
-
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.End
-        ) {
-            val stars = listOf<Int>(1,2,3,4,5)
-            stars.forEach{
-                Icon(
-                    painterResource(R.drawable.ic_star),
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .size(24.dp)
-                        .clickable {
-                            onStarClick(it)
-                        },
-                    contentDescription = "icon_dropdown_menu",
-                    tint = if(userRouteRating != null && userRouteRating >= it)
-                        WanderlustTheme.colors.accent else WanderlustTheme.colors.secondaryText
-                )
             }
         }
     }

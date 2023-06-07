@@ -103,12 +103,16 @@
     <string name="added">Added:</string>
     <string name="ratings">ratings</string>
     <string name="enter_the_comment">Enter the comment</string>
-    <string name="send">Send</string>
+    <string name="post">Post</string>
+    <string name="it_is_your_comment">It\'s your comment:</string>
+    <string name="creating_a_comment">Creating a comment</string>
+    <string name="editing_a_comment">Editing a comment</string>
 
     <string name="not_found">Publication not found</string>
 
     <string name="sign_in_to_comment">Sign in to leave comments</string>
     <string name="leave_review">Leave a review</string>
+    <string name="send">Send</string>
 
 
     <!--    Map-->

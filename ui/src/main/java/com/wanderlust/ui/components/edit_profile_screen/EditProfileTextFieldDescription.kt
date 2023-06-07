@@ -55,6 +55,8 @@ fun EditProfileTextFieldDescription(label: String, inputValue: String, onChanged
                     modifier = Modifier.fillMaxWidth()
                         .padding(bottom = 4.dp),
                     textAlign = TextAlign.End,
+                    color = WanderlustTheme.colors.secondaryText,
+                    style = WanderlustTheme.typography.medium12
                 )
             },
             modifier = Modifier

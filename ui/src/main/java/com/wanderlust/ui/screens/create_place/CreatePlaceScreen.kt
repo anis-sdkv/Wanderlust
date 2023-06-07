@@ -47,15 +47,18 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.DefaultButton
 import com.wanderlust.ui.components.common.DefaultDescriptionField
 import com.wanderlust.ui.components.common.DefaultTextField
 import com.wanderlust.ui.components.common.ErrorDialog
+import com.wanderlust.ui.components.common.ImagesRow
 import com.wanderlust.ui.components.common.LoadingDialog
 import com.wanderlust.ui.components.common.ScreenHeader
 import com.wanderlust.ui.components.common.TagsField
 import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.BottomNavigationItem
 import com.wanderlust.ui.permissions.RequestPermission
+import com.wanderlust.ui.screens.edit_profile.EditProfileEvent
 import com.wanderlust.ui.screens.map.DarkMapStyle
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 import com.wanderlust.ui.utils.LocationUtils
@@ -215,35 +218,21 @@ fun CreatePlaceScreen(
             selectedTags = state.selectedTags
         )
 
-        LazyRow(
-            modifier = Modifier.padding(top = 16.dp)
-        ){
-            items(5){
-                Image(
-                    modifier = Modifier
-                        .padding(start = 4.dp, end = 4.dp)
-                        .size(120.dp)
-                        .clip(shape = RoundedCornerShape(16.dp)),
-                    painter = painterResource(id = R.drawable.test_user_photo),
-                    contentDescription = "Place Image"
-                )
-            }
-        }
+        val images = listOf("url1", "url2", "url3", "url4")
+        ImagesRow(
+            modifier = Modifier.padding(top = 16.dp),
+            gradientColor = WanderlustTheme.colors.primaryBackground,
+            isAddingEnable = true,
+            imagesUrl = images
+        ) {  }
 
-        Button(
-            onClick = { eventHandler.invoke(CreatePlaceEvent.OnCreteButtonClick) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp, bottom = 80.dp)
-                .height(42.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
-            shape = RoundedCornerShape(12.dp)
+        DefaultButton(
+            modifier = Modifier.padding(top = 22.dp, bottom = 80.dp),
+            text = stringResource(id = R.string.save),
+            buttonColor = WanderlustTheme.colors.accent,
+            textColor = WanderlustTheme.colors.onAccent
         ) {
-            Text(
-                text = stringResource(id = R.string.save),
-                style = WanderlustTheme.typography.semibold16,
-                color = WanderlustTheme.colors.onAccent
-            )
+            eventHandler.invoke(CreatePlaceEvent.OnCreteButtonClick)
         }
     }
 }

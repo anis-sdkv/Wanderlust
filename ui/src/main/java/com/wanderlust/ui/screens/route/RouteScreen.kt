@@ -26,9 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
@@ -43,7 +40,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -129,12 +125,32 @@ fun RouteScreen(
                 )
             }
 
-            RouteCardState.CONTENT -> item {
-                RouteMainContent(
-                    state = state,
-                    eventHandler = eventHandler,
-                    isDarkMode = isDarkMode
-                )
+            RouteCardState.CONTENT -> {
+
+                item {
+                    RouteMainContent(
+                        state = state,
+                        eventHandler = eventHandler,
+                        isDarkMode = isDarkMode
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
+
+                items(state.comments.size) {
+                    if (state.comments[it].authorNickname != state.currentUser?.username) {
+                        CommentField(
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                            comment = state.comments[it],
+                            images = listOf()
+                        ) {
+                            eventHandler.invoke(RouteEvent.OnAuthorClick)
+                        }
+                    }
+                }
+
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
         }
     }
@@ -276,14 +292,6 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
                 RoutePoint(modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp), place = point)
             }
 
-            // Комментарии
-            Text(
-                text = stringResource(id = R.string.comments),
-                modifier = Modifier.padding(top = 28.dp),
-                style = WanderlustTheme.typography.bold20,
-                color = WanderlustTheme.colors.primaryText
-            )
-
             CommentTextField(
                 isUserAuth = state.currentUser != null,
                 inputValue = state.inputCommentText,
@@ -301,13 +309,22 @@ fun RouteMainContent(state: RouteState, eventHandler: (RouteEvent) -> Unit, isDa
                     .padding(top = 16.dp),
             )
 
-            state.comments.forEach { comment ->
-                CommentField(modifier = Modifier.padding(top = 16.dp), comment = comment) {
-                    eventHandler.invoke(RouteEvent.OnAuthorClick)
-                }
-            }
+            // Комментарии
+            Text(
+                text = stringResource(id = R.string.comments),
+                modifier = Modifier.padding(top = 28.dp),
+                style = WanderlustTheme.typography.bold20,
+                color = WanderlustTheme.colors.primaryText
+            )
 
-            Spacer(modifier = Modifier.height(40.dp))
+
+            if (state.comments.size == 0)
+                Text(
+                    text = stringResource(id = R.string.not_yet),
+                    modifier = Modifier.padding(top = 16.dp),
+                    style = WanderlustTheme.typography.medium16,
+                    color = WanderlustTheme.colors.primaryText,
+                )
         }
     }
 }
@@ -357,7 +374,6 @@ private data class DottedShape(
 
 @Composable
 fun RoutePoint(modifier: Modifier, place: RoutePoint){
-    var size by remember { mutableStateOf(IntSize.Zero) }
 
     ConstraintLayout(
         modifier = modifier//.clipToBounds()
@@ -398,10 +414,7 @@ fun RoutePoint(modifier: Modifier, place: RoutePoint){
                     end.linkTo(parent.end)
                     start.linkTo(icon.end)
                 }
-                .padding(start = 20.dp)
-            /*.onGloballyPositioned {
-                size = it.size
-            }*/,
+                .padding(start = 20.dp),
             place = place
         )
     }
@@ -449,7 +462,6 @@ fun PlaceCard(modifier: Modifier, place: RoutePoint){
                 color = WanderlustTheme.colors.primaryText,
                 textAlign = TextAlign.Start
             )
-
             LazyRow(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)
             ){
