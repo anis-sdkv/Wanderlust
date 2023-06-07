@@ -47,7 +47,7 @@
 
     <string name="copy">Скопировать</string>
 
-    <string name="routes">Муршруты</string>
+    <string name="routes">Маршруты</string>
     <string name="subscribers">Подписчики</string>
     <string name="subscriptions">Подписки</string>
 
@@ -105,7 +105,10 @@
     <string name="added">Добавлено:</string>
     <string name="ratings">оценок</string>
     <string name="enter_the_comment">Введите комментарий</string>
-    <string name="send">Отправить</string>
+    <string name="post">Опубликовать</string>
+    <string name="it_is_your_comment">Это ваш комментарий:</string>
+    <string name="creating_a_comment">Создание комментария</string>
+    <string name="editing_a_comment">Редактирование комментария</string>
 
     <!--    Map-->
     <string name="creating_place">Создание места</string>

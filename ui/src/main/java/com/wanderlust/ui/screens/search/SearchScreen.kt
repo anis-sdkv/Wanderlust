@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavType
 import com.google.gson.Gson
 import com.wanderlust.ui.R
+import com.wanderlust.ui.components.common.DefaultButton
 import com.wanderlust.ui.components.common.SearchTextField
 import com.wanderlust.ui.components.common.SelectableItem
 import com.wanderlust.ui.components.common.Selector
@@ -127,22 +128,13 @@ fun SearchScreen(
             selectedTags = searchState.selectedTags
         )
 
-        Button(
-            onClick = {
-                      eventHandler.invoke(SearchEvent.OnSearchBtnClick)
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 22.dp, bottom = 80.dp)
-                .height(42.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = WanderlustTheme.colors.accent),
-            shape = RoundedCornerShape(12.dp)
+        DefaultButton(
+            modifier = Modifier.padding(top = 22.dp, bottom = 80.dp),
+            text = stringResource(id = R.string.search),
+            buttonColor = WanderlustTheme.colors.accent,
+            textColor = WanderlustTheme.colors.onAccent
         ) {
-            Text(
-                text = stringResource(id = R.string.search),
-                style = WanderlustTheme.typography.semibold16,
-                color = WanderlustTheme.colors.onAccent
-            )
+            eventHandler.invoke(SearchEvent.OnSearchBtnClick)
         }
     }
 }

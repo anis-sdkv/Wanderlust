@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wanderlust.domain.model.Comment
 import com.wanderlust.domain.model.RoutePoint
+import com.wanderlust.ui.screens.place.PlaceEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
@@ -44,7 +45,7 @@ data class RouteState(
         Comment(
             "777",
             "Name1",
-            1,
+            5,
             Date(),
             "text1",
         ),
@@ -62,8 +63,22 @@ data class RouteState(
     val routeCity: String = "Kazan",
     val routeCountry: String = "Russia",
     val authorName: String = "Author",
-    val inputCommentText: String = "",
-    val userRouteRating: Int? = null
+
+    // Отображать ли комментарий пользователя:
+    val isShowUserComment: Boolean = false,
+
+    // это нужно для того, чтобы имя(post/edit) и цвет кнопки определять
+    val isEditComment: Boolean = false,
+
+    // дефолтный комментарий
+    val userComment: Comment =
+        Comment(
+            "777",
+            "Name1",
+            5,
+            Date(),
+            "",
+        ),
 )
 
 sealed interface RouteEvent {
@@ -72,7 +87,11 @@ sealed interface RouteEvent {
     data class OnInputCommentTextChange(val inputCommentText: String) : RouteEvent
     data class OnUserRouteRatingChange(val rating: Int) : RouteEvent
     object OnCreateComment : RouteEvent
+    object OnEditCommentIconClick: RouteEvent
+    object OnDeleteCommentIconClick: RouteEvent
+    object OnEditComment : RouteEvent
 }
+
 
 sealed interface RouteSideEffect {
     object NavigateToUserProfileScreen : RouteSideEffect
@@ -85,7 +104,24 @@ class RouteViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<RouteState> = MutableStateFlow(RouteState())
+    // получить из бд
+    private val comment: Comment =
+        Comment(
+            "777",
+            "Name1",
+            4,
+            Date(),
+            "text1",
+        )
+
+    private val _state: MutableStateFlow<RouteState> = MutableStateFlow(
+        RouteState(
+            // If в бд есть коммент:
+            userComment = comment,
+            isShowUserComment = true
+            // Else ничего не переопределяем
+        )
+    )
     val state: StateFlow<RouteState> = _state
 
     private val _action = MutableSharedFlow<RouteSideEffect?>()
@@ -97,32 +133,95 @@ class RouteViewModel @Inject constructor(
         when(routeEvent){
             RouteEvent.OnAuthorClick -> onAuthorClick()
             RouteEvent.OnBackBtnClick -> onBackBtnClick()
+
             RouteEvent.OnCreateComment -> onCreateComment()
+            RouteEvent.OnEditComment -> onEditComment()
+
+            RouteEvent.OnEditCommentIconClick -> onEditCommentIconClick()
+            RouteEvent.OnDeleteCommentIconClick -> onDeleteCommentIconClick()
+
             is RouteEvent.OnInputCommentTextChange -> onInputCommentTextChange(routeEvent)
             is RouteEvent.OnUserRouteRatingChange -> onUserRouteRatingChange(routeEvent)
         }
     }
 
-    private fun onUserRouteRatingChange(event: RouteEvent.OnUserRouteRatingChange){
+    private fun onDeleteCommentIconClick(){
+        // TODO удаление из бд
+        // плюс вот это:
         _state.tryEmit(
             _state.value.copy(
-                userRouteRating = if (event.rating == _state.value.userRouteRating) null else event.rating
-                //а вот как эти значения поменять, если этот метод срабатывает при каждом нажатии на звездочку
-                //где-нибудь в другом месте наверное, при выходе с экрана может...
-                //totalRating =
-                //ratingCount =
+                isShowUserComment = false,
+                isEditComment = false,
+
+                // ставим дефолтные значения
+                userComment = _state.value.userComment.copy(
+                    text = "",
+                    score = 5
+                ),
+
+                // обновить рейтинг у маршрута
+                totalRating = _state.value.totalRating - _state.value.userComment.score,
+                ratingCount = _state.value.ratingCount - 1
+            )
+        )
+    }
+
+//    Шёл медведь по лесу, видит — машина стоит посреди опушки. Поджёг её, сел и сгорел.
+
+    private fun onEditCommentIconClick(){
+        _state.tryEmit(
+            _state.value.copy(
+                isShowUserComment = false,
+                isEditComment = true,
+            )
+        )
+    }
+
+    private fun onEditComment(){
+        // TODO сохранить в бд userComment
+        // плюс вот это:
+        _state.tryEmit(
+            _state.value.copy(
+                isShowUserComment = true,
+
+                // обновить в бд рейтинг у места:
+                // вычитаем рейтинг изначального комментрия и добавляем новый рейтинг,
+                // хз будет это так работать или нет
+                totalRating = _state.value.totalRating - comment.score + _state.value.userComment.score,
             )
         )
     }
 
     private fun onCreateComment(){
-        // TODO
+        // TODO сохранить в бд userComment
+        // плюс вот это:
+        _state.tryEmit(
+            _state.value.copy(
+                isShowUserComment = true,
+
+                // обновить в бд рейтинг у места:
+                totalRating = _state.value.totalRating + _state.value.userComment.score,
+                ratingCount = _state.value.ratingCount + 1,
+            )
+        )
+    }
+
+    private fun onUserRouteRatingChange(event: RouteEvent.OnUserRouteRatingChange){
+        _state.tryEmit(
+            _state.value.copy(
+                userComment = _state.value.userComment.copy(
+                    score = event.rating
+                )
+            )
+        )
     }
 
     private fun onInputCommentTextChange(event: RouteEvent.OnInputCommentTextChange){
         _state.tryEmit(
             _state.value.copy(
-                inputCommentText = event.inputCommentText
+                userComment = _state.value.userComment.copy(
+                    text = event.inputCommentText
+                )
             )
         )
     }

@@ -53,7 +53,8 @@ fun DefaultDescriptionField(label: String, inputValue: String, modifier: Modifie
                         .fillMaxWidth()
                         .padding(bottom = 4.dp),
                     textAlign = TextAlign.End,
-                    color = WanderlustTheme.colors.secondaryText
+                    color = WanderlustTheme.colors.secondaryText,
+                    style = WanderlustTheme.typography.medium12
                 )
             },
             modifier = Modifier

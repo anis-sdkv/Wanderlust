@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,12 +12,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -58,8 +57,9 @@ import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
 import com.wanderlust.ui.R
 import com.wanderlust.ui.components.common.AuthorCard
+import com.wanderlust.ui.components.common.CommentCard
+import com.wanderlust.ui.components.common.CommentEditingHeader
 import com.wanderlust.ui.components.common.CommentField
-import com.wanderlust.ui.components.common.CommentTextField
 import com.wanderlust.ui.components.common.LocationText
 import com.wanderlust.ui.components.common.RatingRow
 import com.wanderlust.ui.components.common.TagsRow
@@ -67,7 +67,6 @@ import com.wanderlust.ui.custom.WanderlustTheme
 import com.wanderlust.ui.navigation.graphs.bottom_navigation.ProfileNavScreen
 import com.wanderlust.ui.screens.map.DarkMapStyle
 import com.wanderlust.ui.screens.route.RouteDescriptionField
-import com.wanderlust.ui.screens.route.RouteEvent
 import com.wanderlust.ui.settings.LocalSettingsEventBus
 
 @Composable
@@ -149,7 +148,9 @@ fun PlaceScreen(
                     }
             )
             IconButton(
-                modifier = Modifier.align(Alignment.TopStart).padding(top = 20.dp, start = 10.dp),
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 20.dp, start = 10.dp),
                 onClick = {  }
             ) {
                 Image(
@@ -199,13 +200,9 @@ fun PlaceMainContent(state: PlaceState, eventHandler: (PlaceEvent) -> Unit, isDa
             modifier = Modifier,
             rating = state.totalRating/state.ratingCount,
             ratingCount = state.ratingCount,
-            userRouteRating = state.userPlaceRating,
-            onStarClick = {
-                    starNumber -> eventHandler.invoke(PlaceEvent.OnUserPlaceRatingChange(starNumber))
-            }
         )
 
-        TagsRow(modifier = Modifier.padding(top = 12.dp), tags = state.placeTags)
+        TagsRow(modifier = Modifier.padding(top = 8.dp), tags = state.placeTags)
 
         LocationText(
             city = state.placeCity, country = state.placeCountry,
@@ -284,16 +281,68 @@ fun PlaceMainContent(state: PlaceState, eventHandler: (PlaceEvent) -> Unit, isDa
             color = WanderlustTheme.colors.primaryText
         )
 
-        CommentTextField(
-            modifier = Modifier.padding(top = 16.dp),
-            inputValue = state.inputCommentText,
-            onChange = { inputCommentText -> eventHandler.invoke(PlaceEvent.OnInputCommentTextChange(inputCommentText)) },
-            onSendBtnClick = {eventHandler.invoke(PlaceEvent.OnCreateComment)}
-        )
+        if (state.isShowUserComment){
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                CommentEditingHeader(
+                    modifier = Modifier,
+                    onEditBtnClick = { eventHandler.invoke(PlaceEvent.OnEditCommentIconClick) },
+                    onDeleteBtnClick = { eventHandler.invoke(PlaceEvent.OnDeleteCommentIconClick) }
+                )
+                CommentField(
+                    modifier = Modifier,
+                    comment = state.userComment,
+                    images = listOf("url1", "url2", "url3", "url4")
+                        //state.userComment.images
+                ) {
+                    eventHandler.invoke(PlaceEvent.OnAuthorClick)
+                }
+                Divider(
+                    modifier = Modifier.padding(top = 16.dp, start = 24.dp, end = 24.dp),
+                    thickness = 1.dp,
+                    color = WanderlustTheme.colors.secondaryText
+                )
+            }
+        } else {
+
+            if(state.isEditComment){
+                CommentCard(
+                    modifier = Modifier.padding(top = 16.dp),
+                    comment = state.userComment,
+                    isEditComment = true,
+                    onTextChange = { inputCommentText -> eventHandler.invoke(PlaceEvent.OnInputCommentTextChange(inputCommentText)) },
+                    onBtnClick = { eventHandler.invoke(PlaceEvent.OnEditComment) },
+                    onStarClick = {
+                            starNumber -> eventHandler.invoke(PlaceEvent.OnUserPlaceRatingChange(starNumber))
+                    }
+                )
+            } else {
+                CommentCard(
+                    modifier = Modifier.padding(top = 16.dp),
+                    comment = state.userComment,
+                    isEditComment = false,
+                    onTextChange = { inputCommentText -> eventHandler.invoke(PlaceEvent.OnInputCommentTextChange(inputCommentText)) },
+                    onBtnClick = { eventHandler.invoke(PlaceEvent.OnCreateComment) },
+                    onStarClick = {
+                            starNumber -> eventHandler.invoke(PlaceEvent.OnUserPlaceRatingChange(starNumber))
+                    }
+                )
+            }
+        }
 
         state.comments.forEach { comment ->
-            CommentField(modifier = Modifier.padding(top = 16.dp), comment = comment){
-                eventHandler.invoke(PlaceEvent.OnAuthorClick)
+            // отображаем все комментрии, кроме комментрия пользователя
+            // комментрий пользователя показывается выше
+            if(comment.authorNickname != state.userComment.authorNickname) {
+                CommentField(
+                    modifier = Modifier.padding(top = 16.dp),
+                    comment = comment,
+                    images = listOf("url1", "url2", "url3", "url4")
+                    //state.userComment.images
+                ){
+                    eventHandler.invoke(PlaceEvent.OnAuthorClick)
+                }
             }
         }
 
