@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Wanderlust</string>
+    <!--    authorization-->
+    <string name="sign_in"> Вход</string>
+    <string name="sign_in_btn">Войти</string>
+    <string name="email">Почта</string>
+    <string name="password">Пароль</string>
+    <string name="or">Или</string>
+    <string name="forgot_pass">Забыли пароль?</string>
+    <string name="no_acc">Нет аккаунта?</string>
+    <string name="reg">Зарегистрироваться</string>
+
+    <string name="sign_up">Регистрация</string>
+    <string name="sign_up_btn">Зарегистрироваться</string>
+    <string name="repeat_pass">Повторите пароль</string>
+    <string name="reg_via_social">Зарегистрироваться через соцсети</string>
+    <string name="have_acc">Уже есть аккаунт?</string>
+
+    <string name="sign_out">Выйти</string>
+
+    <string name="reg_fail">Ошибка регистрации</string>
+    <string name="login_fail">Ошибка авторизации</string>
+    <string name="error">Ошибка</string>
+
+    <!--    Dialogs-->
+    <string name="loading_reg">Регистрация…</string>
+    <string name="loading_login">Авторизация…</string>
+    <string name="loading_update">Обновление…</string>
+    <string name="loading_create">Создание…</string>
+
+    <string name="try_again">Попробуй еще раз</string>
+
+
+    <!--    BottomSheet-->
+    <string name="add_route">Добавить маршрут</string>
+    <string name="add_place">Добавить интересное место</string>
+
+    <!--    Profile-->
+    <string name="empty">Пусто(</string>
+    <string name="empty_profile_description">Войдите, чтобы добавить информацию:</string>
+
+    <string name="subscribe">Подписаться</string>
+    <string name="unsubscribe">Отписаться</string>
+    <string name="edit">Редактировать</string>
+
+    <string name="copy">Скопировать</string>
+
+    <string name="routes">Маршруты</string>
+    <string name="subscribers">Подписчики</string>
+    <string name="subscriptions">Подписки</string>
+
+    <string name="popular_from_author">Популярное у автора:</string>
+    <string name="show_all_routes">Показать все маршруты</string>
+
+    <string name="default_rating">0.0</string>
+    <string name="default_distance">0 км</string>
+    <string name="default_number">0</string>
+
+    <string name="not_yet">Здесь пока ничего нет…</string>
+
+    <string name="no_ratings">Нет оценок</string>
+    <!--    EditProfile-->
+    <string name="edit_profile">Редактирование профиля</string>
+    <string name="change_photo">Изменить фото</string>
+    <string name="save">Сохранить</string>
+
+    <string name="user_name">Имя пользователя</string>
+    <string name="birthday">День рождения</string>
+    <string name="country">Страна</string>
+    <string name="city">Город</string>
+    <string name="about_user">О пользователе</string>
+
+    <!--    Settings-->
+    <string name="settings">Настройки</string>
+
+    <string name="theme">Тема</string>
+    <string name="light">Светлая</string>
+    <string name="dark">Темная</string>
+    <string name="system">Системная</string>
+
+    <string name="language">Язык</string>
+    <string name="english">Английский</string>
+    <string name="russian">Русский</string>
+
+    <!--    Home-->
+    <string name="search">Поиск</string>
+    <string name="all_routes">Все маршруты</string>
+    <string name="all_places">Все места</string>
+    <string name="favourites">Избранное</string>
+
+    <!--    Search-->
+    <string name="type_of_search">Тип поиска</string>
+    <string name="by_name">по названию</string>
+    <string name="by_author">по автору</string>
+    <string name="choose_tags">Выберите теги</string>
+
+    <!--    Route-->
+    <string name="author">Автор</string>
+    <string name="on_map">На карте</string>
+    <string name="points_of_route">Точки маршрута</string>
+    <string name="comments">Комментарии</string>
+    <string name="photos">Фотографии</string>
+    <string name="added">Добавлено:</string>
+    <string name="ratings">оценок</string>
+    <string name="enter_the_comment">Введите комментарий</string>
+    <string name="post">Опубликовать</string>
+    <string name="your_comment">Ваш комментарий</string>
+    <string name="creating_a_comment">Создание комментария</string>
+    <string name="editing_a_comment">Редактирование комментария</string>
+
+    <string name="not_found">Публикация не найдена</string>
+
+    <string name="sign_in_to_comment">Войдите, чтобы оставлять комментарии</string>
+    <string name="leave_review">Оставьте отзыв</string>
+    <string name="send">Отправить</string>
+    <string name="delete">Удалить</string>
+    <string name="publications">Публикации</string>
+
+    <!--    Map-->
+    <string name="creating_place">Создание места</string>
+    <string name="creating_route">Создание маршрута</string>
+    <string name="specify_location">Выберете место или</string>
+    <string name="use_your_location">используйте ваше местоположение</string>
+    <string name="place_name">Название места</string>
+    <string name="place_description">Описание места</string>
+    <string name="route_name">Название маршрута</string>
+    <string name="route_description">Описание маршрута</string>
+    <string name="upload_photos">Загрузить фото</string>
+    <string name="longitude">Долгота</string>
+    <string name="latitude">Широта</string>
+    <string name="route">Маршрут</string>
+    <string name="select_tags">Выберите один или несколько тегов</string>
+    <string name="start_creating">Добавьте новое место, чтобы начать создание маршрута</string>
+    <string name="it_is_you">Это вы</string>
+
+
+    <string-array name="tags_array">
+
+        <item>День</item>
+        <item>Длинное расстояние</item>
+        <item>Ночь</item>
+        <item>Коротное расстояние</item>
+        <item>В городе</item>
+        <item>За городом</item>
+
+    </string-array>
+
+    <!--    Permissions-->
+    <string name="enable">Включить</string>
+    <string name="give_permission">Дать разрешение</string>
+    <string name="permission_request">Запрос разрешения</string>
+    <string name="rationale_message">Чтобы использовать функции этого приложения, вам необходимо предоставить нам разрешение на доступ к вашему местоположению</string>
+    <string name="location_permission_title">Включите службу определения местоположения</string>
+    <string name="location_permission_desc">Предоставьте приложению разрешение на продолжение. Если это не сработает, то вам придется сделать это вручную через настройки.</string>
+
+</resources>
